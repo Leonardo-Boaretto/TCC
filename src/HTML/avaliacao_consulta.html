@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação da Consulta</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .rating {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0 30px;
+            direction: rtl;
+        }
+        .rating input {
+            display: none;
+        }
+        .rating label {
+            font-size: 2.5em;
+            cursor: pointer;
+            color: #ddd;
+            transition: color 0.2s;
+        }
+        .rating label:hover,
+        .rating label:hover ~ label,
+        .rating input:checked ~ label {
+            color: #ffd700;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px 0 20px;
+            min-height: 100px;
+            resize: vertical;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            display: block;
+            margin: 0 auto;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Como foi sua consulta? <span class="emoji">😊</span></h1>
+        
+        <form id="avaliacaoForm" action="/enviar_avaliacao" method="POST">
+            <input type="hidden" name="id_medico" value="">
+            <input type="hidden" name="id_paciente" value="">
+            <input type="hidden" name="id_consulta" value="">
+            
+            <div class="rating">
+                <input type="radio" id="star5" name="nota" value="5" required>
+                <label for="star5">★</label>
+                
+                <input type="radio" id="star4" name="nota" value="4">
+                <label for="star4">★</label>
+                
+                <input type="radio" id="star3" name="nota" value="3">
+                <label for="star3">★</label>
+                
+                <input type="radio" id="star2" name="nota" value="2">
+                <label for="star2">★</label>
+                
+                <input type="radio" id="star1" name="nota" value="1">
+                <label for="star1">★</label>
+            </div>
+            
+            <div>
+                <label for="comentario">Deixe seu comentário (opcional):</label>
+                <textarea name="avaliacao" id="comentario" placeholder="Conte-nos como foi sua experiência..."></textarea>
+            </div>
+            
+            <button type="submit">Enviar Avaliação <span class="emoji">📤</span></button>
+        </form>
+    </div>
+
+    <script>
+        // Função para obter parâmetros da URL
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                consulta_id: params.get('consulta_id'),
+                medico_id: params.get('medico_id'),
+                paciente_id: params.get('paciente_id')
+            };
+        }
+
+        // Verificar se a consulta já foi avaliada e preencher o formulário
+        async function verificarAvaliacaoExistente(consultaId) {
+            try {
+                // Buscar avaliação da consulta
+                const response = await fetch(`/api/avaliacoes/consulta/${consultaId}`);
+                const data = await response.json();
+                
+                if (response.status === 200) {
+                    if (data.pode_avaliar) {
+                        // Consulta pode ser avaliada, mostrar formulário
+                        return false;
+                    } else if (data.erro) {
+                        // Mostrar mensagem de erro
+                        document.querySelector('.container').innerHTML = `
+                            <div style="text-align: center; padding: 20px;">
+                                <div style="font-size: 5em; margin: 20px 0; color: #e74c3c;">⚠️</div>
+                                <h2 style="color: #e74c3c;">Não foi possível avaliar</h2>
+                                <p>${data.erro}</p>
+                                <a href="/" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px;">Voltar para a página inicial</a>
+                            </div>
+                        `;
+                        return true;
+                    } else {
+                        // Consulta já avaliada, mostrar mensagem
+                        document.querySelector('.container').innerHTML = `
+                            <div style="text-align: center; padding: 20px;">
+                                <h2 style="color: #27ae60;">✅ Avaliação já enviada</h2>
+                                <p>Você já avaliou esta consulta em ${new Date(data.data).toLocaleDateString('pt-BR')}.</p>
+                                <div style="margin: 20px 0; font-size: 2em; color: #f1c40f;">
+                                    ${'★'.repeat(data.nota)}${'☆'.repeat(5 - data.nota)}
+                                </div>
+                                ${data.avaliacao ? `<p><strong>Seu comentário:</strong> ${data.avaliacao}</p>` : ''}
+                                <a href="/" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px;">Voltar para a página inicial</a>
+                            </div>
+                        `;
+                        return true;
+                    }
+                } else if (response.status === 404) {
+                    // Verificar se é um erro de consulta não encontrada ou de permissão
+                    return response.json().then(data => {
+                        if (data.erro && data.erro.includes('não encontrada')) {
+                            document.querySelector('.container').innerHTML = `
+                                <div style="text-align: center; padding: 20px;">
+                                    <div style="font-size: 5em; margin: 20px 0; color: #e74c3c;">🔍</div>
+                                    <h2 style="color: #e74c3c;">Consulta não encontrada</h2>
+                                    <p>Não foi possível encontrar a consulta que você está tentando avaliar.</p>
+                                    <p>Verifique se o link está correto ou entre em contato com o suporte.</p>
+                                    <a href="/" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px;">Voltar para a página inicial</a>
+                                </div>
+                            `;
+                            return true; // Impede que o formulário seja exibido
+                        }
+                        return false; // Continua para o formulário de avaliação
+                    }).catch(() => false);
+                } else if (response.status === 400) {
+                    // Tratar erros de validação
+                    return response.json().then(data => {
+                        if (data.erro && data.erro.includes('apenas consultas concluídas')) {
+                            // Tentar obter informações da consulta para mostrar uma mensagem
+                            const params = new URLSearchParams(window.location.search);
+                            const consultaId = params.get('consulta_id');
+                            
+                            fetch(`/api/consultas/${consultaId}`)
+                                .then(res => res.json())
+                                .then(consulta => {
+                                    let mensagem = '';
+                                    
+                                    if (consulta.status === 'Agendada' || consulta.status === 'Confirmada') {
+                                        mensagem = `
+                                            <p>Sua consulta está marcada para ${new Date(consulta.data_consulta).toLocaleDateString('pt-BR')} às ${consulta.horario}.</p>
+                                            <p>Você poderá avaliar a consulta após a sua realização.</p>
+                                        `;
+                                    } else if (consulta.status === 'Em Andamento') {
+                                        mensagem = `
+                                            <p>Sua consulta está em andamento no momento.</p>
+                                            <p>Você poderá avaliá-la assim que for finalizada pelo médico.</p>
+                                        `;
+                                    } else if (consulta.status === 'Cancelada') {
+                                        mensagem = `
+                                            <p>Esta consulta foi cancelada e não pode ser avaliada.</p>
+                                        `;
+                                    } else {
+                                        mensagem = `
+                                            <p>Você só pode avaliar consultas que já foram concluídas.</p>
+                                            <p>Por favor, aguarde até o término da sua consulta para enviar sua avaliação.</p>
+                                        `;
+                                    }
+                                    
+                                    document.querySelector('.container').innerHTML = `
+                                        <div style="text-align: center; padding: 20px;">
+                                            <div style="font-size: 5em; margin: 20px 0; color: #f39c12;">⏳</div>
+                                            <h2 style="color: #f39c12;">Ainda não é possível avaliar</h2>
+                                            ${mensagem}
+                                            <a href="/" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px;">Voltar para a página inicial</a>
+                                        </div>
+                                    `;
+                                })
+                                .catch(() => {
+                                    document.querySelector('.container').innerHTML = `
+                                        <div style="text-align: center; padding: 20px;">
+                                            <div style="font-size: 5em; margin: 20px 0; color: #f39c12;">⏳</div>
+                                            <h2 style="color: #f39c12;">Ainda não é possível avaliar</h2>
+                                            <p>Você só pode avaliar consultas que já foram concluídas.</p>
+                                            <p>Por favor, aguarde até o término da sua consulta para enviar sua avaliação.</p>
+                                            <a href="/" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px;">Voltar para a página inicial</a>
+                                        </div>
+                                    `;
+                                });
+                            return true; // Impede que o formulário seja exibido
+                        }
+                        throw new Error(data.erro || 'Erro ao verificar avaliação');
+                    });
+                } else {
+                    // Outro erro na API
+                    return response.json().then(data => {
+                        throw new Error(data.erro || `Erro ao verificar avaliação: ${response.status} ${response.statusText}`);
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao verificar avaliação existente:', error);
+                document.querySelector('.container').innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 5em; margin: 20px 0; color: #e74c3c;">⚠️</div>
+                        <h2 style="color: #e74c3c;">Erro ao carregar avaliação</h2>
+                        <p>Não foi possível verificar o status da sua avaliação no momento.</p>
+                        <p>Por favor, tente novamente mais tarde ou entre em contato com o suporte.</p>
+                        <a href="/" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px;">Voltar para a página inicial</a>
+                    </div>
+                `;
+                return true; // Impede que o formulário seja exibido
+            }
+        }
+
+        // Preencher campos ocultos com os parâmetros da URL
+        document.addEventListener('DOMContentLoaded', async function() {
+            const params = getUrlParams();
+            
+            if (params.consulta_id && params.medico_id && params.paciente_id) {
+                // Preencher os campos ocultos do formulário
+                document.querySelector('input[name="id_medico"]').value = params.medico_id;
+                document.querySelector('input[name="id_paciente"]').value = params.paciente_id;
+                document.querySelector('input[name="id_consulta"]').value = params.consulta_id;
+                
+                // Verificar se a consulta já foi avaliada
+                const jaAvaliada = await verificarAvaliacaoExistente(params.consulta_id);
+                
+                if (!jaAvaliada) {
+                    // Se não foi avaliada, preencher os campos ocultos
+                    document.querySelector('input[name="id_consulta"]').value = params.consulta_id;
+                    document.querySelector('input[name="id_medico"]').value = params.medico_id;
+                    document.querySelector('input[name="id_paciente"]').value = params.paciente_id;
+                }
+            } else {
+                // Se faltar algum parâmetro, mostrar mensagem de erro
+                document.querySelector('.container').innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <h2 style="color: #e74c3c;">Link inválido ou expirado</h2>
+                        <p>O link de avaliação parece estar incompleto ou expirado.</p>
+                        <p>Por favor, entre em contato com a clínica para obter um novo link de avaliação.</p>
+                        <a href="/" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px;">Voltar para a página inicial</a>
+                    </div>
+                `;
+            }
+        });
+
+        // Adiciona feedback visual ao selecionar uma estrela
+        document.querySelectorAll('.rating input').forEach(input => {
+            input.addEventListener('change', function() {
+                const rating = this.value;
+                let feedback = '';
+                
+                switch(rating) {
+                    case '1': feedback = 'Péssimo 😞'; break;
+                    case '2': feedback = 'Ruim 😕'; break;
+                    case '3': feedback = 'Regular 😐'; break;
+                    case '4': feedback = 'Bom 😊'; break;
+                    case '5': feedback = 'Excelente! 😍'; break;
+                }
+                
+                //  o título com o feedback
+                document.querySelector('h1').innerHTML = `Sua avaliação: ${feedback}`;
+            });
+        });
+
+        // Validação do formulário
+        document.getElementById('avaliacaoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const notaSelecionada = document.querySelector('input[name="nota"]:checked');
+            
+            if (!notaSelecionada) {
+                alert('Por favor, selecione uma nota para avaliar a consulta.');
+                return false;
+            }
+            
+            try {
+                const formData = new FormData(this);
+                const response = await fetch('/api/avaliacoes', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Mostrar mensagem de sucesso estilizada
+                    const nota = formData.get('nota');
+                    let mensagem = '';
+                    
+                    switch(nota) {
+                        case '1': mensagem = 'Péssimo 😞'; break;
+                        case '2': mensagem = 'Ruim 😕'; break;
+                        case '3': mensagem = 'Regular 😐'; break;
+                        case '4': mensagem = 'Bom 😊'; break;
+                        case '5': mensagem = 'Excelente! 😍'; break;
+                    }
+                    
+                    document.querySelector('.container').innerHTML = `
+                        <div style="text-align: center; padding: 20px;">
+                            <div style="font-size: 5em; margin: 20px 0; color: #27ae60;">✓</div>
+                            <h2 style="color: #27ae60;">Obrigado por sua avaliação!</h2>
+                            <p>Sua opinião é muito importante para nós.</p>
+                            <div style="margin: 20px 0; font-size: 2em; color: #f1c40f;">
+                                ${'★'.repeat(nota)}${'☆'.repeat(5 - nota)}
+                                <div style="font-size: 0.6em; margin-top: 10px; color: #7f8c8d;">${mensagem}</div>
+                            </div>
+                            ${formData.get('avaliacao') ? `<p><strong>Seu comentário:</strong> ${formData.get('avaliacao')}</p>` : ''}
+                            <p>Você será redirecionado para a página inicial em alguns segundos...</p>
+                        </div>
+                    `;
+                    
+                    // Redirecionar para a página inicial após 5 segundos
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 5000);
+                } else if (response.status === 400 && result.erro && result.erro.includes('já foi avaliada')) {
+                    document.querySelector('.container').innerHTML = `
+                        <div style="text-align: center; padding: 20px;">
+                            <div style="font-size: 5em; margin: 20px 0; color: #f39c12;">⚠️</div>
+                            <h2 style="color: #e74c3c;">Avaliação já enviada</h2>
+                            <p>Parece que você já avaliou esta consulta anteriormente.</p>
+                            <p>Obrigado por seu feedback! Sua opinião é muito importante para nós.</p>
+                            <a href="/" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px;">Voltar para a página inicial</a>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(result.erro || 'Erro ao enviar avaliação');
+                }
+            } catch (error) {
+                console.error('Erro ao enviar avaliação:', error);
+                alert('Ocorreu um erro ao enviar sua avaliação. Por favor, tente novamente mais tarde.');
+            }
+        }); // Fechamento da função de callback do addEventListener
+    </script>
+</body>
+</html>

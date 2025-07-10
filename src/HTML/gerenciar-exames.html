@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Exames - Clínica Vida e Saúde</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <header class="cabecalho" id="cabecalho">
+        <div class="logo">
+            <img class="logo2-0" src="../IMG/logo2.0-sem-fundo-lol.png" alt="Nome da Clínica Vida e Saúde" />
+        </div>
+
+        <!-- Menu Hamburguer -->
+        <div class="menu-hamburguer">
+            <div class="icone-hamburguer" onclick="toggleMenu()" aria-label="Menu de opções">
+                <img src="../IMG/opcoes.png" alt="Menu">
+            </div>
+            <div class="menu-opcoes" id="menu-opcoes">
+                <ul>
+                    <li><a href="pagina-principal-usr.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="gerenciar-consultas.html"><i class="fas fa-calendar-check"></i> Consultas</a></li>
+                    <li><a href="gerenciar-exames.html" class="active"><i class="fas fa-vials"></i> Exames</a></li>
+                    <li><a href="historico-consultas-exames.html"><i class="fas fa-history"></i> Histórico</a></li>
+                    <li><a href="#ajuda"><i class="fas fa-question-circle"></i> Ajuda</a></li>
+                    <li><a href="#suporte"><i class="fas fa-headset"></i> Suporte</a></li>
+                    <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mt-4">
+        <h1 class="mb-4">Meus Exames Agendados</h1>
+
+        <!-- Filtros -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="filtroData" class="form-label">Filtrar por Data</label>
+                        <input type="date" class="form-control" id="filtroData">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="filtroTipoExame" class="form-label">Filtrar por Tipo de Exame</label>
+                        <select class="form-select" id="filtroTipoExame">
+                            <option value="">Todos os Tipos</option>
+                            <!-- Preenchido via JavaScript -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="alert alert-info mb-4">
+            <i class="fas fa-info-circle me-2"></i>Esta página exibe apenas exames agendados.
+        </div>
+
+        <!-- Lista de Exames -->
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Horário</th>
+                        <th>Tipo de Exame</th>
+                        <th>Status</th>
+                        <th>Médico</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="listaExames">
+                    <!-- Preenchido via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div class="modal fade" id="modalEditar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Exame</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditar">
+                        <input type="hidden" id="exameId">
+                        <div class="mb-3">
+                            <label for="novaData" class="form-label">Nova Data</label>
+                            <input type="date" class="form-control" id="novaData" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="novoHorario" class="form-label">Novo Horário</label>
+                            <select class="form-select" id="novoHorario" required>
+                                <option value="">Selecione o horário</option>
+                                <!-- Preenchido via JavaScript -->
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btnCancelarExame">Cancelar Exame</button>
+                    <button type="button" class="btn btn-primary" id="btnSalvarEdicao">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal de Motivo de Cancelamento -->
+    <div class="modal fade" id="modalCancelarExame" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Motivo do Cancelamento</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="motivoCancelamento" class="form-label">Selecione o motivo do cancelamento:</label>
+                        <select class="form-select" id="motivoCancelamento" required>
+                            <option value="" selected disabled>Selecione um motivo</option>
+                            <option value="Problemas familiares urgentes">Problemas familiares urgentes</option>
+                            <option value="Conflitos de horário">Conflitos de horário</option>
+                            <option value="Melhora dos sintomas">Melhora dos sintomas</option>
+                            <option value="Outro">Outro (especificar)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="outroMotivoContainer" style="display: none;">
+                        <label for="outroMotivo" class="form-label">Especifique o motivo:</label>
+                        <textarea class="form-control" id="outroMotivo" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmarCancelamento">Confirmar Cancelamento</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Função para alternar o menu hamburguer
+        function toggleMenu() {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            menuOpcoes.classList.toggle('active');
+        }
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(event) {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            const iconeHamburguer = document.querySelector('.icone-hamburguer');
+            
+            if (!iconeHamburguer.contains(event.target) && !menuOpcoes.contains(event.target)) {
+                menuOpcoes.classList.remove('active');
+            }
+        });
+
+        // Função para obter o ID do usuário da sessão
+        async function obterUsuarioId() {
+            try {
+                // Tenta obter o ID do usuário da rota /api/usuario/atual
+                const response = await fetch('/api/usuario/atual', {
+                    credentials: 'include'  
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('[DEBUG] Dados do usuário atual:', data);
+                    return data.id || 0;
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('[ERRO] Erro ao obter usuário atual:', response.status, errorData);
+                    
+                    //  redirecionar para o login
+                    if (response.status === 401) {
+                        window.location.href = '/HTML/login.html';
+                        return 0;
+                    }
+                    
+                    // Se não for erro de autenticação, tentar obter do endpoint de exames como fallback
+                    console.log('[DEBUG] Tentando obter ID do usuário do endpoint de exames...');
+                    const responseExames = await fetch('/api/exames/paciente', {
+                        credentials: 'include'
+                    });
+                    
+                    if (responseExames.ok) {
+                        const exames = await responseExames.json();
+                        console.log('[DEBUG] Dados dos exames recebidos:', exames);
+                        
+                        if (Array.isArray(exames) && exames.length > 0) {
+                            const usuarioId = exames[0].usuario_id || 0;
+                            console.log(`[DEBUG] ID do usuário obtido dos exames: ${usuarioId}`);
+                            return usuarioId;
+                        }
+                    }
+                    
+                    console.warn('[WARN] Não foi possível obter o ID do usuário de nenhuma fonte');
+                    return 0;
+                }
+            } catch (error) {
+                console.error('Erro ao obter ID do usuário:', error);
+                return 0;
+            }
+        }
+
+        // Carregar exames do paciente
+        async function carregarExames() {
+            // Obter o ID do usuário da sessão
+            const usuarioId = await obterUsuarioId();
+            console.log('[DEBUG] ID do usuário obtido da sessão:', usuarioId);
+            
+            // Se não tivermos um ID de usuário, tentamos obter da API de exames
+            if (!usuarioId || usuarioId <= 0) {
+                console.warn('[WARN] Nenhum ID de usuário disponível na sessão. Tentando obter da API de exames...');
+                
+                try {
+                    const response = await fetch('/api/exames/paciente');
+                    if (response.ok) {
+                        const exames = await response.json();
+                        console.log('[DEBUG] Dados dos exames recebidos:', exames);
+                        
+                        if (Array.isArray(exames) && exames.length > 0) {
+                            console.log('[DEBUG] Primeiro exame encontrado:', exames[0]);
+                        }
+                    }
+                } catch (error) {
+                    console.error('[ERROR] Erro ao obter exames do paciente:', error);
+                }
+            }
+            const tbody = document.getElementById('listaExames');
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando...</span></div></td></tr>';
+            
+            try {
+                console.log('[DEBUG] Iniciando carregamento de exames...');
+                const response = await fetch('/api/exames/paciente');
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(`[ERROR] Erro na resposta da API: ${response.status} - ${errorText}`);
+                    throw new Error(`Erro ao carregar exames: ${response.status} - ${response.statusText}`);
+                }
+                
+                let exames = await response.json();
+                console.log('[DEBUG] Exames recebidos da API:', JSON.stringify(exames, null, 2));
+                
+                if (!Array.isArray(exames)) {
+                    console.error('[ERROR] A resposta não é um array:', exames);
+                    throw new Error('Formato de dados inválido recebido do servidor');
+                }
+                
+
+                exames = exames.filter(exame => exame.status && exame.status.toLowerCase() === 'agendado');
+                
+                // Salvar a lista completa de exames para filtragem
+                window.todosExames = exames;
+                
+                // Preencher opções de tipo de exame
+                preencherTiposExame(exames);
+                
+                // Adicionar eventos para os filtros (se ainda não adicionados)
+                const filtroData = document.getElementById('filtroData');
+                const filtroTipo = document.getElementById('filtroTipoExame');
+                
+                // Remover listeners antigos para evitar duplicação
+                const newFiltroData = filtroData.cloneNode(true);
+                const newFiltroTipo = filtroTipo.cloneNode(true);
+                filtroData.parentNode.replaceChild(newFiltroData, filtroData);
+                filtroTipo.parentNode.replaceChild(newFiltroTipo, filtroTipo);
+                
+                // Adicionar novos listeners
+                newFiltroData.addEventListener('change', aplicarFiltros);
+                newFiltroTipo.addEventListener('change', aplicarFiltros);
+                
+                // Aplicar filtros iniciais
+                aplicarFiltros();
+                
+                // Processar exames para exibição
+                exames.forEach((exame, index) => {
+                    try {
+                        // Validação dos campos obrigatórios
+                        if (!exame || typeof exame !== 'object') {
+                            console.error(`[ERROR] Exame inválido no índice ${index}:`, exame);
+                            return; 
+                        }
+                        
+                        // Garante que os campos obrigatórios existam
+                        const exameData = {
+                            id: exame.id || 'N/A',
+                            data: exame.data || null,
+                            data_exame: exame.data_exame || exame.data || null,
+                            horario: exame.horario || '--:--',
+                            tipo: exame.tipo || 'Tipo não especificado',
+                            tipo_exame: exame.tipo_exame || exame.tipo || 'Tipo não especificado',
+                            especificacao: exame.especificacao || '',
+                            medico_id: exame.medico_id || exame.medico?.id || '',
+                            usuario_id: exame.usuario_id || exame.usuario?.id || '',
+                            preparacao: exame.preparacao || '',
+                            observacoes: exame.observacoes || '',
+                            status: exame.status || 'Status desconhecido',
+                            ativo: exame.ativo !== undefined ? exame.ativo : 1,
+                            nome_medico: exame.nome_medico || exame.medico?.nome || 'Médico não especificado',
+                            // Manter a referência ao objeto original para uso posterior
+                            _original: exame
+                        };
+                        
+                        // Criar um objeto com todos os campos necessários para edição
+                        const exameParaEdicao = {
+                            id: exame.id || exameData.id,
+                            data: exame.data || exameData.data,
+                            data_exame: exame.data_exame || exameData.data_exame || exame.data || exameData.data,
+                            horario: exame.horario || exameData.horario,
+                            tipo: exame.tipo || exameData.tipo,
+                            tipo_exame: exame.tipo_exame || exame.tipo || exameData.tipo,
+                            especificacao: exame.especificacao || exameData.especificacao || 'Exame de rotina',
+                            // Garantir que temos um ID de médico válido
+                            medico_id: parseInt(exame.medico_id || exame.medico?.id || exameData.medico_id || '0'),
+                            // Usar o ID do usuário da sessão (já obtido anteriormente)
+                            usuario_id: usuarioId || parseInt(exame.usuario_id || exame.usuario?.id || exameData.usuario_id || '0'),
+                            preparacao: exame.preparacao || exameData.preparacao || 'Nenhuma preparação necessária',
+                            observacoes: exame.observacoes || exameData.observacoes || 'Nenhuma observação',
+                            status: exame.status || exameData.status || 'Agendado',
+                            ativo: exame.ativo !== undefined ? exame.ativo : (exameData.ativo !== undefined ? exameData.ativo : 1),
+                            nome_medico: exame.nome_medico || exame.medico?.nome || exameData.nome_medico || 'Médico não especificado',
+                            // Manter referência ao objeto original para depuração
+                            _original: exame
+                        };
+                        
+                        console.log('[DEBUG] Exame para edição com ID do usuário:', exameParaEdicao);
+                        
+                        console.log('Dados do exame para edição (processado):', JSON.stringify(exameParaEdicao, null, 2));
+                        
+                        console.log('Dados do exame para edição:', exameParaEdicao);
+                        
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${formatarData(exameData.data)}</td>
+                            <td>${exameData.horario}</td>
+                            <td>${exameData.tipo}</td>
+                            <td><span class="badge ${getBadgeClass(exameData.status)}">${exameData.status}</span></td>
+                            <td>${exameData.nome_medico}</td>
+                            <td>
+                                ${exameData.status === 'Agendado' ? `
+                                    <button class="btn btn-sm btn-primary" onclick='abrirModalEdicao(${JSON.stringify(exameParaEdicao)})'>
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                ` : ''}
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                        
+                    } catch (error) {
+                        console.error(`[ERROR] Erro ao processar exame no índice ${index}:`, error, 'Dados do exame:', exame);
+                    }
+                });
+            } catch (error) {
+                console.error('Erro ao carregar exames:', error);
+                const errorMessage = error.message || 'Erro ao carregar exames. Por favor, tente novamente.';
+                
+                // Exibir mensagem de erro na interface
+                const tbody = document.getElementById('listaExames');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            ${errorMessage}
+                        </td>
+                    </tr>`;
+                
+ 
+                if (!errorMessage.includes('nenhum exame') && !errorMessage.includes('Nenhum exame')) {
+                    alert(errorMessage);
+                }
+            }
+        }
+
+        // Carregar horários disponíveis
+        async function carregarHorarios(data) {
+            const selectHorario = document.getElementById('novoHorario');
+            selectHorario.innerHTML = '<option value="">Carregando...</option>';
+
+            if (!data) {
+                selectHorario.innerHTML = '<option value="">Selecione uma data primeiro</option>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/horarios-exames-disponiveis?data=${data}`);
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                const horarios = await response.json();
+                
+                selectHorario.innerHTML = '<option value="">Selecione o horário</option>';
+                if (horarios.length === 0) {
+                    selectHorario.innerHTML = '<option value="">Nenhum horário disponível</option>';
+                    return;
+                }
+
+                horarios.forEach(horarioObj => {
+                    const option = document.createElement('option');
+                    option.value = horarioObj.horario;
+                    option.textContent = horarioObj.horario;
+                    selectHorario.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar horários para exames:', error);
+                selectHorario.innerHTML = '<option value="">Erro ao carregar horários</option>';
+            }
+        }
+
+        // Variável global para armazenar os dados do exame em edição
+        let exameEmEdicao = null;
+
+        // Editar exame
+        function abrirModalEdicao(exame) {
+            console.log('=== INÍCIO abrirModalEdicao ===');
+            console.log('Tipo do parâmetro exame:', typeof exame);
+            console.log('Dados do exame recebidos para edição (stringificado):', JSON.stringify(exame, null, 2));
+            console.log('Dados do exame recebidos para edição (objeto):', exame);
+            
+            // Log detalhado de cada propriedade do objeto exame
+            if (exame && typeof exame === 'object') {
+                console.log('=== PROPRIEDADES DO OBJETO EXAME ===');
+                for (const key in exame) {
+                    console.log(`- ${key}:`, exame[key], `(tipo: ${typeof exame[key]})`);
+                }
+            }
+            
+            try {
+                // Garantir que temos um objeto de exame válido
+                if (!exame || typeof exame !== 'object') {
+                    console.error('ERRO: Dados do exame inválidos ou vazios');
+                    throw new Error('Dados do exame inválidos');
+                }
+                
+                console.log('Dados recebidos no modal de edição:', exame);
+                
+                // Mapear campos para garantir que todos os necessários existam
+                exameEmEdicao = {
+                    id: exame.id || '',
+                    data: exame.data || exame.data_exame || '',
+                    data_exame: exame.data_exame || exame.data || '',
+                    horario: exame.horario || '',
+                    tipo: exame.tipo || '',
+                    tipo_exame: exame.tipo_exame || exame.tipo || '',
+                    especificacao: exame.especificacao || '',
+                    medico_id: exame.medico_id || exame.medico?.id || '',
+                    usuario_id: exame.usuario_id || exame.usuario?.id || '',
+                    preparacao: exame.preparacao || '',
+                    observacoes: exame.observacoes || '',
+                    status: exame.status || 'Agendado',
+                    ativo: exame.ativo !== undefined ? exame.ativo : 1,
+                    nome_medico: exame.nome_medico || exame.medico?.nome || 'Médico não especificado'
+                };
+                
+                console.log('Dados mapeados para edição:', exameEmEdicao);
+                
+                console.log('Dados do exame processados para edição:', exameEmEdicao);
+                
+                // Preencher campos do formulário
+                document.getElementById('exameId').value = exameEmEdicao.id;
+                document.getElementById('novaData').value = exameEmEdicao.data_exame;
+                document.getElementById('novoHorario').value = exameEmEdicao.horario;
+                
+                console.log('Campos do formulário preenchidos para edição');
+                
+                // Mostrar o modal
+                const modalElement = document.getElementById('modalEditar');
+                if (!modalElement) {
+                    throw new Error('Elemento do modal não encontrado');
+                }
+                
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+                
+            } catch (error) {
+                console.error('Erro ao abrir modal de edição:', error);
+                alert('Erro ao carregar os dados do exame. Por favor, tente novamente.');
+                
+                // Tentar registrar o erro no servidor
+                if (navigator.sendBeacon) {
+                    const errorData = new FormData();
+                    errorData.append('erro', `Erro ao abrir modal de edição: ${error.message}`);
+                    errorData.append('dados', JSON.stringify(exame));
+                    navigator.sendBeacon('/api/erro', errorData);
+                }
+            }
+        }
+
+        // Função para confirmar o cancelamento do exame
+        function confirmarCancelamento(exameId) {
+            if (exameId === undefined) {
+                // Se chamada sem parâmetro, tenta pegar o ID do formulário
+                exameId = document.getElementById('exameId')?.value;
+            }
+            
+            if (!exameId) {
+                console.error('ID do exame não encontrado');
+                return;
+            }
+            
+            // Armazena o ID do exame no botão de confirmação
+            const btnConfirmar = document.getElementById('btnConfirmarCancelamento');
+            if (btnConfirmar) {
+                btnConfirmar.dataset.exameId = exameId;
+                
+                // Limpa os campos do modal
+                const motivoSelect = document.getElementById('motivoCancelamento');
+                const outroMotivo = document.getElementById('outroMotivo');
+                const outroMotivoContainer = document.getElementById('outroMotivoContainer');
+                
+                if (motivoSelect) motivoSelect.value = '';
+                if (outroMotivo) {
+                    outroMotivo.value = '';
+                    outroMotivo.required = false;
+                }
+                if (outroMotivoContainer) outroMotivoContainer.style.display = 'none';
+                
+                // Abre o modal
+                const modal = new bootstrap.Modal(document.getElementById('modalCancelarExame'));
+                modal.show();
+            } else {
+                console.error('Botão de confirmação não encontrado');
+                // Fallback para o método antigo se o modal não estiver disponível
+                if (confirm('Tem certeza que deseja cancelar este exame? Esta ação não pode ser desfeita.')) {
+                    cancelarExame(exameId);
+                }
+            }
+        }
+
+        // Função para fechar todos os modais e limpar o backdrop
+        function fecharTodosOsModais() {
+            // Fechar todos os modais abertos
+            const modais = document.querySelectorAll('.modal');
+            modais.forEach(modal => {
+                const modalInstance = bootstrap.Modal.getInstance(modal);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            });
+            
+            // Remover todos os backdrops
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => backdrop.remove());
+            
+            // Restaurar o body
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        }
+
+        // Função para processar o cancelamento do exame
+        async function cancelarExame(exameId, motivo) {
+            if (!exameId || !motivo) {
+                console.error('ID do exame e motivo são obrigatórios');
+                return;
+            }
+            
+            try {
+                console.log(`Enviando requisição para cancelar o exame ${exameId} com motivo:`, motivo);
+                
+                const response = await fetch(`/api/exames/${exameId}/cancelar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ motivo: motivo.trim() })
+                });
+
+                // Fechar todos os modais e limpar o backdrop
+                fecharTodosOsModais();
+
+                // Verificar se a resposta é JSON
+                const contentType = response.headers.get('content-type');
+                let resultado;
+                
+                if (contentType && contentType.includes('application/json')) {
+                    resultado = await response.json();
+                } else {
+                    const text = await response.text();
+                    console.error('Resposta não é JSON:', text);
+                    throw new Error('Resposta do servidor não é um JSON válido');
+                }
+
+
+                if (response.ok) {
+                    alert(resultado.mensagem || "Exame cancelado com sucesso!");
+                    carregarExames(); // Recarregar a lista de exames
+                } else {
+                    console.error('Erro na resposta:', resultado);
+                    alert("Erro ao cancelar exame: " + (resultado.erro || `Status ${response.status}`));
+                }
+            } catch (error) {
+                console.error('Erro na requisição de cancelamento:', error);
+                alert('Falha ao comunicar com o servidor para cancelar o exame: ' + error.message);
+                // Garantir que todos os modais sejam fechados em caso de erro
+                fecharTodosOsModais();
+            }
+        }
+        
+        // Mostrar/ocultar campo de motivo personalizado
+        document.addEventListener('DOMContentLoaded', function() {
+            const motivoSelect = document.getElementById('motivoCancelamento');
+            if (motivoSelect) {
+                motivoSelect.addEventListener('change', function() {
+                    const outroMotivoContainer = document.getElementById('outroMotivoContainer');
+                    const outroMotivo = document.getElementById('outroMotivo');
+                    
+                    if (outroMotivoContainer && outroMotivo) {
+                        const mostrarOutroMotivo = this.value === 'Outro';
+                        outroMotivoContainer.style.display = mostrarOutroMotivo ? 'block' : 'none';
+                        outroMotivo.required = mostrarOutroMotivo;
+                        if (!mostrarOutroMotivo) {
+                            outroMotivo.value = '';
+                        }
+                    }
+                });
+            }
+            
+            // Configurar o botão de confirmar cancelamento
+            const btnConfirmar = document.getElementById('btnConfirmarCancelamento');
+            if (btnConfirmar) {
+                btnConfirmar.addEventListener('click', function() {
+                    const exameId = this.dataset.exameId;
+                    const motivoSelect = document.getElementById('motivoCancelamento');
+                    let motivo = motivoSelect ? motivoSelect.value : '';
+                    
+                    if (!motivo) {
+                        alert('Por favor, selecione um motivo para o cancelamento.');
+                        return;
+                    }
+                    
+                    if (motivo === 'Outro') {
+                        const outroMotivo = document.getElementById('outroMotivo');
+                        motivo = outroMotivo ? outroMotivo.value.trim() : '';
+                        if (!motivo) {
+                            alert('Por favor, especifique o motivo do cancelamento.');
+                            return;
+                        }
+                    }
+                    
+                    if (exameId) {
+                        cancelarExame(exameId, motivo);
+                    } else {
+                        console.error('ID do exame não encontrado');
+                        alert('Erro: ID do exame não encontrado.');
+                    }
+                });
+            }
+        });
+
+        // Adicionar listener para o campo de data no modal de edição
+        document.getElementById('novaData').addEventListener('change', function() {
+            carregarHorarios(this.value);
+        });
+
+        // Funções auxiliares
+        function formatarData(data) {
+            if (!data) {
+                console.warn('Data inválida recebida:', data);
+                return 'Data inválida';
+            }
+            
+            try {
+               
+                if (data instanceof Date) {
+                    return data.toLocaleDateString('pt-BR');
+                }
+                
+          
+                if (typeof data === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(data)) {
+                    const [year, month, day] = data.split('-').map(Number);
+                    return new Date(year, month - 1, day).toLocaleDateString('pt-BR');
+                }
+                
+      
+                if (typeof data === 'string') {
+                    //  converter para data
+                    const date = new Date(data);
+                    if (!isNaN(date.getTime())) {
+                        return date.toLocaleDateString('pt-BR');
+                    }
+                }
+                
+                console.warn('Formato de data não suportado:', data);
+                return 'Data inválida';
+                
+            } catch (error) {
+                console.error('Erro ao formatar data:', error, 'Data original:', data);
+                return 'Data inválida';
+            }
+        }
+
+        function getBadgeClass(status) {
+            switch (status) {
+                case 'agendado':
+                    return 'bg-primary';
+                case 'realizado':
+                    return 'bg-success';
+                case 'cancelado':
+                    return 'bg-danger';
+                default:
+                    return 'bg-secondary';
+            }
+        }
+
+        // Função para preencher os tipos de exame no select
+        function preencherTiposExame(exames) {
+            const selectTipo = document.getElementById('filtroTipoExame');
+            const tipos = [...new Set(exames.map(exame => exame.tipo).filter(Boolean))].sort();
+            
+            // Limpa opções existentes, mantendo a primeira opção "Todos os Tipos"
+            while (selectTipo.options.length > 1) {
+                selectTipo.remove(1);
+            }
+            
+            // Adiciona os tipos de exame
+            tipos.forEach(tipo => {
+                const option = document.createElement('option');
+                option.value = tipo;
+                option.textContent = tipo;
+                selectTipo.appendChild(option);
+            });
+        }
+        
+        // Função para aplicar os filtros
+        function aplicarFiltros() {
+            console.log('Aplicando filtros...');
+            const filtroData = document.getElementById('filtroData')?.value;
+            const filtroTipo = document.getElementById('filtroTipoExame')?.value;
+            
+            if (!window.todosExames || !Array.isArray(window.todosExames)) {
+                console.error('Nenhum dado de exame disponível para filtrar');
+                return;
+            }
+            
+            console.log(`Filtrando por data: ${filtroData}, tipo: ${filtroTipo}`);
+            console.log('Total de exames para filtrar:', window.todosExames.length);
+            
+            // Filtra os exames
+            let examesFiltrados = window.todosExames.map(exame => ({
+                ...exame,
+                // Garante que temos os campos necessários
+                tipo: exame.tipo || exame.tipo_exame || 'Tipo não especificado',
+                tipo_exame: exame.tipo_exame || exame.tipo || 'Tipo não especificado',
+                data: exame.data || exame.data_exame || null,
+                data_exame: exame.data_exame || exame.data || null
+            }));
+            
+            // Aplica filtro de data
+            if (filtroData) {
+                examesFiltrados = examesFiltrados.filter(exame => {
+                    if (!exame.data) return false;
+                    
+                    // Tenta converter a data para um formato padrão
+                    let dataExame;
+                    try {
+                        // Se a data já está no formato YYYY-MM-DD
+                        if (/^\d{4}-\d{2}-\d{2}$/.test(exame.data)) {
+                            dataExame = exame.data;
+                        } 
+                        // Se a data está no formato ISO (com T e Z)
+                        else if (exame.data.includes('T')) {
+                            dataExame = exame.data.split('T')[0];
+                        }
+                
+                        else {
+                            dataExame = new Date(exame.data).toISOString().split('T')[0];
+                        }
+                        
+                        console.log(`Comparando datas: ${dataExame} === ${filtroData}`);
+                        return dataExame === filtroData;
+                    } catch (e) {
+                        console.error('Erro ao processar data do exame:', e, 'Data:', exame.data);
+                        return false;
+                    }
+                });
+            }
+            
+            // Aplica filtro de tipo
+            if (filtroTipo) {
+                examesFiltrados = examesFiltrados.filter(exame => {
+                    return (exame.tipo === filtroTipo) || (exame.tipo_exame === filtroTipo);
+                });
+            }
+            
+            console.log(`Exames após filtros: ${examesFiltrados.length}`);
+            
+            // Atualiza a tabela
+            atualizarTabelaExames(examesFiltrados);
+        }
+        
+        // Função para atualizar a tabela com a lista de exames
+        function atualizarTabelaExames(exames) {
+            const tbody = document.getElementById('listaExames');
+            tbody.innerHTML = '';
+            
+            if (exames.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="6" class="text-center">Nenhum exame encontrado com os filtros atuais</td>';
+                tbody.appendChild(tr);
+                return;
+            }
+            
+            exames.forEach((exame, index) => {
+                try {
+                    // Validação dos campos obrigatórios
+                    if (!exame || typeof exame !== 'object') {
+                        console.error(`[ERROR] Exame inválido no índice ${index}:`, exame);
+                        return; // Pula para o próximo exame
+                    }
+                    
+                    // Garante que os campos obrigatórios existam
+                    const exameData = {
+                        id: exame.id || 'N/A',
+                        data: exame.data || exame.data_exame || null,
+                        data_exame: exame.data_exame || exame.data || null,
+                        horario: exame.horario || '--:--',
+                        tipo: exame.tipo || exame.tipo_exame || 'Tipo não especificado',
+                        tipo_exame: exame.tipo_exame || exame.tipo || 'Tipo não especificado',
+                        especificacao: exame.especificacao || '',
+                        medico_id: exame.medico_id || exame.medico?.id || 0,
+                        usuario_id: exame.usuario_id || exame.usuario?.id || 0,
+                        preparacao: exame.preparacao || '',
+                        observacoes: exame.observacoes || '',
+                        status: exame.status || 'Agendado',
+                        ativo: exame.ativo !== undefined ? exame.ativo : 1,
+                        nome_medico: exame.nome_medico || exame.medico?.nome || 'Médico não especificado'
+                    };
+                    
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${formatarData(exameData.data)}</td>
+                        <td>${exameData.horario}</td>
+                        <td>${exameData.tipo}</td>
+                        <td><span class="badge ${getBadgeClass(exameData.status)}">${exameData.status}</span></td>
+                        <td>${exameData.nome_medico}</td>
+                        <td>
+                            ${exameData.status === 'Agendado' ? `
+                                <button class="btn btn-sm btn-primary" onclick='abrirModalEdicao(${JSON.stringify(exameData)})'>
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                            ` : ''}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                } catch (error) {
+                    console.error(`[ERROR] Erro ao processar exame ${index}:`, error);
+                }
+            });
+        }
+        
+        // Função para inicializar os listeners
+        function inicializarListeners() {
+            // Filtros
+            const filtroStatus = document.getElementById('filtroStatus');
+            const filtroData = document.getElementById('filtroData');
+            const filtroTipoExame = document.getElementById('filtroTipoExame');
+            
+            if (filtroStatus) filtroStatus.addEventListener('change', carregarExames);
+            if (filtroData) filtroData.addEventListener('change', carregarExames);
+            if (filtroTipoExame) filtroTipoExame.addEventListener('change', carregarExames);
+            
+            // Botão de salvar edição
+            const btnSalvarEdicao = document.getElementById('btnSalvarEdicao');
+            if (btnSalvarEdicao) {
+                btnSalvarEdicao.addEventListener('click', salvarEdicaoExame);
+            }
+            
+            // Botão de cancelar exame
+            const btnCancelarExame = document.getElementById('btnCancelarExame');
+            if (btnCancelarExame) {
+                btnCancelarExame.addEventListener('click', confirmarCancelamento);
+            }
+            
+            // Campo de data para carregar horários
+            const novaData = document.getElementById('novaData');
+            if (novaData) {
+                novaData.addEventListener('change', function() {
+                    carregarHorarios(this.value);
+                });
+            }
+        }
+        
+        // Função para salvar a edição do exame
+        async function salvarEdicaoExame() {
+            console.log('=== INÍCIO salvarEdicaoExame ===');
+            console.log('[DEBUG] Iniciando salvamento da edição do exame...');
+            console.log('Valor de exameEmEdicao:', JSON.stringify(exameEmEdicao, null, 2));
+            
+            try {
+                // Obter valores do formulário
+                const id = document.getElementById('exameId')?.value;
+                const novaData = document.getElementById('novaData')?.value;
+                const novoHorario = document.getElementById('novoHorario')?.value;
+                
+                console.log('[DEBUG] Valores do formulário:', { id, novaData, novoHorario });
+                
+                
+                if (!exameEmEdicao) {
+                    throw new Error('Dados do exame não encontrados. Por favor, recarregue a página e tente novamente.');
+                }
+                
+                // Log detalhado dos dados do médico
+                console.log('[DEBUG] Dados do médico no exameEmEdicao:', {
+                    medico_id: exameEmEdicao.medico_id,
+                    medicoId: exameEmEdicao.medicoId,
+                    nome_medico: exameEmEdicao.nome_medico,
+                    todos_os_campos: Object.keys(exameEmEdicao).map(key => `${key}: ${exameEmEdicao[key]}`)
+                });
+                
+                // Obter o ID do médico
+                const medicoId = parseInt(exameEmEdicao.medico_id || exameEmEdicao.medicoId || '0');
+                
+
+                if (medicoId <= 0) {
+                    console.warn('[WARN] Nenhum ID de médico válido encontrado. Tentando obter do nome do médico...');
+                    
+                    // Se tivermos um nome de médico
+                    if (exameEmEdicao.nome_medico) {
+                   
+                        const medicoIdPadrao = 1; 
+                        console.warn(`[WARN] Usando ID de médico padrão: ${medicoIdPadrao}`);
+                        exameEmEdicao.medico_id = medicoIdPadrao;
+                    } else {
+                        console.error('[ERROR] Nenhum ID de médico válido encontrado e nenhum nome de médico disponível');
+                        throw new Error('Não foi possível identificar o médico responsável. Por favor, tente novamente mais tarde.');
+                    }
+                }
+                
+                // Garantir que temos uma especificação válida
+                const especificacao = exameEmEdicao.especificacao || 'Exame de rotina';
+                
+                // Obter o ID do usuário usando a função auxiliar
+                const usuarioId = await obterUsuarioId();
+                
+                // Se não tivermos um ID de usuário válido, não podemos continuar
+                if (!usuarioId || usuarioId <= 0) {
+                    console.error('[ERROR] Nenhum ID de usuário válido encontrado');
+                    throw new Error('Não foi possível identificar o usuário. Por favor, faça login novamente.');
+                }
+                
+                console.log('[DEBUG] ID do usuário que será usado:', usuarioId);
+                
+                // Validar campos obrigatórios do formulário
+                const camposFaltandoForm = [];
+                if (!id) camposFaltandoForm.push('ID do exame');
+                if (!novaData) camposFaltandoForm.push('data');
+                if (!novoHorario) camposFaltandoForm.push('horário');
+                
+                if (camposFaltandoForm.length > 0) {
+                    const mensagem = `Por favor, preencha todos os campos. Faltando: ${camposFaltandoForm.join(', ')}`;
+                    console.error('[ERROR]', mensagem);
+                    alert(mensagem);
+                    return;
+                }
+            
+                // Verificar se temos os dados do exame em edição
+                if (!exameEmEdicao) {
+                    throw new Error('Dados do exame não encontrados. Por favor, recarregue a página e tente novamente.');
+                }
+                
+                // Campos obrigatórios
+                const camposObrigatorios = [
+                    { nome: 'tipo_exame', tipo: 'string' },
+                    { nome: 'especificacao', tipo: 'string' },
+                    { nome: 'medico_id', tipo: 'number' },
+                    { nome: 'usuario_id', tipo: 'number' }
+                ];
+                
+                // Preparar objeto com os dados do exame
+                const dadosExame = {
+                    // Campos do formulário
+                    id: id,
+                    data_exame: novaData,
+                    horario: novoHorario,
+                    
+                    // Campos do exame em edição com valores padrão seguros
+                    tipo_exame: exameEmEdicao.tipo_exame || exameEmEdicao.tipo || 'outros',
+                    especificacao: especificacao, // Já definido anteriormente
+                    medico_id: medicoId, // Já validado anteriormente
+                    usuario_id: usuarioId, // Já validado anteriormente
+                    preparacao: exameEmEdicao.preparacao || 'Nenhuma preparação necessária',
+                    observacoes: exameEmEdicao.observacoes || 'Nenhuma observação',
+                    
+                    // Campos com valores padrão
+                    status: exameEmEdicao.status || 'Agendado',
+                    ativo: exameEmEdicao.ativo !== undefined ? exameEmEdicao.ativo : 1,
+                    
+                    // Garantir que os campos obrigatórios estejam presentes
+                    data: novaData, // Garantir que a data esteja presente
+                    tipo: exameEmEdicao.tipo || exameEmEdicao.tipo_exame || 'outros' // Garantir que o tipo esteja presente
+                };
+                
+                // Log detalhado dos dados que serão enviados
+                console.log('[DEBUG] Dados preparados para envio à API:', JSON.stringify(dadosExame, null, 2));
+                
+                // Verificação final dos campos obrigatórios
+                const camposObrigatoriosFinal = [
+                    { nome: 'id', tipo: 'number' },
+                    { nome: 'data_exame', tipo: 'string' },
+                    { nome: 'horario', tipo: 'string' },
+                    { nome: 'tipo_exame', tipo: 'string' },
+                    { nome: 'especificacao', tipo: 'string' },
+                    { nome: 'medico_id', tipo: 'number' },
+                    { nome: 'usuario_id', tipo: 'number' },
+                    { nome: 'status', tipo: 'string' }
+                ];
+                
+                const camposFaltando = [];
+                const camposInvalidos = [];
+                
+                console.log('=== VALIDAÇÃO FINAL DE CAMPOS OBRIGATÓRIOS ===');
+                camposObrigatoriosFinal.forEach(campo => {
+                    const valor = dadosExame[campo.nome];
+                    console.log(`Verificando campo ${campo.nome}:`, valor, `(tipo: ${typeof valor})`);
+                    console.log(`Campo: ${campo.nome}, Valor: ${valor}, Tipo: ${typeof valor}`);
+                    
+                    if (valor === undefined || valor === null || valor === '') {
+                        console.warn(`[WARN] Campo obrigatório não encontrado ou vazio: ${campo.nome}`);
+                        console.warn(`[WARN] Valor do campo ${campo.nome}:`, valor);
+                        console.warn(`[WARN] exameEmEdicao:`, exameEmEdicao);
+                        camposFaltando.push(campo.nome);
+                        return;
+                    }
+                    
+                    // Converter tipos se necessário
+                    if (campo.tipo === 'number' && typeof valor !== 'number') {
+                        try {
+                            dadosExame[campo.nome] = parseInt(valor);
+                            if (isNaN(dadosExame[campo.nome])) {
+                                throw new Error('Não é um número válido');
+                            }
+                        } catch (e) {
+                            console.error(`[ERROR] Erro ao converter campo ${campo.nome}:`, e);
+                            camposInvalidos.push(`${campo.nome} (tipo inválido: ${typeof valor})`);
+                        }
+                    }
+                });
+                
+                // Verificar se houve erros de validação
+                if (camposFaltando.length > 0 || camposInvalidos.length > 0) {
+                    let mensagemErro = 'Não foi possível salvar as alterações. ';
+                    
+                    if (camposFaltando.length > 0) {
+                        mensagemErro += `\n\nCampos obrigatórios faltando: ${camposFaltando.join(', ')}`;
+                    }
+                    
+                    if (camposInvalidos.length > 0) {
+                        mensagemErro += `\n\nCampos com valores inválidos: ${camposInvalidos.join(', ')}`;
+                    }
+                    
+                    mensagemErro += '\n\nPor favor, recarregue a página e tente novamente.';
+                    
+                    console.error('[ERROR]', mensagemErro);
+                    alert(mensagemErro);
+                    return;
+                }
+                
+                console.log('[DEBUG] Dados que serão enviados para a API:', dadosExame);
+                
+                console.log(`[DEBUG] Enviando requisição PUT para: /api/exames/${id}`);
+                
+                const response = await fetch(`/api/exames/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                },
+                body: JSON.stringify(dadosExame)
+            });
+
+            console.log('[DEBUG] Resposta recebida. Status:', response.status);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('[ERROR] Erro na resposta da API:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    response: errorText
+                });
+                
+                let mensagemErro = `Erro ao atualizar exame: ${response.status} - ${response.statusText}`;
+                
+                try {
+                    // Tentar extrair mensagem de erro do JSON de resposta
+                    const errorData = JSON.parse(errorText);
+                    if (errorData.message) {
+                        mensagemErro = errorData.message;
+                    } else if (errorText) {
+                        mensagemErro = errorText;
+                    }
+                } catch (e) {
+                    console.error('[ERROR] Erro ao processar resposta de erro:', e);
+                }
+                
+                throw new Error(mensagemErro);
+            }
+
+            const data = await response.json();
+            console.log('[SUCCESS] Exame atualizado com sucesso:', data);
+
+            // Fechar o modal
+            const modalElement = document.getElementById('modalEditar');
+            if (modalElement) {
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                if (modal) {
+                    modal.hide();
+                }
+            }
+
+            // Recarregar a lista de exames
+            await carregarExames();
+
+            // Mostrar mensagem de sucesso
+            alert('Exame atualizado com sucesso!');
+            
+            } catch (error) {
+                console.error('[ERROR] Erro ao editar exame:', error);
+                
+                let mensagemErro = error.message || 'Erro ao atualizar o exame. Por favor, tente novamente.';
+                
+                // Tratar erros específicos
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    mensagemErro = 'Não foi possível conectar ao servidor. Verifique sua conexão com a internet e tente novamente.';
+                }
+                
+                alert(mensagemErro);
+                
+                // Registrar o erro no servidor, se possível
+                if (navigator.sendBeacon) {
+                    try {
+                        const errorData = new FormData();
+                        errorData.append('erro', `Erro ao salvar edição de exame: ${error.message}`);
+                        errorData.append('stack', error.stack || '');
+                        errorData.append('url', window.location.href);
+                        navigator.sendBeacon('/api/erro', errorData);
+                    } catch (e) {
+                        console.error('[ERROR] Erro ao registrar erro no servidor:', e);
+                    }
+                }
+            }
+        }
+        
+        // Inicializar a aplicação quando o DOM estiver totalmente carregado
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarListeners();
+            carregarExames();
+            
+            // Inicializar tooltips do Bootstrap
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Adicionar listener para o botão de cancelar exame no modal de edição
+            const btnCancelarExame = document.getElementById('btnCancelarExame');
+            if (btnCancelarExame) {
+                btnCancelarExame.addEventListener('click', function() {
+                    const exameId = document.getElementById('exameId')?.value;
+                    if (exameId) {
+                        confirmarCancelamento(exameId);
+                    } else {
+                        console.error('ID do exame não encontrado no formulário de edição');
+                        alert('Erro: Não foi possível identificar o exame para cancelamento.');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

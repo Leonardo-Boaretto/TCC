@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Consulta - Clínica Vida e Saúde</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/editar-usuario.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <h1>CVS<br><span>Administração</span></h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="funcionario.html">Início</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="main-content">
+        <h2>Editar Consulta</h2>
+
+        <form id="formEditarConsulta" class="form-agendamento" action="/consulta/atualizar/{{ consulta.id }}" method="POST">
+            <div class="form-group">
+                <label for="nome"><i class="fas fa-user"></i> Nome do Paciente:</label>
+                <input type="text" id="nome" name="nome" value="" required maxlength="100">
+            </div>
+
+            <div class="form-group">
+                <label for="especialidade"><i class="fas fa-stethoscope"></i> Especialidade:</label>
+                <select id="especialidade" name="especialidade" class="form-control" required>
+                    <option value="">Selecione uma especialidade</option>
+                    <option value="Clínico Geral">Clínico Geral</option>
+                    <option value="Cardiologia">Cardiologia</option>
+                    <option value="Dermatologia">Dermatologia</option>
+                    <option value="Endocrinologia">Endocrinologia</option>
+                    <option value="Ginecologia">Ginecologia</option>
+                    <option value="Ortopedia">Ortopedia</option>
+                    <option value="Pediatria">Pediatria</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="medico"><i class="fas fa-user-md"></i> Médico:</label>
+                <select id="medico" name="medico" class="form-control" required>
+                    <option value="">Carregando médicos...</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="data"><i class="far fa-calendar-alt"></i> Data:</label>
+                        <input type="date" id="data" name="data" class="form-control" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="horario"><i class="far fa-clock"></i> Horário:</label>
+                        <input type="time" id="horario" name="horario" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tipo-consulta"><i class="fas fa-notes-medical"></i> Tipo de Consulta:</label>
+                <select id="tipo-consulta" name="tipo-consulta" class="form-control" required>
+                    <option value="Primeira Consulta">Primeira Consulta</option>
+                    <option value="Retorno">Retorno</option>
+                    <option value="Emergência">Emergência</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="observacoes"><i class="fas fa-comment-medical"></i> Observações:</label>
+                <textarea id="observacoes" name="observacoes" class="form-control" rows="4"></textarea>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+                <a href="funcionario.html" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const consultaId = urlParams.get('id');
+
+            if (!consultaId) {
+                alert('ID da consulta não fornecido.');
+                window.location.href = 'funcionario.html';
+                return;
+            }
+
+            try {
+                // Buscar lista de médicos
+                const responseMedicos = await fetch('/api/medicos', {
+                    credentials: 'include' 
+                });
+                
+                if (!responseMedicos.ok) {
+                    throw new Error('Erro ao carregar lista de médicos');
+                }
+                
+                const medicos = await responseMedicos.json();
+                const selectMedico = document.getElementById('medico');
+                
+                // Limpar opções existentes
+                selectMedico.innerHTML = '';
+                
+                // Adicionar opção vazia
+                const optionVazia = document.createElement('option');
+                optionVazia.value = '';
+                optionVazia.textContent = 'Selecione um médico';
+                selectMedico.appendChild(optionVazia);
+                
+                // Preencher select com os médicos
+                medicos.forEach(medico => {
+                    const option = document.createElement('option');
+                    option.value = medico.id;
+                    option.textContent = `${medico.nome} - ${medico.especialidade}`;
+                    selectMedico.appendChild(option);
+                });
+                
+                // Buscar dados da consulta
+                const responseConsulta = await fetch(`/api/consultas/${consultaId}`, {
+                    credentials: 'include'
+                });
+                
+                if (!responseConsulta.ok) {
+                    throw new Error('Erro ao carregar dados da consulta');
+                }
+                
+                const consulta = await responseConsulta.json();
+                
+                // Preencher dados da consulta
+                if (consulta.medico_id) {
+                    for (let i = 0; i < selectMedico.options.length; i++) {
+                        if (parseInt(selectMedico.options[i].value) === consulta.medico_id) {
+                            selectMedico.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+
+                // Limpar o campo de horário primeiro
+                const horarioInput = document.getElementById('horario');
+                horarioInput.value = '';
+                
+                // Preencher data e hora
+                if (consulta.data_consulta) {
+                    document.getElementById('data').value = consulta.data_consulta;
+                }
+                
+                if (consulta.horario) {
+                    let horarioFormatado = '';
+                    try {
+                        const horarioStr = String(consulta.horario).trim();
+                        
+                        // Se for um horário inválido ou contiver 'Inval', pula a formatação
+                        if (horarioStr.includes('Inval') || horarioStr === '') {
+                            horarioInput.value = '';
+                        } else {
+                            
+                            const match = horarioStr.match(/^(\d{1,2}):(\d{2})(?::\d{2})?/);
+                            if (match) {
+                                const horas = match[1].padStart(2, '0');
+                                const minutos = match[2];
+                                horarioFormatado = `${horas}:${minutos}`;
+                                
+                                // Valida se o horário é válido
+                                const [h, m] = horarioFormatado.split(':').map(Number);
+                                if (h >= 0 && h <= 23 && m >= 0 && m <= 59) {
+                                    horarioInput.value = horarioFormatado;
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Erro ao formatar horário:', e);
+                        horarioInput.value = '';
+                    }
+                }
+                
+                // Preencher tipo de consulta
+                if (consulta.tipo_consulta) {
+                    document.getElementById('tipo-consulta').value = consulta.tipo_consulta;
+                }
+                
+                // Preencher nome do paciente
+                document.getElementById('nome').value = consulta.nome_paciente;
+                
+                // Preencher observações
+                document.getElementById('observacoes').value = consulta.observacoes || '';
+                
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                alert(`Erro ao carregar dados: ${error.message}`);
+                
+            }
+        });
+
+        
+        document.getElementById('formEditarConsulta').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const consultaId = urlParams.get('id');
+
+            if (!consultaId) {
+                alert('ID da consulta não fornecido.');
+                return;
+            }
+
+            // Validar formato do horário
+            const horarioInput = document.getElementById('horario');
+            if (horarioInput.value && !/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(horarioInput.value)) {
+                alert('Por favor, insira um horário válido no formato HH:MM');
+                horarioInput.focus();
+                return;
+            }
+
+            const medicoSelect = document.getElementById('medico');
+            const medicoId = medicoSelect.value;
+            const medicoNome = medicoSelect.options[medicoSelect.selectedIndex].text.split(' - ')[0];
+
+            const dadosAtualizados = {
+                medico_id: medicoId,
+                nome_medico: medicoNome,
+                especialidade: document.getElementById('especialidade').value,
+                data_consulta: document.getElementById('data').value,
+                horario: horarioInput.value,
+                tipo_consulta: document.getElementById('tipo-consulta').value,
+                observacoes: document.getElementById('observacoes').value
+            };
+
+            try {
+                const response = await fetch(`/api/consultas/${consultaId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dadosAtualizados)
+                });
+
+                if (response.ok) {
+                    alert('Consulta atualizada com sucesso!');
+                    window.location.href = 'funcionario.html';
+                } else {
+                    const erro = await response.json();
+                    alert(`Erro ao atualizar consulta: ${erro.erro || 'Erro desconhecido'}`);
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar consulta:', error);
+                alert('Erro ao atualizar consulta. Verifique o console para mais detalhes.');
+            }
+        });
+    </script>
+
+</body>
+</html>

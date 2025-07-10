@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marcar Exame - Clínica Vida e Saúde</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../CSS/marcar-exame.css">
+    <link rel="stylesheet" href="../CSS/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="description" content="Agende seus exames na Clínica Vida e Saúde">
+</head>
+
+<body>
+    <!-- Fundo curvado -->
+    <div class="curved-background"></div>
+
+    <header class="cabecalho" id="cabecalho">
+        <div class="logo">
+            <img class="logo2-0" src="../IMG/logo2.0-sem-fundo-lol.png" alt="Nome da Clínica Vida e Saúde" />
+            
+        </div>
+
+        <!-- Menu Hamburguer -->
+        <div class="menu-hamburguer">
+            <div class="hamburguer-icon" onclick="toggleMenu()" aria-label="Menu de opções">
+               <img src="../IMG/opcoes.png" alt="Menu">
+            </div>
+            <div class="menu-opcoes" id="menu-opcoes">
+                <ul>
+                    <li><a href="pagina-principal-usr.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="#ajuda"><i class="fas fa-question-circle"></i> Ajuda</a></li>
+                    <li><a href="#suporte"><i class="fas fa-headset"></i> Suporte</a></li>
+                    <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <div class="form-section">
+                <h2><i class="fas fa-vials"></i> Marcar Exame</h2>
+                <p class="subtitle">Preencha o formulário abaixo para agendar seu exame</p>
+                <form id="formExame" class="form-agendamento">
+                    <div class="form-group">
+                        <label for="tipo-exame"><i class="fas fa-flask"></i> Tipo de Exame:</label>
+                        <select id="tipo-exame" name="tipo-exame" required>
+                            <option value="">Selecione o tipo de exame</option>
+                            <option value="sangue">Exame de Sangue</option>
+                            <option value="urina">Exame de Urina</option>
+                            <option value="fezes">Exame de Fezes</option>
+                            <option value="cardiologico">Exame Cardiológico</option>
+                            <option value="respiratorio">Exame Respiratório</option>
+                            <option value="imagem">Exame de Imagem</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="especificacao"><i class="fas fa-file-medical"></i> Especificação do Exame:</label>
+                        <input type="text" id="especificacao" name="especificacao" placeholder="Ex: Hemograma Completo, Raio-X de Tórax, etc." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medico-que-pediu"><i class="fas fa-user-md"></i> Médico que Solicitou o Exame:</label>
+                        <select id="medico-que-pediu" name="medico-que-pediu" required>
+                            <option value="">Selecione o médico solicitante</option>                
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medico-realizante"><i class="fas fa-user-md"></i> Médico Realizante: <span class="required">*</span></label>
+                        <select id="medico-realizante" name="medico-realizante" required>
+                            <option value="">Selecione o médico realizante</option>                
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="data-exame"><i class="fas fa-calendar-alt"></i> Data do Exame:</label>
+                        <input type="date" id="data-exame" name="data-exame" required min="">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="horario-exame"><i class="fas fa-clock"></i> Horário:</label>
+                        <select id="horario-exame" name="horario-exame" required>
+                            <option value="">Selecione um horário</option>
+                            <option value="08:00">08:00</option>
+                            <option value="09:00">09:00</option>
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="14:00">14:00</option>
+                            <option value="15:00">15:00</option>
+                            <option value="16:00">16:00</option>
+                            <option value="17:00">17:00</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="preparacao"><i class="fas fa-info-circle"></i> Preparação Necessária:</label>
+                        <select id="preparacao" name="preparacao" required>
+                            <option value="">Selecione a preparação necessária</option>
+                            <option value="jejum">Jejum de 8 horas</option>
+                            <option value="jejum-12">Jejum de 12 horas</option>
+                            <option value="jejum-4">Jejum de 4 horas</option>
+                            <option value="sem-jejum">Sem jejum</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="observacoes-exame"><i class="fas fa-sticky-note"></i> Observações:</label>
+                        <textarea id="observacoes-exame" name="observacoes-exame" rows="4" placeholder="Informações adicionais sobre o exame"></textarea>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-check"></i> Agendar Exame
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="window.location.href='pagina-principal-usr.html'">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para carregar médicos nos selects
+        async function carregarMedicos() {
+            try {
+                const response = await fetch('/api/medicos');
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar médicos');
+                }
+                const medicos = await response.json();
+                
+                const selectSolicitante = document.getElementById('medico-que-pediu');
+                const selectRealizante = document.getElementById('medico-realizante');
+                
+                // Limpar opções atuais, exceto a primeira
+                while (selectSolicitante.options.length > 1) {
+                    selectSolicitante.remove(1);
+                }
+                while (selectRealizante.options.length > 1) {
+                    selectRealizante.remove(1);
+                }
+                
+                // Adicionar médicos aos selects
+                medicos.forEach(medico => {
+                    if (medico.ativo) { 
+                        const option1 = document.createElement('option');
+                        option1.value = medico.id;
+                        option1.textContent = medico.nome; 
+                        
+                        const option2 = option1.cloneNode(true);
+                        
+                        selectSolicitante.appendChild(option1);
+                        selectRealizante.appendChild(option2);
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Erro ao carregar médicos:', error);
+                alert('Não foi possível carregar a lista de médicos. Tente novamente mais tarde.');
+            }
+        }
+        
+        function toggleMenu() {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            menuOpcoes.classList.toggle('active');
+        }
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(event) {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            const hamburguerIcon = document.querySelector('.hamburguer-icon');
+            
+            if (!hamburguerIcon.contains(event.target) && !menuOpcoes.contains(event.target)) {
+                menuOpcoes.classList.remove('active');
+            }
+        });
+
+        // Definir data mínima como hoje
+        const hoje = new Date().toISOString().split('T')[0];
+        document.getElementById('data-exame').min = hoje;
+
+        // Definir data máxima como 1 ano no futuro
+        const dataMaxima = new Date();
+        dataMaxima.setFullYear(dataMaxima.getFullYear() + 1); // Limite de 1 ano no futuro
+        document.getElementById('data-exame').max = dataMaxima.toISOString().split('T')[0];
+        
+        // Função para verificar se o médico realizante é obrigatório
+        function atualizarObrigatoriedadeMedicoRealizante() {
+            const tipoExame = document.getElementById('tipo-exame').value;
+            const medicoRealizanteSelect = document.getElementById('medico-realizante');
+            const obrigatorio = ['imagem', 'respiratorio', 'cardiologico'].includes(tipoExame);
+            const desabilitado = ['sangue', 'urina', 'fezes'].includes(tipoExame);
+            
+            // Atualiza o atributo required e disabled
+            medicoRealizanteSelect.required = obrigatorio;
+            medicoRealizanteSelect.disabled = desabilitado;
+            
+            // Se estiver desabilitado, limpa a seleção
+            if (desabilitado) {
+                medicoRealizanteSelect.value = '';
+            }
+            
+            // Atualiza a classe para feedback visual
+            const label = document.querySelector('label[for="medico-realizante"]');
+            const container = medicoRealizanteSelect.closest('.form-group');
+            
+            if (obrigatorio) {
+                label.innerHTML = '<i class="fas fa-user-md"></i> Médico Realizante: <span class="required">*</span>';
+                container.style.opacity = '1';
+            } else if (desabilitado) {
+                label.innerHTML = '<i class="fas fa-user-md"></i> Médico Realizante:';
+                container.style.opacity = '0.6';
+            } else {
+                label.innerHTML = '<i class="fas fa-user-md"></i> Médico Realizante:';
+                container.style.opacity = '1';
+            }
+        }
+        
+        // Carregar médicos quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarMedicos();
+            
+            // Adiciona o evento de mudança no select de tipo de exame
+            document.getElementById('tipo-exame').addEventListener('change', atualizarObrigatoriedadeMedicoRealizante);
+            
+            // Verifica o estado inicial
+            atualizarObrigatoriedadeMedicoRealizante();
+        });
+
+        // Manipular envio do formulário
+        document.getElementById('formExame').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const tipoExame = document.getElementById('tipo-exame').value;
+            const especificacao = document.getElementById('especificacao').value;
+            const medicoSolicitanteId = document.getElementById('medico-que-pediu').value;
+            const medicoRealizanteId = document.getElementById('medico-realizante').value;
+            const dataExame = document.getElementById('data-exame').value;
+            const horario = document.getElementById('horario-exame').value;
+            const preparacao = document.getElementById('preparacao').value;
+            const observacoes = document.getElementById('observacoes-exame').value;
+
+            // Obter o ID do usuário logado
+            const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+            const usuarioId = usuarioLogado ? usuarioLogado.id : null;
+
+            if (!usuarioId) {
+                alert('Erro: Usuário não autenticado. Faça login novamente.');
+                window.location.href = 'login.html'; 
+                return;
+            }
+
+            const dadosExame = {
+                tipo_exame: tipoExame,
+                especificacao: especificacao,
+                medico_id: medicoSolicitanteId, // Usando o médico solicitante como médico responsável
+                usuario_id: usuarioId,
+                data_exame: dataExame,
+                horario: horario,
+                preparacao: preparacao,
+                observacoes: observacoes
+            };
+            
+            // Adiciona o médico realizante como observação se existir
+            if (medicoRealizanteId) {
+                const medicoRealizanteSelect = document.getElementById('medico-realizante');
+                const medicoRealizanteNome = medicoRealizanteSelect.options[medicoRealizanteSelect.selectedIndex].text;
+                if (dadosExame.observacoes) {
+                    dadosExame.observacoes += `\nMédico Realizante: ${medicoRealizanteNome}`;
+                } else {
+                    dadosExame.observacoes = `Médico Realizante: ${medicoRealizanteNome}`;
+                }
+            }
+
+            try {
+                const response = await fetch('/api/agendar-exame', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dadosExame)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erro ao marcar exame.');
+                }
+
+                const resultado = await response.json();
+                alert(resultado.mensagem);
+                window.location.href = 'pagina-principal-usr.html'; 
+            } catch (error) {
+                console.error('Erro ao marcar exame:', error);
+                alert('Erro ao marcar exame. Por favor, tente novamente.');
+            }
+        });
+    </script>
+</body>
+
+</html>

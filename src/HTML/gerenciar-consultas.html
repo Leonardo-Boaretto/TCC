@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Consultas - Clínica Vida e Saúde</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <header class="cabecalho" id="cabecalho">
+        <div class="logo">
+            <img class="logo2-0" src="../IMG/logo2.0-sem-fundo-lol.png" alt="Nome da Clínica Vida e Saúde" />
+        </div>
+
+        <!-- Menu Hamburguer -->
+        <div class="menu-hamburguer">
+            <div class="icone-hamburguer" onclick="toggleMenu()" aria-label="Menu de opções">
+                <img src="../IMG/opcoes.png" alt="Menu">
+            </div>
+            <div class="menu-opcoes" id="menu-opcoes">
+                <ul>
+                    <li><a href="pagina-principal-usr.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="gerenciar-consultas.html" class="active"><i class="fas fa-calendar-check"></i> Consultas</a></li>
+                    <li><a href="gerenciar-exames.html"><i class="fas fa-vials"></i> Exames</a></li>
+                    <li><a href="historico-consultas-exames.html"><i class="fas fa-history"></i> Histórico</a></li>
+                    <li><a href="#ajuda"><i class="fas fa-question-circle"></i> Ajuda</a></li>
+                    <li><a href="#suporte"><i class="fas fa-headset"></i> Suporte</a></li>
+                    <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mt-4">
+        <h1 class="mb-4">Minhas Consultas</h1>
+
+        <!-- Filtros -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="filtroData" class="form-label">Data</label>
+                        <input type="date" class="form-control" id="filtroData">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="filtroMedico" class="form-label">Médico</label>
+                        <select class="form-select" id="filtroMedico">
+                            <option value="">Todos</option>
+                            <!-- Preenchido via JavaScript -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Consultas -->
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Horário</th>
+                        <th>Médico</th>
+                        <th>Especialidade</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="listaConsultas">
+                    <!-- Preenchido via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div class="modal fade" id="modalEditar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Consulta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditar">
+                        <input type="hidden" id="consultaId">
+                        <div class="mb-3">
+                            <label for="novaData" class="form-label">Nova Data</label>
+                            <input type="date" class="form-control" id="novaData" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="novoHorario" class="form-label">Novo Horário</label>
+                            <select class="form-select" id="novoHorario" required>
+                                <option value="">Selecione o horário</option>
+                                <!-- Preenchido via JavaScript -->
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalCancelarConsulta">
+                        Cancelar Consulta
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnSalvarEdicao">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Motivo de Cancelamento -->
+    <div class="modal fade" id="modalCancelarConsulta" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Motivo do Cancelamento</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="motivoCancelamento" class="form-label">Selecione o motivo do cancelamento:</label>
+                        <select class="form-select" id="motivoCancelamento" required>
+                            <option value="" selected disabled>Selecione um motivo</option>
+                            <option value="Problemas familiares urgentes">Problemas familiares urgentes</option>
+                            <option value="Conflitos de horário">Conflitos de horário</option>
+                            <option value="Melhora dos sintomas">Melhora dos sintomas</option>
+                            <option value="Outro">Outro (especificar)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="outroMotivoContainer" style="display: none;">
+                        <label for="outroMotivo" class="form-label">Especifique o motivo:</label>
+                        <textarea class="form-control" id="outroMotivo" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmarCancelamento">Confirmar Cancelamento</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Função para alternar o menu hamburguer
+        function toggleMenu() {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            menuOpcoes.classList.toggle('active');
+        }
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(event) {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            const iconeHamburguer = document.querySelector('.icone-hamburguer');
+            
+            if (!iconeHamburguer.contains(event.target) && !menuOpcoes.contains(event.target)) {
+                menuOpcoes.classList.remove('active');
+            }
+        });
+
+        // Mostrar/ocultar campo de motivo personalizado
+        document.addEventListener('DOMContentLoaded', function() {
+            const motivoSelect = document.getElementById('motivoCancelamento');
+            if (motivoSelect) {
+                motivoSelect.addEventListener('change', function() {
+                    const outroMotivoContainer = document.getElementById('outroMotivoContainer');
+                    if (outroMotivoContainer) {
+                        outroMotivoContainer.style.display = this.value === 'Outro' ? 'block' : 'none';
+                        if (this.value !== 'Outro') {
+                            document.getElementById('outroMotivo').value = '';
+                        }
+                    }
+                });
+            }
+
+            // Salvar edição
+            const btnSalvarEdicao = document.getElementById('btnSalvarEdicao');
+            if (btnSalvarEdicao) {
+                btnSalvarEdicao.addEventListener('click', async () => {
+                    const id = document.getElementById('consultaId').value;
+                    const novaData = document.getElementById('novaData').value;
+                    const novoHorario = document.getElementById('novoHorario').value;
+                    
+                    if (!novaData || !novoHorario) {
+                        alert('Por favor, preencha todos os campos.');
+                        return;
+                    }
+                    
+                    try {
+                        const consultaIdElement = document.getElementById('consultaId');
+                    const medicoId = consultaIdElement.dataset.medicoId;
+                    const especialidade = consultaIdElement.dataset.especialidade;
+                    
+                    if (!medicoId) {
+                        throw new Error('ID do médico não encontrado. Por favor, recarregue a página e tente novamente.');
+                    }
+                    
+                    if (!especialidade) {
+                        throw new Error('Especialidade não encontrada. Por favor, recarregue a página e tente novamente.');
+                    }
+                    
+                    // Dados que serão enviados na requisição
+                    const tipoConsulta = consultaIdElement.dataset.tipoConsulta || 'Retorno';
+                    const dadosRequisicao = {
+                        data_consulta: novaData,
+                        horario: novoHorario,
+                        medico_id: medicoId,
+                        especialidade: especialidade,
+                        tipo_consulta: tipoConsulta
+                    };
+                    
+                    console.log('Dados da requisição:', dadosRequisicao);
+                    
+                    const response = await fetch(`/api/consultas/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(dadosRequisicao)
+                        });
+                        
+                        console.log('Status da resposta:', response.status);
+                        const responseData = await response.json().catch(() => ({}));
+                        console.log('Resposta da API:', responseData);
+                        
+                        if (response.ok) {
+                            alert('Consulta atualizada com sucesso!');
+                            carregarConsultas();
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
+                            if (modal) modal.hide();
+                        } else {
+                            const errorMessage = responseData.erro || responseData.message || 'Erro ao atualizar consulta';
+                            console.error('Erro na API:', errorMessage);
+                            alert(`Erro: ${errorMessage}`);
+                        }
+                    } catch (error) {
+                        console.error('Erro:', error);
+                        alert('Erro ao atualizar consulta');
+                    }
+                });
+            }
+
+            // Confirmar cancelamento da consulta
+            const btnConfirmarCancelamento = document.getElementById('btnConfirmarCancelamento');
+            if (btnConfirmarCancelamento) {
+                btnConfirmarCancelamento.addEventListener('click', async () => {
+                    const motivoSelect = document.getElementById('motivoCancelamento');
+                    let motivo = motivoSelect ? motivoSelect.value : '';
+                    
+                    if (!motivo) {
+                        alert('Por favor, selecione um motivo para o cancelamento.');
+                        return;
+                    }
+                    
+                    if (motivo === 'Outro') {
+                        const outroMotivo = document.getElementById('outroMotivo');
+                        motivo = outroMotivo ? outroMotivo.value.trim() : '';
+                        if (!motivo) {
+                            alert('Por favor, especifique o motivo do cancelamento.');
+                            return;
+                        }
+                    }
+                    
+                    const id = document.getElementById('consultaId').value;
+                    
+                    try {
+                        const response = await fetch(`/api/consultas/${id}/cancelar`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                motivo_cancelamento: motivo
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            alert('Consulta cancelada com sucesso!');
+                            carregarConsultas();
+                            
+                            // Fechar ambos os modais
+                            const modalCancelar = bootstrap.Modal.getInstance(document.getElementById('modalCancelarConsulta'));
+                            if (modalCancelar) modalCancelar.hide();
+                            
+                            const modalEditar = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
+                            if (modalEditar) modalEditar.hide();
+                            
+                            // Resetar o formulário de motivo
+                            if (motivoSelect) motivoSelect.value = '';
+                            const outroMotivo = document.getElementById('outroMotivo');
+                            if (outroMotivo) outroMotivo.value = '';
+                            const outroMotivoContainer = document.getElementById('outroMotivoContainer');
+                            if (outroMotivoContainer) outroMotivoContainer.style.display = 'none';
+                        } else {
+                            const error = await response.json();
+                            alert(error.erro || 'Erro ao cancelar consulta');
+                        }
+                    } catch (error) {
+                        console.error('Erro:', error);
+                        alert('Erro ao cancelar consulta');
+                    }
+                });
+            }
+        });
+
+        // Função para aplicar filtros nas consultas
+        function aplicarFiltros(consultas) {
+            const filtroData = document.getElementById('filtroData').value;
+            const filtroMedico = document.getElementById('filtroMedico').value;
+            
+            return consultas.filter(consulta => {
+                // Filtro por data
+                if (filtroData) {
+                    const dataConsulta = new Date(consulta.data_consulta).toISOString().split('T')[0];
+                    if (dataConsulta !== filtroData) return false;
+                }
+                
+                // Filtro por médico
+                if (filtroMedico) {
+                    if (String(consulta.id_medico) !== filtroMedico) return false;
+                }
+                
+                return true;
+            });
+        }
+        
+        // Carregar médicos para o filtro
+        async function carregarMedicos() {
+            try {
+                console.log('Iniciando carregamento de médicos...');
+                const response = await fetch('/api/medicos', {
+                    method: 'GET',
+                    credentials: 'include', 
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('Resposta da API de médicos:', response);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Erro na resposta da API de médicos:', response.status, errorText);
+                    throw new Error(`Erro ao carregar médicos: ${response.status} ${response.statusText}`);
+                }
+                
+                const medicos = await response.json();
+                console.log('Médicos recebidos:', medicos);
+                
+                const select = document.getElementById('filtroMedico');
+                
+                // Limpar opções exceto a primeira
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+                
+                // Adicionar médicos ao select
+                if (Array.isArray(medicos)) {
+                    medicos.forEach(medico => { 
+                        console.log('Processando médico:', medico);
+                        if (medico.id && medico.nome) {
+                            const option = document.createElement('option');
+                            option.value = medico.id;
+                            option.textContent = `${medico.nome} - ${medico.especialidade || 'Sem especialidade'}`;
+                            select.appendChild(option);
+                        }
+                    });
+                    
+                    // Disparar evento de mudança para atualizar a lista de consultas
+                    if (select.value) {
+                        select.dispatchEvent(new Event('change'));
+                    }
+                } else {
+                    console.error('Formato de dados inválido recebido da API de médicos:', medicos);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar médicos:', error);
+                // Exibir mensagem de erro para o usuário
+                const tbody = document.getElementById('listaConsultas');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-danger">
+                            Erro ao carregar a lista de médicos. Por favor, recarregue a página.
+                            <button class="btn btn-sm btn-outline-primary ms-2" onclick="window.location.reload()">
+                                <i class="fas fa-sync-alt"></i> Recarregar
+                            </button>
+                        </td>
+                    </tr>`;
+            }
+        }
+        
+        // Carregar consultas do paciente
+        async function carregarConsultas() {
+            try {
+                console.log('Iniciando carregamento de consultas...');
+                
+                const response = await fetch('/api/consultas/paciente', {
+                    method: 'GET',
+                    credentials: 'include',  
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('Resposta recebida:', response);
+                
+                // Verificar se a resposta foi bem-sucedida
+                if (!response.ok) {
+                    let errorMessage = 'Erro ao carregar consultas';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.erro || errorMessage;
+                        console.error('Erro na resposta da API:', errorData);
+                        
+                        // Se o erro for de autenticação, volta para a pag. de login
+                        if (response.status === 401) {
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                    } catch (e) {
+                        console.error('Erro ao processar resposta de erro:', e);
+                    }
+                    throw new Error(errorMessage);
+                }
+                
+                let consultas = await response.json();
+                console.log('Consultas recebidas:', consultas);
+                
+                const tbody = document.getElementById('listaConsultas');
+                tbody.innerHTML = '';
+                
+                if (!Array.isArray(consultas)) {
+                    console.error('Dados de consultas inválidos:', consultas);
+                    throw new Error('Formato de dados inválido recebido do servidor');
+                }
+                
+         
+                consultas = consultas.filter(consulta => consulta.status && consulta.status.toLowerCase() === 'agendado');
+                
+                // Aplicar filtros
+                consultas = aplicarFiltros(consultas);
+                
+                if (consultas.length === 0) {
+                    console.log('Nenhuma consulta agendada encontrada para o usuário');
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td colspan="6" class="text-center">Nenhuma consulta agendada encontrada</td>
+                    `;
+                    tbody.appendChild(tr);
+                    return;
+                }
+                
+                // Ordenar consultas por data mais próxima
+                consultas.sort((a, b) => new Date(a.data_consulta) - new Date(b.data_consulta));
+                
+                consultas.forEach((consulta, index) => {
+                    try {
+                        console.log(`Processando consulta ${index + 1}:`, consulta);
+                        
+                        // Verificar se a consulta tem os campos necessários
+                        if (!consulta || typeof consulta !== 'object') {
+                            console.error('Consulta inválida:', consulta);
+                            return;
+                        }
+                        
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${formatarData(consulta.data_consulta)}</td>
+                            <td>${consulta.horario ? (typeof consulta.horario === 'string' ? consulta.horario.substring(0, 5) : '') : ''}</td>
+                            <td>${consulta.nome_medico || 'Não informado'}</td>
+                            <td>${consulta.especialidade || 'Não informada'}</td>
+                            <td><span class="badge ${getBadgeClass(consulta.status ? consulta.status.toLowerCase() : '')}">${consulta.status || 'Desconhecido'}</span></td>
+                            <td>
+                                ${consulta.status && consulta.status.toLowerCase() === 'agendado' ? `
+                                    <button class="btn btn-sm btn-primary" onclick="editarConsulta(${consulta.id || 0})">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                ` : ''}
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    } catch (error) {
+                        console.error(`Erro ao processar consulta ${index + 1}:`, error, consulta);
+                        // Adiciona uma linha de erro para consultas problemáticas
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td colspan="6" class="text-danger">Erro ao carregar consulta</td>
+                        `;
+                        tbody.appendChild(tr);
+                    }
+                });
+                
+                console.log('Todas as consultas foram processadas com sucesso');
+            } catch (error) {
+                console.error('Erro ao carregar consultas:', error);
+                
+                // Exibe uma mensagem de erro na tabela
+                const tbody = document.getElementById('listaConsultas');
+                tbody.innerHTML = '';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td colspan="6" class="text-center text-danger">
+                        ${error.message || 'Erro ao carregar consultas. Por favor, tente novamente.'}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+                
+                // Mostra um alerta apenas se for um erro inesperado
+                if (error.message !== 'Failed to fetch') {
+                    alert(error.message || 'Erro ao carregar consultas. Por favor, tente novamente.');
+                }
+            }
+        }
+
+        // Carregar horários disponíveis
+        async function carregarHorarios(data) {
+            try {
+                const response = await fetch(`/api/horarios-disponiveis?data=${data}`);
+                const horarios = await response.json();
+                
+                const select = document.getElementById('novoHorario');
+                select.innerHTML = '<option value="">Selecione o horário</option>';
+                
+                horarios.forEach(horarioObj => { 
+                    const option = document.createElement('option');
+                    option.value = horarioObj.horario; 
+                    option.textContent = horarioObj.horario; 
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar horários:', error);
+                alert('Erro ao carregar horários disponíveis. Por favor, tente novamente.');
+            }
+        }
+
+        // Editar consulta
+        async function editarConsulta(id) {
+            try {
+                // Buscar os detalhes completos da consulta
+                const response = await fetch(`/api/consultas/${id}`);
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar detalhes da consulta');
+                }
+                const consulta = await response.json();
+                
+                // Armazenar os dados necessários para uso posterior
+                const consultaIdElement = document.getElementById('consultaId');
+                consultaIdElement.value = id;
+                consultaIdElement.dataset.medicoId = consulta.medico_id || '';
+                consultaIdElement.dataset.especialidade = consulta.especialidade || '';
+                consultaIdElement.dataset.tipoConsulta = consulta.tipo_consulta || 'Retorno'; // Armazena o tipo de consulta
+                
+                // Configurar a data atual no campo de data
+                const dataAtual = new Date(consulta.data_consulta).toISOString().split('T')[0];
+                const novaDataInput = document.getElementById('novaData');
+                novaDataInput.value = dataAtual;
+                
+                // Carregar horários disponíveis para a data atual
+                document.getElementById('novoHorario').innerHTML = '<option value="">Selecione o horário</option>';
+                if (dataAtual) {
+                    await carregarHorarios(dataAtual);
+                    // Selecionar o horário atual da consulta
+                    if (consulta.horario) {
+                        document.getElementById('novoHorario').value = consulta.horario;
+                    }
+                }
+                
+                // Configurar eventos
+                novaDataInput.removeEventListener('change', handleNovaDataChange); 
+                novaDataInput.addEventListener('change', handleNovaDataChange);
+                
+                // Exibir o modal
+                var modalEditar = new bootstrap.Modal(document.getElementById('modalEditar'));
+                modalEditar.show();
+            } catch (error) {
+                console.error('Erro ao carregar detalhes da consulta:', error);
+                alert('Erro ao carregar os detalhes da consulta. Por favor, tente novamente.');
+            }
+        }
+
+        function handleNovaDataChange(event) {
+            const dataSelecionada = event.target.value;
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0); // Zera as horas para comparar apenas a data
+            
+            if (dataSelecionada) {
+                const dataSelecionadaObj = new Date(dataSelecionada);
+                
+                // Verifica se a data selecionada é anterior à data atual
+                if (dataSelecionadaObj < hoje) {
+                    alert('Não é possível agendar consultas para datas passadas.');
+                    event.target.value = ''; // Limpa o campo de data
+                    document.getElementById('novoHorario').innerHTML = '<option value="">Selecione o horário</option>';
+                    return;
+                }
+                
+                carregarHorarios(dataSelecionada);
+            }
+        }
+
+        function formatarData(data) {
+            // Se a data já estiver no formato brasileiro, retorna como está
+            if (typeof data === 'string' && data.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                return data;
+            }
+            
+            //  criar uma data a partir do valor recebido
+            try {
+               
+                if (typeof data === 'string' && data.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                    const [year, month, day] = data.split('-');
+                    return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+                }
+                
+    
+                const dataObj = new Date(data);
+                
+                // Verifica se a data é válida
+                if (isNaN(dataObj.getTime())) {
+                    console.error('Data inválida:', data);
+                    return 'Data inválida';
+                }
+                
+ 
+                return dataObj.toLocaleDateString('pt-BR');
+            } catch (error) {
+                console.error('Erro ao formatar data:', error);
+                return 'Data inválida';
+            }
+        }
+
+        function getBadgeClass(status) {
+            switch (status) {
+                case 'Agendado':
+                    return 'bg-primary';
+                case 'Realizado':
+                    return 'bg-success';
+                case 'Cancelado':
+                    return 'bg-danger';
+                case 'Confirmado':
+                    return 'bg-info';
+                case 'Falta':
+                    return 'bg-warning';
+                default:
+                    return 'bg-secondary';
+            }
+        }
+
+        // Função para limpar filtros
+        function limparFiltros() {
+            document.getElementById('filtroData').value = '';
+            document.getElementById('filtroMedico').value = '';
+            carregarConsultas();
+        }
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configura o valor mínimo da data como hoje
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('novaData').min = hoje;
+            document.getElementById('filtroData').min = hoje;
+            
+            carregarMedicos();
+            carregarConsultas();
+            
+            // Adicionar botão de limpar filtros
+            const filtroCard = document.querySelector('.card.mb-4 .card-body');
+            if (filtroCard) {
+                const botaoLimpar = document.createElement('button');
+                botaoLimpar.className = 'btn btn-outline-secondary btn-sm mt-2';
+                botaoLimpar.id = 'btnLimparFiltros';
+                botaoLimpar.innerHTML = '<i class="fas fa-times"></i> Limpar Filtros';
+                botaoLimpar.onclick = limparFiltros;
+                filtroCard.appendChild(botaoLimpar);
+            }
+            
+            // Event listeners para os filtros
+            const filtroData = document.getElementById('filtroData');
+            const filtroMedico = document.getElementById('filtroMedico');
+            
+            if (filtroData) filtroData.addEventListener('change', carregarConsultas);
+            if (filtroMedico) filtroMedico.addEventListener('change', carregarConsultas);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+.curved-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #14dcd2 0%, rgba(157, 193, 131, 0.00) 100%);
+    z-index: -1;
+}
+
+.cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo2-0 {
+    width: 150px;
+    height: auto;
+}
+
+.menu-hamburguer {
+    position: relative;
+}
+
+.hamburguer-icon {
+    cursor: pointer;
+}
+
+.hamburguer-icon img {
+    width: 30px;
+    height: 30px;
+}
+
+.menu-opcoes {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    z-index: 1000;
+}
+
+.menu-opcoes.active {
+    display: block;
+}
+
+.menu-opcoes ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-opcoes ul li {
+    padding: 0.5rem 0;
+}
+
+.menu-opcoes ul li a {
+    color: #333;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.menu-opcoes ul li a:hover {
+    color: #9DC183;
+}
+
+.container {
+    max-width: 900px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.card {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background: white;
+}
+
+.nav-tabs .nav-link {
+    color: #495057;
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link.active {
+    color: #9DC183;
+    font-weight: 600;
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+.senha-requisitos {
+    margin-top: 8px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.senha-requisitos p {
+    margin-bottom: 5px;
+}
+
+.senha-requisitos ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.senha-requisitos li {
+    margin-bottom: 3px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.senha-requisitos li:before {
+    content: "•";
+    position: absolute;
+    left: 5px;
+}
+
+.form-check {
+    margin: 1.5rem 0;
+}
+
+.form-check-label a {
+    color: #14dcd2;
+    text-decoration: none;
+}
+
+.form-check-label a:hover {
+    text-decoration: underline;
+}
+
+.form-check-input:checked {
+    background-color: #14dcd2;
+    border-color: #14dcd2
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-cadastrar,
+.btn-cancelar {
+    padding: 8px 24px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    width: auto;
+    min-width: 140px;
+    justify-content: center;
+}
+
+.btn-cadastrar {
+    background-color: #14dcd2;
+    color: white;
+}
+
+.btn-cadastrar:hover {
+    background-color: #11c4bb;
+}
+
+.btn-cancelar {
+    background-color: #e0e0e0;
+    color: #666;
+}
+
+.btn-cancelar:hover {
+    background-color: #d0d0d0;
+}
+
+/* Ajustes para os campos do formulário */
+.form-control {
+    padding: 10px 15px;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    width: 65%;  
+    max-width: 65%;  
+    box-sizing: border-box; 
+}
+
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(20, 220, 210, 0.25);
+}
+
+/* Ajustes para os grupos de formulário */
+.mb-3 {
+    margin-bottom: 1.25rem;
+}
+
+/* Ajustes para os campos de data e seleção */
+input[type="date"],
+select.form-control {
+    height: calc(2.25rem + 2px);
+    padding: 0.375rem 0.75rem;
+}
+
+/* Ajustes para os botões */
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    font-weight: 500;
+    background-color: #9DC183;
+    border-color: #9DC183;
+    font-size: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #85a86d;
+    border-color: #7d9e66;
+}
+
+/* Ajustes para as abas */
+.nav-tabs {
+    border-bottom: 2px solid #dee2e6;
+    margin-bottom: 1.5rem;
+}
+
+.nav-tabs .nav-link {
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-right: 0.5rem;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link.active {
+    color: #9DC183;
+    background-color: transparent;
+    border-color: transparent;
+    border-bottom-color: #9DC183;
+    font-weight: 600;
+}
+
+/* Ajustes para o card */
+.card {
+    border: none;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* Ajustes para responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .form-control {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        margin: 15px;
+    }
+    
+    .cabecalho {
+        padding: 1rem;
+    }
+}

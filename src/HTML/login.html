@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Clínica Vida e Saúde</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/CSS/style-login.css">
+    <link rel="stylesheet" href="/CSS/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="description" content="Login - Clínica Vida e Saúde">
+</head>
+
+<body>
+    <!-- Fundo curvado -->
+    <div class="curved-background"></div>
+
+    <header class="cabecalho">
+        <div class="logo">
+            <img class="logo2-0" src="/IMG/Green Simple Medical Clinic Logo (1)-picaai.png" alt="Logo da Clínica Vida e Saúde" />
+        </div>
+
+        <!-- Menu Hamburguer -->
+        <div class="menu-hamburguer">
+            <div class="hamburguer-icon" onclick="toggleMenu()" aria-label="Menu de opções">
+               <img src="/IMG/opcoes.png" alt="Menu">
+            </div>
+            <div class="menu-opcoes" id="menu-opcoes">
+                <ul>
+                    <li><a href="/HTML/cadastro.html"><i class="fas fa-user-plus"></i> Cadastre-se</a></li>
+                    <li><a href="#ajuda"><i class="fas fa-question-circle"></i> Ajuda</a></li>
+                    <li><a href="#suporte"><i class="fas fa-headset"></i> Suporte</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <div class="form-section">
+                <h2><i class="fas fa-user-circle"></i> Login</h2>
+                <form id="formLogin" class="form-agendamento">
+                    <div class="form-group">
+                        <label for="email">E-mail:</label>
+                        <input type="email" id="email" name="email" required placeholder="Digite seu e-mail">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="senha">Senha:</label>
+                        <div class="senha-input">
+                            <input type="password" id="senha" name="senha" required placeholder="Digite sua senha">
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-links">
+                        <a href="../HTML/esqueci-senha.html">Esqueceu sua senha?</a>
+                        <a href="../HTML/cadastro.html">Não tem uma conta? Cadastre-se</a>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Entrar
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="window.location.href='login.html'">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            menuOpcoes.classList.toggle('active');
+        }
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(event) {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            const hamburguerIcon = document.querySelector('.hamburguer-icon');
+            
+            if (!hamburguerIcon.contains(event.target) && !menuOpcoes.contains(event.target)) {
+                menuOpcoes.classList.remove('active');
+            }
+        });
+
+        function toggleSenha() {
+            const senhaInput = document.getElementById('senha');
+            const btnMostrarSenha = document.querySelector('.btn-mostrar-senha i');
+            
+            if (senhaInput.type === 'password') {
+                senhaInput.type = 'text';
+                btnMostrarSenha.classList.remove('fa-eye');
+                btnMostrarSenha.classList.add('fa-eye-slash');
+            } else {
+                senhaInput.type = 'password';
+                btnMostrarSenha.classList.remove('fa-eye-slash');
+                btnMostrarSenha.classList.add('fa-eye');
+            }
+        }
+
+        // Função para mostrar mensagem de erro
+        function mostrarErro(mensagem) {
+            const formSection = document.querySelector('.form-section');
+            let mensagemErro = document.getElementById('mensagem-erro');
+            
+            if (!mensagemErro) {
+                mensagemErro = document.createElement('div');
+                mensagemErro.id = 'mensagem-erro';
+                formSection.insertBefore(mensagemErro, formSection.firstChild);
+            }
+            
+            mensagemErro.textContent = mensagem;
+            mensagemErro.style.display = 'block';
+            
+            setTimeout(() => {
+                mensagemErro.style.display = 'none';
+            }, 3000);
+        }
+
+        // Manipular envio do formulário
+        document.getElementById('formLogin').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Salvar os dados do usuário e o token no localStorage
+                    localStorage.setItem('usuarioLogado', JSON.stringify(data.usuario));
+                    localStorage.setItem('tipoUsuario', data.tipo);
+                    if (data.token) {
+                        localStorage.setItem('token', data.token);
+                    }
+
+                    // Redirecionar para a URL fornecida ou para a página padrão
+                    if (data.redirect_url) {
+                        window.location.href = data.redirect_url;
+                    } else {
+                        window.location.href = '/HTML/index.html';
+                    }
+                } else {
+                    alert(data.erro || 'Erro ao fazer login.');
+                }
+            } catch (error) {
+                console.error('Erro ao fazer login:', error);
+                alert('Erro ao fazer login. Por favor, tente novamente.');
+            }
+        });
+    </script>
+</body>
+
+</html>

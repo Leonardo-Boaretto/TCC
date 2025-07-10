@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancelar Exame - Clínica Vida e Saúde</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../CSS/style-pagina-usr.css">
+    <link rel="stylesheet" href="../CSS/cancelar-exame.css">
+    <link rel="stylesheet" href="../CSS/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="description" content="Cancelamento de exames da Clínica Vida e Saúde">
+</head>
+
+<body>
+    <!-- Fundo curvado -->
+    <div class="curved-background"></div>
+
+    <header class="cabecalho" id="cabecalho">
+        <div class="logo">
+            <img class="logo2-0" src="../IMG/logo2.0-sem-fundo-lol.png" alt="Nome da Clínica Vida e Saúde" />
+        </div>
+
+        <!-- Menu Hamburguer -->
+        <div class="menu-hamburguer">
+            <div class="hamburguer-icon" onclick="toggleMenu()" aria-label="Menu de opções">
+               <img src="../IMG/opcoes.png" alt="Menu">
+            </div>
+            <div class="menu-opcoes" id="menu-opcoes">
+                <ul>
+                    <li><a href="../HTML/pagina-principal-usr.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="#ajuda"><i class="fas fa-question-circle"></i> Ajuda</a></li>
+                    <li><a href="#suporte"><i class="fas fa-headset"></i> Suporte</a></li>
+                    <li><a href="../HTML/index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <div class="exames-agendados">
+                <h3><i class="fas fa-vials"></i> Exames Agendados</h3>
+                <div class="lista-exames">
+                    <!-- Os exames serão carregados dinamicamente aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            menuOpcoes.classList.toggle('active');
+        }
+
+        async function carregarExames() {
+            try {
+                const response = await fetch('/api/exames');
+                if (!response.ok) throw new Error('Erro ao buscar exames');
+                const exames = await response.json();
+
+                const listaExames = document.querySelector('.lista-exames');
+                listaExames.innerHTML = ''; 
+
+                exames.forEach(exame => {
+                    const exameItem = document.createElement('div');
+                    exameItem.classList.add('exame-item');
+                    exameItem.setAttribute('data-id', exame.id);
+                    exameItem.innerHTML = `
+                        <div class="exame-info">
+                            <h4>${exame.tipo_exame}</h4>
+                            <p><i class="fas fa-user-md"></i> Médico: ${exame.medico_solicitante}</p>
+                            <p><i class="fas fa-user"></i> Paciente: ${exame.paciente}</p>
+                            <p><i class="fas fa-calendar"></i> Data: ${formatarData(exame.data_exame)}</p> <!-- Formata a data -->
+                            <p><i class="fas fa-clock"></i> Horário: ${exame.horario}</p>
+                        </div>
+                        <button class="btn-cancelar" onclick="cancelarExame(${exame.id})">
+                            <i class="fas fa-ban"></i> Cancelar Exame
+                        </button>
+                    `;
+                    listaExames.appendChild(exameItem);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar exames:', error);
+                alert('Erro ao carregar exames. Por favor, tente novamente.');
+            }
+        }
+
+        async function cancelarExame(id) {
+            if (confirm('Tem certeza que deseja cancelar este exame?')) {
+                try {
+                    const response = await fetch(`/api/exames/${id}/cancelar`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Erro ao cancelar exame.');
+                    }
+
+                    const resultado = await response.json();
+                    alert(resultado.mensagem);
+
+                    // Remover o exame do painel
+                    const exameItem = document.querySelector(`.exame-item[data-id="${id}"]`);
+                    if (exameItem) {
+                        exameItem.remove();
+                    }
+                } catch (error) {
+                    console.error('Erro ao cancelar exame:', error);
+                    alert('Erro ao cancelar exame. Por favor, tente novamente.');
+                }
+            }
+        }
+
+        function formatarData(data) {
+            const dataObj = new Date(data);
+            return dataObj.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+        }
+
+        // Carregar os exames ao carregar a página
+        document.addEventListener('DOMContentLoaded', carregarExames);
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(event) {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            const hamburguerIcon = document.querySelector('.hamburguer-icon');
+            
+            if (!hamburguerIcon.contains(event.target) && !menuOpcoes.contains(event.target)) {
+                menuOpcoes.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+
+</html>

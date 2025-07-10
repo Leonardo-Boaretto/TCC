@@ -1,0 +1,3608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área do Profissional - Clínica Vida e Saúde</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../CSS/style-pagina-usr.css">
+    <link rel="stylesheet" href="../CSS/style-pagina-profissional.css">
+    <link rel="stylesheet" href="../CSS/modal-historico.css">
+    <link rel="stylesheet" href="../CSS/reset.css">
+    <!-- SweetAlert2 para notificações bonitas -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="description" content="Área do profissional de saúde - Clínica Vida e Saúde">
+</head>
+
+<body>
+    <!-- Fundo curvado -->
+    <div class="fundo-curvado"></div>
+
+    <header class="cabecalho" id="cabecalho">
+        <div class="logo">
+            <img class="logo-principal" src="../IMG/logo1.0-sem-fundo.png" alt="Logo da Clínica Vida e Saúde" />
+        </div>
+
+        <!-- Menu Hamburguer -->
+        <div class="menu-hamburguer">
+            <div class="icone-hamburguer" onclick="alternarMenu()" aria-label="Menu de opções">
+               <img src="../IMG/opcoes.png" alt="Menu">
+            </div>
+            <div class="menu-opcoes" id="menu-opcoes">
+                <ul>
+                    <li><a href="#consultas"><i class="fas fa-calendar-check"></i> Consultas</a></li>
+                    <li><a href="#historico-pacientes"><i class="fas fa-users"></i> Histórico de Pacientes</a></li>
+                    <li><a href="#receitas"><i class="fas fa-prescription"></i> Receitas</a></li>
+                    <li><a href="#exames"><i class="fas fa-vial"></i> Exames</a></li>
+                    <li><a href="#" onclick="sair()"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="conteudo">
+            <div class="secao-profissional">
+                <!-- Seção de Consultas -->
+                <div id="consultas" class="conteudo-secao">
+                    <h2><i class="fas fa-calendar-check"></i> Consultas Agendadas</h2>
+                    
+                    <!-- Informações do Profissional -->
+                    <div class="info-profissional">
+                        <div class="card-info">
+                            <h3>Dr. João Silva</h3>
+                            <p>Especialidade: Clínico Geral</p>
+                            <p>CRM: 12345</p>
+                        </div>
+                    </div>
+
+                    <!-- Filtros de Consultas -->
+                    <div class="filtros-consultas">
+                        <div class="grupo-formulario">
+                            <label for="periodo">Período:</label>
+                            <select id="periodo" name="periodo">
+                                <option value="todos">Todos os períodos</option>
+                                <option value="hoje">Hoje</option>
+                                <option value="semana" selected>Esta Semana</option>
+                                <option value="mes">Este Mês</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- Lista de Consultas -->
+                    <div class="lista-consultas">
+                        <div class="grade-consultas">
+                            <!-- Consultas serão preenchidas dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção de Histórico de Pacientes -->
+                <div id="historico-pacientes" class="conteudo-secao" style="display: none;">
+                    <h2><i class="fas fa-users"></i> Histórico de Pacientes</h2>
+                    
+                    <!-- Filtros de Pacientes -->
+                    <div class="filtros-pacientes" style="margin-bottom: 20px;">
+                        <div class="grupo-formulario">
+                            <label for="busca-paciente">Buscar Paciente:</label>
+                            <input type="text" id="busca-paciente" placeholder="Nome" style="padding: 8px; width: 300px;">
+                            <button onclick="filtrarPacientes()" class="botao-primario" style="margin-left: 10px;">Buscar</button>
+                        </div>
+                        <div class="grupo-formulario">
+                            <label for="ordenar-por">Ordenar por:</label>
+                            <select id="ordenar-por" onchange="ordenarPacientes()" style="padding: 8px;">
+                                <option value="nome">Nome (A-Z)</option>
+                                <option value="nome-desc">Nome (Z-A)</option>
+                                <option value="data-ultima-consulta">Última Consulta (Recentes)</option>
+                                <option value="data-ultima-consulta-asc">Última Consulta (Antigas)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Pacientes -->
+                    <div class="tabela-pacientes" style="overflow-x: auto;">
+                        <table id="tabela-pacientes" class="tabela-dados" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Data Nascimento</th>
+                                    <th>Última Consulta</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="corpo-tabela-pacientes">
+                                <!-- Dados serão preenchidos via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Paginação -->
+                    <div class="paginacao" style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                        <div class="info-paginacao">
+                            Mostrando <span id="inicio-pagina">1</span> a <span id="fim-pagina">10</span> de <span id="total-pacientes">0</span> pacientes
+                        </div>
+                        <div class="controles-paginacao">
+                            <button id="anterior-pagina" onclick="mudarPagina('anterior')" disabled style="margin-right: 10px; padding: 5px 10px;">Anterior</button>
+                            <span id="pagina-atual">1</span> / <span id="total-paginas">1</span>
+                            <button id="proxima-pagina" onclick="mudarPagina('proxima')" style="margin-left: 10px; padding: 5px 10px;">Próxima</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção de Receitas -->
+                <div id="receitas" class="conteudo-secao" style="display: none;">
+                    <h2><i class="fas fa-prescription"></i> Gerenciar Receitas</h2>
+
+                    <!-- Formulário de Nova Receita -->
+                    <div class="criar-receita">
+                        <h3>Nova Receita</h3>
+                        <form id="form-receita" class="form-receita">
+                            <div class="grupo-formulario">
+                                <label for="paciente-receita">Paciente:</label>
+                                <select id="paciente-receita" name="paciente_id" required>
+                                    <option value="">Selecione o paciente</option>
+                                </select>
+                            </div>
+
+                            <div class="grupo-formulario">
+                                <label for="medicamento">Medicamento:</label>
+                                <input type="text" id="medicamento" name="medicamento" placeholder="Nome do medicamento" required>
+                            </div>
+
+                            <div class="grupo-formulario-row">
+                                <div class="grupo-formulario">
+                                    <label for="dosagem">Dosagem:</label>
+                                    <input type="text" id="dosagem" name="dosagem" placeholder="Ex: 1 comprimido" required>
+                                </div>
+                                <div class="grupo-formulario">
+                                    <label for="frequencia">Frequência:</label>
+                                    <input type="text" id="frequencia" name="frequencia" placeholder="Ex: 8 em 8 horas" required>
+                                </div>
+                            </div>
+
+                            <div class="grupo-formulario">
+                                <label for="duracao">Duração do Tratamento:</label>
+                                <input type="text" id="duracao" name="duracao" placeholder="Ex: 7 dias" required>
+                            </div>
+
+                            <div class="grupo-formulario">
+                                <label for="observacoes">Observações:</label>
+                                <textarea id="observacoes" name="observacoes" rows="4" placeholder="Instruções adicionais ou observações"></textarea>
+                            </div>
+
+                            <div class="acoes-receita">
+                                <button type="submit" class="botao-principal">
+                                    <i class="fas fa-save"></i> Salvar Receita
+                                </button>
+                                <button type="button" class="botao-secundario" onclick="imprimirReceita()">
+                                    <i class="fas fa-print"></i> Imprimir
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Lista de Receitas -->
+                    <div class="historico-receitas">
+                        <div class="cabecalho-secao">
+                            <h3><i class="fas fa-history"></i> Histórico de Receitas</h3>
+                            <button id="btn-recargar-receitas" class="botao-icone" onclick="carregarReceitas()" title="Recarregar">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="filtros-receitas">
+                            <div class="grupo-formulario">
+                                <label for="busca-receita">Buscar:</label>
+                                <input type="text" id="busca-receita" placeholder="Paciente ou medicamento">
+                            </div>
+                            <div class="grupo-formulario">
+                                <label for="filtro-data">Data:</label>
+                                <input type="date" id="filtro-data">
+                            </div>
+                            <button type="button" class="botao-secundario" id="btn-limpar-filtros">
+                                <i class="fas fa-times"></i> Limpar Filtros
+                            </button>
+                        </div>
+
+                        <div class="lista-receitas">
+                            <!-- As receitas serão carregadas dinamicamente aqui -->
+                            <div class="sem-registros">
+                                <i class="fas fa-inbox"></i>
+                                <p>Nenhuma receita encontrada</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Controles de paginação -->
+                        <div class="paginacao-receitas">
+                            <div class="info-paginacao">
+                                Mostrando 0 de 0 receitas
+                            </div>
+                            <div class="controles-paginacao">
+                                <button id="anterior-pagina-receitas" disabled>Anterior</button>
+                                <span id="pagina-atual-receitas">1</span> / <span id="total-paginas-receitas">1</span>
+                                <button id="proxima-pagina-receitas" disabled>Próxima</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção de Exames -->
+                <div id="exames" class="conteudo-secao" style="display: none;">
+                    <h2><i class="fas fa-vial"></i> Exames Agendados</h2>
+                    <div class="filtros-exames">
+                        <div class="grupo-formulario">
+                            <label for="filtro-status-exame">Status:</label>
+                            <select id="filtro-status-exame" onchange="filtrarExames()">
+                                <option value="todos">Todos</option>
+                                <option value="agendado" selected>Agendado</option>
+                                <option value="realizado">Realizado</option>
+                                <option value="cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="lista-exames"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Prontuário -->
+    <div id="modalProntuario" class="modal">
+        <div class="modal-conteudo" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-cabecalho">
+                <h2>Prontuário Médico</h2>
+                <span class="fechar" onclick="fecharModalProntuario()">&times;</span>
+            </div>
+            <div class="modal-corpo">
+                <div class="dados-paciente" style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+                    <h3 id="prontuarioPacienteNome">Paciente</h3>
+                    <div id="infoAtualizacao">
+                        <p>Prontuário ainda não foi preenchido.</p>
+                    </div>
+                </div>
+                
+                <form id="formProntuario" onsubmit="event.preventDefault(); salvarProntuario();">
+                    <input type="hidden" id="pacienteId" name="paciente_id">
+                    <input type="hidden" id="medicoId" name="medico_id">
+                    
+                    <div class="form-group">
+                        <label for="historicoMedico">Histórico Médico Pessoal:</label>
+                        <textarea id="historicoMedico" name="historico_medico" class="form-control" rows="4" placeholder="Descreva o histórico médico do paciente, incluindo doenças prévias, cirurgias, internações, etc."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="historicoFamiliar">Histórico Familiar:</label>
+                        <textarea id="historicoFamiliar" name="historico_familiar" class="form-control" rows="3" placeholder="Descreva o histórico médico da família, incluindo doenças hereditárias ou condições relevantes."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="alergias">Alergias:</label>
+                        <textarea id="alergias" name="alergias" class="form-control" rows="2" placeholder="Liste todas as alergias conhecidas do paciente, incluindo medicamentos, alimentos, etc."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="medicamentos">Medicamentos em Uso Contínuo:</label>
+                        <textarea id="medicamentos" name="medicamentos_uso_continuo" class="form-control" rows="3" placeholder="Liste todos os medicamentos que o paciente usa regularmente, incluindo dosagens e frequência."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="observacoesProntuario">Observações Adicionais:</label>
+                        <textarea id="observacoesProntuario" name="observacoes" class="form-control" rows="4" placeholder="Adicione quaisquer outras observações relevantes sobre o paciente."></textarea>
+                    </div>
+                    
+                    <div class="botoes-formulario" style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                        <button type="button" class="botao-secundario" onclick="fecharModalProntuario()">Cancelar</button>
+                        <button type="submit" class="botao-primario">Salvar Prontuário</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Estilos para o modal de prontuário */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow: auto;
+        }
+        
+        .modal-conteudo {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 25px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 900px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .modal-cabecalho {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .fechar {
+            color: #777;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .fechar:hover {
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #4a90e2;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .botao-primario, .botao-secundario {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .botao-primario {
+            background-color: #4a90e2;
+            color: white;
+        }
+        
+        .botao-primario:hover {
+            background-color: #3a7bc8;
+        }
+        
+        .botao-secundario {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        
+        .botao-secundario:hover {
+            background-color: #e0e0e0;
+        }
+        
+        /* Estilos para o histórico de receitas */
+        .filtros-receitas {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        
+        .filtros-receitas .grupo-formulario {
+            margin-bottom: 0;
+        }
+        
+        .filtros-receitas input[type="text"],
+        .filtros-receitas input[type="date"] {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .filtros-receitas button {
+            padding: 8px 15px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .filtros-receitas button:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .lista-receitas {
+            margin-top: 20px;
+        }
+        
+        .card-receita {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .cabecalho-receita {
+            background-color: #f8f9fa;
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .cabecalho-receita .data {
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .cabecalho-receita .paciente {
+            font-weight: 600;
+            color: #333;
+            flex-grow: 1;
+            margin: 0 15px;
+        }
+        
+        .cabecalho-receita .status {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+        
+        .status.ativa {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status.suspensa {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        
+        /* Estilos para a seção de exames */
+        .filtros-exames {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filtros-exames .grupo-formulario {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0;
+        }
+        
+        .filtros-exames label {
+            margin-bottom: 0;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .filtros-exames select {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background-color: #fff;
+            font-size: 14px;
+            color: #495057;
+            cursor: pointer;
+        }
+        
+        .filtros-exames select:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .exame-item {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .exame-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .cabecalho-exame {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .cabecalho-exame .data,
+        .cabecalho-exame .horario {
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+        
+        .status-badge.agendado {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status-badge.realizado {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .status-badge.cancelado {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .info-exame p {
+            margin: 5px 0;
+            color: #6c757d;
+        }
+        
+        .info-exame p strong {
+            color: #343a40;
+            font-weight: 500;
+        }
+        
+        .btn-finalizar {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-finalizar:hover {
+            background-color: #218838;
+        }
+        
+        .btn-finalizar:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .status.finalizada {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .conteudo-receita {
+            padding: 15px;
+        }
+        
+        .conteudo-receita p {
+            margin: 8px 0;
+            color: #444;
+            line-height: 1.5;
+        }
+        
+        .conteudo-receita hr {
+            border: none;
+            border-top: 1px solid #eee;
+            margin: 15px 0;
+        }
+        
+        .acoes-receita {
+            padding: 12px 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            background-color: #fafafa;
+        }
+        
+        .acoes-receita button {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .acoes-receita button:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .acoes-receita button i {
+            font-size: 14px;
+        }
+        
+        .sem-registros {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .sem-registros i {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+        
+        .sem-registros p {
+            margin: 0;
+            font-size: 16px;
+        }
+        
+        .paginacao-receitas {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 10px 0;
+        }
+        
+        .paginacao-receitas .info-paginacao {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .paginacao-receitas .controles-paginacao {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .paginacao-receitas button {
+            padding: 5px 12px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .paginacao-receitas button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .paginacao-receitas button:hover:not(:disabled) {
+            background-color: #f5f5f5;
+        }
+        
+        /* Estilos para o cabeçalho da seção */
+        .cabecalho-secao {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .cabecalho-secao h3 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #333;
+        }
+        
+        .cabecalho-secao h3 i {
+            color: #4a90e2;
+        }
+        
+        .botao-icone {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .botao-icone:hover {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        
+        .botao-icone i {
+            font-size: 16px;
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        /* Animação de rotação para o ícone de recarregar */
+        .fa-spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        function alternarMenu() {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            menuOpcoes.classList.toggle('active');
+        }
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(event) {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            const iconeHamburguer = document.querySelector('.icone-hamburguer');
+            
+            if (!iconeHamburguer.contains(event.target) && !menuOpcoes.contains(event.target)) {
+                menuOpcoes.classList.remove('active');
+            }
+        });
+
+        function marcarRealizada(idConsulta) {
+            if (confirm('Deseja marcar esta consulta como realizada?')) {
+                fetch(`/api/consultas/${idConsulta}/marcar_realizada`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao marcar consulta como realizada.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.mensagem);
+
+                    // Remover a consulta do painel
+                    const consultaCard = document.querySelector(`.card-consulta[data-id="${idConsulta}"]`);
+                    if (consultaCard) {
+                        consultaCard.remove();
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao marcar consulta como realizada:', error);
+                    alert('Erro ao marcar consulta como realizada.');
+                });
+            }
+        }
+
+        function verDetalhes(idConsulta) {
+          
+            alert('Detalhes da consulta ' + idConsulta);
+        }
+
+        // Atualizar lista de consultas quando os filtros mudarem
+        const periodoFiltro = document.getElementById('periodo');
+        const statusFiltro = document.getElementById('status');
+        let consultasAtuais = []; // Armazenará as consultas atuais para filtragem
+        
+        // Função para aplicar os filtros atuais
+        function aplicarFiltros() {
+            if (!consultasAtuais || consultasAtuais.length === 0) {
+                console.log('Nenhuma consulta para filtrar');
+                document.querySelector('.lista-consultas .grade-consultas').innerHTML = '<p>Nenhuma consulta encontrada.</p>';
+                return;
+            }
+            
+            const periodo = periodoFiltro ? periodoFiltro.value : 'semana';
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            
+            console.log('Aplicando filtros. Período:', periodo, 'Total de consultas:', consultasAtuais.length);
+            
+            const consultasFiltradas = consultasAtuais.filter(consulta => {
+                try {
+                    const dataConsulta = new Date(consulta.data_consulta);
+                    
+                    // Aplicar filtro de período
+                    if (periodo === 'hoje') {
+                        const amanha = new Date(hoje);
+                        amanha.setDate(amanha.getDate() + 1);
+                        return dataConsulta >= hoje && dataConsulta < amanha;
+                    } else if (periodo === 'semana') {
+                        const fimDaSemana = new Date(hoje);
+                        fimDaSemana.setDate(fimDaSemana.getDate() + 7);
+                        return dataConsulta >= hoje && dataConsulta < fimDaSemana;
+                    } else if (periodo === 'mes') {
+                        const fimDoMes = new Date(hoje);
+                        fimDoMes.setMonth(fimDoMes.getMonth() + 1);
+                        return dataConsulta >= hoje && dataConsulta < fimDoMes;
+                    }
+                    return true; // para 'todos' ou qualquer outro valor
+                } catch (e) {
+                    console.error('Erro ao processar consulta:', consulta, e);
+                    return false;
+                }
+            });
+            
+            console.log('Consultas após filtro de período:', consultasFiltradas.length);
+            
+            // Filtrar apenas consultas agendadas ou em andamento
+            const consultasAtivas = consultasFiltradas.filter(consulta => {
+                const status = (consulta.status || '').toLowerCase().trim();
+                return ['agendado', 'em andamento', 'emandamento'].includes(status);
+            });
+            
+            console.log('Consultas ativas:', consultasAtivas.length);
+            
+            // Ordenar por data e hora
+            consultasAtivas.sort((a, b) => {
+                try {
+                    const dataA = new Date(`${a.data_consulta} ${a.horario}`);
+                    const dataB = new Date(`${b.data_consulta} ${b.horario}`);
+                    return dataA - dataB;
+                } catch (e) {
+                    console.error('Erro ao ordenar consultas:', e);
+                    return 0;
+                }
+            });
+            
+            // Exibir as consultas filtradas
+            exibirConsultas(consultasAtivas);
+        }
+        
+        // Função para exibir as consultas na tela
+        function exibirConsultas(consultas) {
+            const listaConsultas = document.querySelector('.lista-consultas .grade-consultas');
+            if (!listaConsultas) {
+                console.error('Elemento .lista-consultas .grade-consultas não encontrado');
+                return;
+            }
+            
+            listaConsultas.innerHTML = '';
+            
+            if (!consultas || consultas.length === 0) {
+                listaConsultas.innerHTML = '<p>Nenhuma consulta encontrada com os filtros atuais.</p>';
+                return;
+            }
+            
+            console.log('Exibindo', consultas.length, 'consultas');
+            
+            consultas.forEach(consulta => {
+                try {
+                    const status = (consulta.status || 'agendado').toLowerCase().trim();
+                    const jaIniciada = consulta.inicio_consulta !== null && consulta.inicio_consulta !== undefined;
+                    const jaEncerrada = consulta.fim_consulta !== null && consulta.fim_consulta !== undefined;
+                    let estaAgendada = status === 'agendado' && !jaIniciada && !jaEncerrada;
+                    let estaEmAndamento = (status === 'em andamento' || status === 'emandamento' || jaIniciada) && !jaEncerrada;
+                
+                    let statusDisplay = consulta.status || 'Agendado';
+                    let statusLower = statusDisplay.toLowerCase().trim();
+                    
+                    // Ajustar status para exibição
+                    if (statusLower === 'em andamento' || statusLower === 'emandamento') {
+                        statusDisplay = 'Em Andamento';
+                        statusLower = 'em andamento';
+                    } else if (statusLower === 'agendado') {
+                        statusDisplay = 'Agendado';
+                    } else if (statusLower === 'concluído' || statusLower === 'concluido') {
+                        statusDisplay = 'Concluído';
+                    } else if (statusLower === 'cancelado') {
+                        statusDisplay = 'Cancelado';
+                    }
+                
+                    const statusClass = statusLower.replace(' ', '-');
+                    const podeIniciar = statusLower === 'agendado';
+                    const podeEncerrar = statusLower === 'em andamento' || statusLower === 'emandamento';
+                    
+                    // Formatar datas
+                    let dataConsulta = 'Data não disponível';
+                    let horarioConsulta = consulta.horario || 'Horário não disponível';
+                    let inicioConsulta = '';
+                    let fimConsulta = '';
+                    
+                    try {
+                        if (consulta.data_consulta) {
+                            const data = new Date(consulta.data_consulta);
+                            if (!isNaN(data.getTime())) {
+                                dataConsulta = data.toLocaleDateString('pt-BR');
+                            }
+                        }
+                        
+                        if (consulta.inicio_consulta) {
+                            const inicio = new Date(consulta.inicio_consulta);
+                            if (!isNaN(inicio.getTime())) {
+                                inicioConsulta = inicio.toLocaleString('pt-BR');
+                            }
+                        }
+                        
+                        if (consulta.fim_consulta) {
+                            const fim = new Date(consulta.fim_consulta);
+                            if (!isNaN(fim.getTime())) {
+                                fimConsulta = fim.toLocaleString('pt-BR');
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Erro ao formatar datas:', e);
+                    }
+                    
+                    const consultaCard = document.createElement('div');
+                    consultaCard.classList.add('card-consulta');
+                    consultaCard.setAttribute('data-id', consulta.id);
+                    
+                    consultaCard.innerHTML = `
+                        <div class="cabecalho-consulta">
+                            <span class="data">${dataConsulta}</span>
+                            <span class="horario">${horarioConsulta}</span>
+                        </div>
+                        <div class="info-consulta">
+                            <p><strong>Paciente:</strong> ${consulta.nome_paciente || 'Não informado'}</p>
+                            <p><strong>Status:</strong> <span class="status ${statusClass}">${statusDisplay}</span></p>
+                            ${inicioConsulta ? `<p><strong>Início:</strong> ${inicioConsulta}</p>` : ''}
+                            ${fimConsulta ? `<p><strong>Fim:</strong> ${fimConsulta}</p>` : ''}
+                        </div>
+                        <div class="acoes-consulta">
+                            <button class="btn-iniciar ${podeIniciar ? '' : 'disabled'}" 
+                                    onclick="${podeIniciar ? `iniciarConsulta(${consulta.id}, this)` : 'return false;'}" 
+                                    ${podeIniciar ? '' : 'disabled'}>
+                                <i class="fas fa-play"></i> Iniciar Consulta
+                            </button>
+                            <button class="btn-encerrar ${podeEncerrar ? '' : 'disabled'}" 
+                                    onclick="${podeEncerrar ? `encerrarConsulta(${consulta.id}, this)` : 'return false;'}" 
+                                    ${podeEncerrar ? '' : 'disabled'}>
+                                <i class="fas fa-stop"></i> Encerrar Consulta
+                            </button>
+                        </div>
+                    `;
+                    
+                    listaConsultas.appendChild(consultaCard);
+                } catch (error) {
+                    console.error('Erro ao exibir consulta:', consulta, error);
+                }
+            });
+        }
+        
+        // Atualizar a função carregarConsultas para usar a nova função de exibição
+        const carregarConsultasOriginal = window.carregarConsultas;
+        window.carregarConsultas = async function(medicoId) {
+            try {
+                const consultas = await new Promise((resolve, reject) => {
+                    const originalThen = carregarConsultasOriginal(medicoId).then(consultas => {
+                        resolve(consultas);
+                        return consultas;
+                    }).catch(reject);
+                });
+                
+                // Armazena as consultas para filtragem
+                consultasAtuais = Array.isArray(consultas) ? consultas : [];
+                
+                // Aplica os filtros atuais
+                aplicarFiltros();
+                
+                return consultas;
+            } catch (error) {
+                console.error('Erro ao carregar consultas:', error);
+                throw error;
+            }
+        };
+        
+        // Adiciona os event listeners para os filtros
+        if (periodoFiltro) {
+            periodoFiltro.addEventListener('change', function() {
+                console.log('Filtro de período alterado:', this.value);
+                aplicarFiltros();
+            });
+        }
+
+        // Navegação entre seções
+        document.querySelectorAll('.menu-opcoes a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const secoes = document.querySelectorAll('.conteudo-secao');
+                const targetElement = document.getElementById(targetId);
+                
+                // Esconde todas as seções
+                secoes.forEach(secao => {
+                    secao.style.display = 'none';
+                });
+                
+                // Mostra apenas a seção alvo se ela existir
+                if (targetElement) {
+                    targetElement.style.display = 'block';
+                } else {
+                    console.error('Elemento não encontrado com o ID:', targetId);
+                }
+                
+                // Fecha o menu após selecionar uma opção
+                const menuOpcoes = document.getElementById('menu-opcoes');
+                if (menuOpcoes) {
+                    menuOpcoes.classList.remove('active');
+                }
+            });
+        });
+
+        function verHistoricoCompleto(idPaciente) {
+            // mostrar histórico completo do paciente
+            alert('Visualizando histórico completo do paciente ' + idPaciente);
+        }
+
+        // Variável global para armazenar o ID do paciente atual
+        let pacienteAtualId = null;
+        let medicoLogadoId = null;
+
+        // Função para abrir o modal de prontuário
+        function verProntuario(pacienteId, pacienteNome) {
+            console.log(`Abrindo prontuário para o paciente ID: ${pacienteId}`);
+            pacienteAtualId = pacienteId;
+            
+            try {
+                // Obter dados do médico logado do localStorage
+                const usuarioLogadoStr = localStorage.getItem('usuarioLogado');
+                if (!usuarioLogadoStr) {
+                    throw new Error('Usuário não está logado');
+                }
+                
+                const medicoLogado = JSON.parse(usuarioLogadoStr);
+                medicoLogadoId = medicoLogado.id;
+                
+                if (!medicoLogadoId) {
+                    throw new Error('ID do médico não encontrado');
+                }
+                
+                console.log('Dados do usuário logado:', medicoLogado);
+                
+                // Buscar os dados do prontuário
+                fetch(`/api/pacientes/${pacienteId}/prontuario`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erro ao carregar prontuário');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Preencher o formulário com os dados do prontuário
+                        document.getElementById('prontuarioPacienteNome').textContent = pacienteNome;
+                        document.getElementById('prontuarioPacienteId').value = pacienteId;
+                        document.getElementById('medicoId').value = medicoLogadoId;
+                        
+                        // Preencher os campos do formulário se existirem dados
+                        if (data.historico_medico !== undefined) {
+                            document.getElementById('historicoMedico').value = data.historico_medico || '';
+                            document.getElementById('historicoFamiliar').value = data.historico_familiar || '';
+                            document.getElementById('alergias').value = data.alergias || '';
+                            document.getElementById('medicamentos').value = data.medicamentos_uso_continuo || '';
+                            document.getElementById('observacoesProntuario').value = data.observacoes || '';
+                            
+                            // Atualizar informações de data e médico responsável
+                            const infoAtualizacao = document.getElementById('infoAtualizacao');
+                            if (data.ultima_atualizacao) {
+                                const dataAtualizacao = new Date(data.ultima_atualizacao);
+                                const dataFormatada = dataAtualizacao.toLocaleDateString('pt-BR');
+                                const horaFormatada = dataAtualizacao.toLocaleTimeString('pt-BR');
+                                
+                                infoAtualizacao.innerHTML = `
+                                    <p><strong>Última atualização:</strong> ${dataFormatada} às ${horaFormatada}</p>
+                                    ${data.medico_nome ? `<p><strong>Médico responsável:</strong> ${data.medico_nome} (${data.medico_especialidade || 'Sem especialidade'})</p>` : ''}
+                                `;
+                            } else {
+                                infoAtualizacao.innerHTML = '<p>Prontuário ainda não foi preenchido.</p>';
+                            }
+                        }
+                        
+                        // Exibir o modal
+                        document.getElementById('modalProntuario').style.display = 'block';
+                    })
+                    .catch(error => {
+                        console.error('Erro ao carregar prontuário:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro',
+                            text: error.message || 'Não foi possível carregar o prontuário do paciente.'
+                        });
+                    });
+            } catch (error) {
+                console.error('Erro ao abrir prontuário:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: error.message || 'Não foi possível abrir o prontuário.'
+                });
+            }
+        }
+        
+        // Função para salvar o prontuário
+        function salvarProntuario() {
+            const form = document.getElementById('formProntuario');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Validar campos obrigatórios
+            if (!data.historico_medico.trim() || !data.historico_familiar.trim() || 
+                !data.alergias.trim() || !data.medicamentos_uso_continuo.trim() || 
+                !data.observacoes.trim()) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atenção',
+                    text: 'Todos os campos são obrigatórios. Por favor, preencha todas as informações.'
+                });
+                return;
+            }
+            
+            // Mostrar loading
+            Swal.fire({
+                title: 'Salvando prontuário...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Enviar dados para a API
+            fetch(`/api/pacientes/${pacienteAtualId}/prontuario`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.erro || 'Erro ao salvar prontuário'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sucesso!',
+                    text: data.mensagem,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                // Atualizar as informações de data e médico responsável
+                if (data.prontuario) {
+                    const dataAtualizacao = new Date(data.prontuario.ultima_atualizacao);
+                    const dataFormatada = dataAtualizacao.toLocaleDateString('pt-BR');
+                    const horaFormatada = dataAtualizacao.toLocaleTimeString('pt-BR');
+                    
+                    document.getElementById('infoAtualizacao').innerHTML = `
+                        <p><strong>Última atualização:</strong> ${dataFormatada} às ${horaFormatada}</p>
+                        ${data.prontuario.medico_nome ? `<p><strong>Médico responsável:</strong> ${data.prontuario.medico_nome} (${data.prontuario.medico_especialidade || 'Sem especialidade'})</p>` : ''}
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao salvar prontuário:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: error.message || 'Não foi possível salvar o prontuário.'
+                });
+            });
+        }
+        
+        // Função para fechar o modal de prontuário
+        function fecharModalProntuario() {
+            document.getElementById('modalProntuario').style.display = 'none';
+        }
+        
+        // Fechar o modal ao clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalProntuario');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Variáveis para controle de paginação
+        let paginaAtual = 1;
+        const itensPorPagina = 10;
+        let pacientes = [];
+        let pacientesFiltrados = [];
+
+        // Função para carregar os pacientes do médico
+        async function carregarPacientes() {
+            try {
+                const medicoId = obterIdMedicoLogado();
+                console.log(`Buscando pacientes para o médico ID: ${medicoId}`);
+                
+                // Inicializa as variáveis de pacientes se não existirem
+                if (typeof window.pacientes === 'undefined') {
+                    window.pacientes = [];
+                }
+                if (typeof window.pacientesFiltrados === 'undefined') {
+                    window.pacientesFiltrados = [];
+                }
+                
+                // Fazer requisição para obter os pacientes do médico
+                const response = await fetch(`/api/medicos/${medicoId}/pacientes`);
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('Erro na resposta da API:', response.status, errorData);
+                    throw new Error(`Erro ao carregar pacientes: ${response.status} ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('Dados dos pacientes recebidos (bruto):', data);
+                
+                // Verifica se a resposta é um array
+                if (!Array.isArray(data)) {
+                    console.warn('A resposta da API não é um array. Convertendo para array.');
+                    window.pacientes = data.pacientes || [data] || [];
+                } else {
+                    window.pacientes = data;
+                }
+                
+                // Log detalhado da estrutura dos dados
+                if (window.pacientes.length > 0) {
+                    console.log('Estrutura do primeiro paciente:', JSON.stringify(window.pacientes[0], null, 2));
+                    console.log('Chaves do objeto paciente:', Object.keys(window.pacientes[0]));
+                }
+                
+                console.log('Pacientes processados:', window.pacientes);
+                
+                // Atualiza a lista de pacientes filtrados
+                window.pacientesFiltrados = [...window.pacientes];
+                
+                console.log('Pacientes filtrados:', window.pacientesFiltrados);
+                
+                atualizarTabelaPacientes();
+                
+            } catch (error) {
+                console.error('Erro ao carregar pacientes:', error);
+                
+                // Mostra mensagem de erro para o usuário
+                const errorMessage = error.message || 'Ocorreu um erro ao carregar a lista de pacientes';
+                alert(errorMessage);
+                
+                // Atualiza a tabela para mostrar mensagem de erro
+                const tbody = document.querySelector('#tabela-pacientes tbody');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="erro-carregamento">
+                                Erro ao carregar pacientes: ${errorMessage}
+                            </td>
+                        </tr>`;
+                }
+            }
+        }
+        
+        // Função para filtrar pacientes
+        function filtrarPacientes() {
+            const termoBusca = document.getElementById('busca-paciente').value.toLowerCase();
+            
+            if (!termoBusca) {
+                pacientesFiltrados = [...pacientes];
+            } else {
+                pacientesFiltrados = pacientes.filter(paciente => 
+                    paciente.nome.toLowerCase().includes(termoBusca) ||
+                    paciente.cpf.includes(termoBusca) ||
+                    paciente.id.toString().includes(termoBusca)
+                );
+            }
+            
+            paginaAtual = 1; // Resetar para a primeira página
+            atualizarTabelaPacientes();
+        }
+        
+        // Função para ordenar pacientes
+        function ordenarPacientes() {
+            console.log('Ordenando pacientes...');
+            const criterio = document.getElementById('ordenar-por').value;
+            
+            if (!window.pacientesFiltrados || window.pacientesFiltrados.length === 0) {
+                console.warn('Nenhum paciente para ordenar');
+                return;
+            }
+            
+            console.log('Critério de ordenação:', criterio);
+            
+            window.pacientesFiltrados.sort((a, b) => {
+                try {
+                    switch(criterio) {
+                        case 'nome':
+                            return (a.nome || '').localeCompare(b.nome || '');
+                        case 'nome-desc':
+                            return (b.nome || '').localeCompare(a.nome || '');
+                        case 'data-ultima-consulta':
+                            return new Date(b.ultima_consulta || 0).getTime() - new Date(a.ultima_consulta || 0).getTime();
+                        case 'data-ultima-consulta-asc':
+                            return new Date(a.ultima_consulta || 0).getTime() - new Date(b.ultima_consulta || 0).getTime();
+                        default:
+                            return 0;
+                    }
+                } catch (error) {
+                    console.error('Erro ao ordenar pacientes:', error);
+                    return 0;
+                }
+            });
+            
+            console.log('Pacientes ordenados:', window.pacientesFiltrados.length);
+            atualizarTabelaPacientes();
+        }
+        
+        // Função para atualizar a tabela de pacientes
+        function atualizarTabelaPacientes() {
+            console.log('Atualizando tabela de pacientes...');
+            
+            // Verifica se pacientesFiltrados está definido
+            if (typeof window.pacientesFiltrados === 'undefined') {
+                console.error('Erro: pacientesFiltrados não está definido');
+                window.pacientesFiltrados = [];
+            }
+            
+            console.log('Total de pacientes filtrados:', window.pacientesFiltrados.length);
+            
+            const inicio = (paginaAtual - 1) * itensPorPagina;
+            const fim = inicio + itensPorPagina;
+            const pacientesPagina = window.pacientesFiltrados.slice(inicio, fim);
+            
+            console.log('Pacientes a serem exibidos na página atual:', pacientesPagina.length);
+            
+            // Chama a função preencherTabelaPacientes com os dados já filtrados e paginados
+            preencherTabelaPacientes(pacientesPagina);
+            
+            // Atualizar informações de paginação apenas se os elementos existirem
+            try {
+                console.log('Atualizando controles de paginação...');
+                const inicioPaginaEl = document.getElementById('inicio-pagina');
+                const fimPaginaEl = document.getElementById('fim-pagina');
+                const totalPaginaEl = document.getElementById('total-pagina');
+                const totalPacientesEl = document.getElementById('total-pacientes');
+                const paginaAnteriorEl = document.getElementById('pagina-anterior');
+                const proximaPaginaEl = document.getElementById('proxima-pagina');
+                
+                console.log('Elementos de paginação:', {
+                    inicioPaginaEl: !!inicioPaginaEl,
+                    fimPaginaEl: !!fimPaginaEl,
+                    totalPaginaEl: !!totalPaginaEl,
+                    totalPacientesEl: !!totalPacientesEl,
+                    paginaAnteriorEl: !!paginaAnteriorEl,
+                    proximaPaginaEl: !!proximaPaginaEl
+                });
+                
+                if (inicioPaginaEl) inicioPaginaEl.textContent = window.pacientesFiltrados.length > 0 ? inicio + 1 : 0;
+                if (fimPaginaEl) fimPaginaEl.textContent = Math.min(fim, window.pacientesFiltrados.length);
+                if (totalPacientesEl) totalPacientesEl.textContent = window.pacientesFiltrados.length;
+                if (totalPaginaEl) totalPaginaEl.textContent = Math.ceil(window.pacientesFiltrados.length / itensPorPagina) || 1;
+                
+                // Atualizar estado dos botões de paginação
+                if (paginaAnteriorEl) paginaAnteriorEl.disabled = paginaAtual === 1;
+                if (proximaPaginaEl) proximaPaginaEl.disabled = fim >= window.pacientesFiltrados.length;
+                
+                // Atualizar número da página atual
+                const paginaAtualEl = document.getElementById('pagina-atual');
+                if (paginaAtualEl) paginaAtualEl.textContent = paginaAtual;
+                
+                console.log('Controles de paginação atualizados com sucesso');
+                
+            } catch (error) {
+                console.error('Erro ao atualizar controles de paginação:', error);
+            }
+        }
+        
+        // Função para mudar de página
+        function mudarPagina(direcao) {
+            const totalPaginas = Math.ceil(window.pacientesFiltrados.length / itensPorPagina);
+            
+            if (direcao === 'proxima' && paginaAtual < totalPaginas) {
+                console.log(`Indo para a próxima página: ${paginaAtual + 1}/${totalPaginas}`);
+                paginaAtual++;
+            } else if (direcao === 'anterior' && paginaAtual > 1) {
+                console.log(`Voltando para a página anterior: ${paginaAtual - 1}/${totalPaginas}`);
+                paginaAtual--;
+            } else {
+                console.log(`Navegação não permitida: ${direcao} (página ${paginaAtual} de ${totalPaginas})`);
+                return;
+            }
+            
+            console.log(`Atualizando tabela para a página ${paginaAtual}`);
+            atualizarTabelaPacientes();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Função para formatar data no formato DD/MM/YYYY
+        function formatarData(dataString) {
+            if (!dataString) return '--';
+            try {
+                const partes = dataString.split('-');
+                if (partes.length === 3) {
+                    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+                }
+                return dataString;
+            } catch (e) {
+                console.error('Erro ao formatar data:', e);
+                return dataString; 
+            }
+        }
+        
+        // Função auxiliar para formatar CPF
+        function formatarCPF(cpf) {
+            if (!cpf) return '';
+            return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        }
+        
+        // Funções de ação para os botões
+        function verDetalhesPaciente(pacienteId) {
+            // Implementar a visualização de detalhes do paciente
+            console.log('Visualizar detalhes do paciente:', pacienteId);
+            // Redirecionar para a página de detalhes ou abrir um modal
+        }
+        
+        function verConsultasPaciente(pacienteId) {
+            // Implementar a visualização das consultas do paciente
+            console.log('Ver consultas do paciente:', pacienteId);
+            // Redirecionar para a página de consultas ou abrir um modal
+        }
+        
+        function verExamesPaciente(pacienteId) {
+            // Implementar a visualização dos exames do paciente
+            console.log('Ver exames do paciente:', pacienteId);
+            // Redirecionar para a página de exames ou abrir um modal
+        }
+        
+        // Função para obter o ID do médico logado
+        function obterIdMedicoLogado() {
+            // Tenta obter os dados do usuário logado do localStorage
+            const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
+            console.log('Dados do usuário logado:', usuarioLogado);
+            
+            if (usuarioLogado && usuarioLogado.id && usuarioLogado.tipoUsuario === 'medico') {
+                return usuarioLogado.id;
+            }
+            
+            if (typeof usuarioLogado !== 'undefined' && usuarioLogado && usuarioLogado.tipo === 'medico') {
+                return usuarioLogado.id;
+            }
+            
+            if (usuarioLogado && usuarioLogado.id) {
+                return usuarioLogado.id;
+            }
+            
+            console.warn('ID do médico não encontrado. Usando valor padrão 1.');
+            return 1;
+        }
+        
+        // Funções para controlar o modal de histórico
+        function abrirModalHistorico(pacienteId, pacienteNome) {
+            document.getElementById('nome-paciente-historico').textContent = pacienteNome;
+            document.getElementById('modal-historico').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Impede rolagem da página
+            
+            // Carregar consultas e exames do paciente
+            carregarHistoricoConsultas(pacienteId);
+            carregarHistoricoExames(pacienteId);
+        }
+        
+        function fecharModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restaura rolagem da página
+        }
+        
+        function mudarAba(aba) {
+            // Esconde todos os conteúdos
+            document.querySelectorAll('.conteudo-aba').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Remove a classe ativa de todos os botões
+            document.querySelectorAll('.botao-aba').forEach(btn => {
+                btn.classList.remove('ativo');
+                btn.style.background = '#e0e0e0';
+                btn.style.color = '#333';
+            });
+            
+            // Mostra o conteúdo da aba selecionada e estiliza o botão
+            document.getElementById(`conteudo-${aba}`).style.display = 'block';
+            const btnAtivo = document.getElementById(`aba-${aba}`);
+            btnAtivo.classList.add('ativo');
+            btnAtivo.style.background = '#4a90e2';
+            btnAtivo.style.color = 'white';
+        }
+        
+        // Função para carregar o histórico de consultas
+        async function carregarHistoricoConsultas(pacienteId) {
+            try {
+                const response = await fetch(`/api/pacientes/${pacienteId}/consultas`);
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar consultas');
+                }
+                
+                const consultas = await response.json();
+                const corpoTabela = document.getElementById('corpo-tabela-consultas');
+                corpoTabela.innerHTML = '';
+                
+                if (consultas.length === 0) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = '<td colspan="6" style="text-align: center; padding: 20px;">Nenhuma consulta encontrada</td>';
+                    corpoTabela.appendChild(tr);
+                    return;
+                }
+                
+                consultas.forEach(consulta => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${consulta.data_consulta ? new Date(consulta.data_consulta).toLocaleDateString('pt-BR') : '-'}</td>
+                        <td>${consulta.horario || '-'}</td>
+                        <td>${consulta.tipo_consulta || '-'}</td>
+                        <td><span class="status ${consulta.status?.toLowerCase() || ''}">${consulta.status || '-'}</span></td>
+                        <td>${consulta.especialidade || '-'}</td>
+                        <td>
+                            <button onclick="verDetalhesConsulta(${consulta.id})" class="botao-icone" title="Ver detalhes">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    `;
+                    corpoTabela.appendChild(tr);
+                });
+                
+            } catch (error) {
+                console.error('Erro ao carregar consultas:', error);
+                alert('Erro ao carregar o histórico de consultas. Por favor, tente novamente.');
+            }
+        }
+        
+        // Função para carregar o histórico de exames
+        async function carregarHistoricoExames(pacienteId) {
+            try {
+                const response = await fetch(`/api/pacientes/${pacienteId}/exames`);
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar exames');
+                }
+                
+                const exames = await response.json();
+                const corpoTabela = document.getElementById('corpo-tabela-exames');
+                corpoTabela.innerHTML = '';
+                
+                if (exames.length === 0) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = '<td colspan="6" style="text-align: center; padding: 20px;">Nenhum exame encontrado</td>';
+                    corpoTabela.appendChild(tr);
+                    return;
+                }
+                
+                exames.forEach(exame => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${exame.data_exame ? new Date(exame.data_exame).toLocaleDateString('pt-BR') : '-'}</td>
+                        <td>${exame.horario || '-'}</td>
+                        <td>${exame.tipo_exame || '-'}</td>
+                        <td>${exame.especificacao || '-'}</td>
+                        <td><span class="status ${exame.status?.toLowerCase() || ''}">${exame.status || '-'}</span></td>
+                        <td>
+                            ${exame.resultado 
+                                ? `<a href="${exame.resultado}" target="_blank" class="botao-icone" title="Ver resultado">
+                                    <i class="fas fa-file-pdf"></i>
+                                  </a>`
+                                : 'N/A'}
+                        </td>
+                    `;
+                    corpoTabela.appendChild(tr);
+                });
+                
+            } catch (error) {
+                console.error('Erro ao carregar exames:', error);
+                alert('Erro ao carregar o histórico de exames. Por favor, tente novamente.');
+            }
+        }
+        
+        // Função para visualizar detalhes de uma consulta
+        function verDetalhesConsulta(consultaId) {
+            // Implemente a visualização detalhada da consulta
+            console.log('Visualizando detalhes da consulta:', consultaId);
+            // Pode abrir outro modal ou redirecionar para uma página de detalhes
+            alert(`Detalhes da consulta ${consultaId} serão exibidos aqui.`);
+        }
+        
+        // Inicializar a tabela de pacientes quando a página carregar
+        // Função para carregar pacientes no select de receitas
+        async function carregarPacientesReceita() {
+            console.log('Iniciando carregarPacientesReceita...');
+            try {
+                const selectPaciente = document.getElementById('paciente-receita');
+                console.log('Elemento selectPaciente encontrado?', !!selectPaciente);
+                if (!selectPaciente) {
+                    console.error('Elemento paciente-receita não encontrado no DOM');
+                    return;
+                }
+                
+                // Limpa o select, mantendo apenas a primeira opção
+                while (selectPaciente.options.length > 1) {
+                    selectPaciente.remove(1);
+                }
+                
+                // Busca os pacientes da API
+                console.log('Fazendo requisição para /api/relatorios/pacientes...');
+                const response = await fetch('/api/relatorios/pacientes');
+                console.log('Resposta recebida:', response.status, response.statusText);
+                
+                if (!response.ok) {
+                    throw new Error(`Erro ao carregar pacientes: ${response.status}`);
+                }
+                
+                const pacientes = await response.json();
+                console.log('Pacientes recebidos:', pacientes);
+                
+                // Adiciona cada paciente como uma opção no select (apenas o nome)
+                pacientes.forEach(paciente => {
+                    const option = document.createElement('option');
+                    option.value = paciente.id;
+                    option.textContent = paciente.nome; 
+                    selectPaciente.appendChild(option);
+                });
+                
+                console.log('Pacientes carregados com sucesso no select de receitas');
+            } catch (error) {
+                console.error('Erro ao carregar pacientes:', error);
+                alert('Não foi possível carregar a lista de pacientes. Por favor, tente novamente.');
+            }
+        }
+        
+        // Função para verificar se estamos na aba de receitas e carregar os pacientes
+        function verificarAbaReceita() {
+            const hash = window.location.hash;
+            console.log('Hash da URL:', hash);
+            
+            if (hash === '#receitas') {
+                console.log('Aba de receitas detectada, carregando pacientes...');
+                carregarPacientesReceita();
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página carregada, configurando eventos...');
+            
+            // Adiciona evento para carregar pacientes quando a aba de receitas for mostrada
+            const linkReceitas = document.querySelector('a[href="#receitas"]');
+            const secaoReceitas = document.getElementById('receitas');
+            const abaHistorico = document.querySelector('a[href="#historico-pacientes"]');
+            const secaoHistorico = document.getElementById('historico-pacientes');
+            
+            // Configura eventos para a aba de receitas
+            if (linkReceitas) {
+                linkReceitas.addEventListener('click', function() {
+                    console.log('Link de receitas clicado');
+                    // Pequeno atraso para garantir que a aba foi mostrada
+                    setTimeout(carregarPacientesReceita, 100);
+                });
+            } else {
+                console.error('Link da aba de receitas não encontrado');
+            }
+            
+            // Verifica se já estamos na aba de receitas ao carregar a página
+            verificarAbaReceita();
+            
+            // Adiciona um listener para mudanças no hash da URL
+            window.addEventListener('hashchange', verificarAbaReceita);
+            
+            // Inicializa a variável pacientes no escopo global
+            window.pacientes = window.pacientes || [];
+            
+            // Configura eventos para a aba de histórico de pacientes
+            if (abaHistorico && secaoHistorico) {
+                console.log('Elementos da aba de histórico encontrados');
+                
+                // Função para verificar se a aba está visível
+                function verificarVisibilidade() {
+                    if (secaoHistorico.offsetParent !== null) {
+                        console.log('Aba de histórico está visível');
+                        if (window.pacientes.length === 0) {
+                            console.log('Carregando pacientes...');
+                            carregarPacientes();
+                        } else {
+                            console.log('Pacientes já carregados, atualizando tabela...');
+                            atualizarTabelaPacientes();
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+                
+                // Adicionar evento de clique direto na aba
+                abaHistorico.addEventListener('click', function(e) {
+                    console.log('Aba de histórico clicada diretamente');
+                    setTimeout(verificarVisibilidade, 100);
+                });
+                
+                const verificarInterval = setInterval(function() {
+                    if (verificarVisibilidade()) {
+                        clearInterval(verificarInterval);
+                    }
+                }, 300);
+                
+                setTimeout(() => clearInterval(verificarInterval), 5000);
+                
+                if (window.location.hash === '#historico-pacientes') {
+                    console.log('Já está na aba de histórico, carregando pacientes...');
+                    carregarPacientes();
+                }
+            } else {
+                console.error('Elementos da aba de histórico não encontrados');
+            }
+            
+            // Configurar o evento de hashchange para detectar mudanças de aba
+            window.addEventListener('hashchange', function() {
+                if (window.location.hash === '#historico-pacientes') {
+                    console.log('Mudou para a aba de histórico via hashchange');
+                    if (window.pacientes && window.pacientes.length === 0) {
+                        carregarPacientes();
+                    } else {
+                        atualizarTabelaPacientes();
+                    }
+                }
+            });
+            
+            // Verificar se já está na aba de histórico ao carregar a página
+            if (window.location.hash === '#historico-pacientes') {
+                console.log('Página carregada diretamente na aba de histórico');
+                // Pequeno atraso para garantir que o DOM esteja pronto
+                setTimeout(() => carregarPacientes(), 100);
+            }
+        });
+
+        // Ordenação de pacientes
+        document.getElementById('ordenar-por').addEventListener('change', function(e) {
+      
+            console.log('Ordenando por:', e.target.value);
+        });
+
+        //// Variáveis para controle de paginação de receitas
+        let paginaAtualReceitas = 1;
+        const itensPorPaginaReceitas = 5;
+        let receitasFiltradas = [];
+        let termoBuscaReceita = '';
+        let dataFiltroReceita = '';
+
+        // Função para carregar as receitas do médico
+        async function carregarReceitas() {
+            try {
+                const medicoId = await obterIdMedicoLogado();
+                if (!medicoId) {
+                    console.error('ID do médico não encontrado');
+                    return;
+                }
+
+                const response = await fetch(`/api/receitas/medico/${medicoId}`);
+                const data = await response.json();
+                
+                if (data.erro) {
+                    console.error('Erro ao carregar receitas:', data.erro);
+                    return;
+                }
+
+                // Armazenar as receitas para filtragem
+                receitasFiltradas = data.receitas || [];
+                
+                // Aplicar filtros
+                aplicarFiltrosReceitas();
+                
+                // Atualizar a exibição
+                atualizarListaReceitas();
+                
+            } catch (error) {
+                console.error('Erro ao carregar receitas:', error);
+            }
+        }
+
+
+        // Função para aplicar filtros às receitas
+        function aplicarFiltrosReceitas() {
+            let filtradas = [...receitasFiltradas];
+            
+            // Aplicar filtro de busca
+            if (termoBuscaReceita) {
+                const termo = termoBuscaReceita.toLowerCase();
+                filtradas = filtradas.filter(receita => 
+                    receita.paciente_nome.toLowerCase().includes(termo) ||
+                    receita.medicamento.toLowerCase().includes(termo)
+                );
+            }
+            
+            // Aplicar filtro de data
+            if (dataFiltroReceita) {
+                const dataFiltro = new Date(dataFiltroReceita).toLocaleDateString('pt-BR');
+                filtradas = filtradas.filter(receita => {
+                    const dataReceita = new Date(receita.data_prescricao).toLocaleDateString('pt-BR');
+                    return dataReceita === dataFiltro;
+                });
+            }
+            
+            // Atualizar a lista filtrada
+            receitasFiltradas = filtradas;
+            
+            // Resetar para a primeira página
+            paginaAtualReceitas = 1;
+        }
+
+        // Função para atualizar a exibição da lista de receitas
+        function atualizarListaReceitas() {
+            const listaReceitas = document.querySelector('.lista-receitas');
+            if (!listaReceitas) return;
+            
+            // Calcular itens para a página atual
+            const inicio = (paginaAtualReceitas - 1) * itensPorPaginaReceitas;
+            const fim = inicio + itensPorPaginaReceitas;
+            const receitasPagina = receitasFiltradas.slice(inicio, fim);
+            
+            // Limpar a lista
+            listaReceitas.innerHTML = '';
+            
+            if (receitasPagina.length === 0) {
+                listaReceitas.innerHTML = `
+                    <div class="sem-registros">
+                        <i class="fas fa-inbox"></i>
+                        <p>Nenhuma receita encontrada</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Adicionar as receitas à lista
+            receitasPagina.forEach(receita => {
+                const dataFormatada = new Date(receita.data_prescricao).toLocaleDateString('pt-BR');
+                const cardReceita = document.createElement('div');
+                cardReceita.className = 'card-receita';
+                cardReceita.innerHTML = `
+                    <div class="cabecalho-receita">
+                        <span class="data">${dataFormatada}</span>
+                        <span class="paciente">${receita.paciente_nome}</span>
+                        <span class="status ${receita.status}">${receita.status}</span>
+                    </div>
+                    <div class="conteudo-receita">
+                        <p><strong>Medicamento:</strong> ${receita.medicamento}</p>
+                        <p><strong>Dosagem:</strong> ${receita.dosagem}</p>
+                        <p><strong>Frequência:</strong> ${receita.frequencia}</p>
+                        <p><strong>Duração:</strong> ${receita.duracao}</p>
+                        ${receita.observacoes ? `<p><strong>Observações:</strong> ${receita.observacoes}</p>` : ''}
+                    </div>
+                    <div class="acoes-receita">
+                        <button class="botao-secundario" onclick="visualizarReceita(${receita.id})">
+                            <i class="fas fa-eye"></i> Visualizar
+                        </button>
+                        <button class="botao-secundario" onclick="imprimirReceita(${receita.id})">
+                            <i class="fas fa-print"></i> Imprimir
+                        </button>
+                    </div>
+                `;
+                listaReceitas.appendChild(cardReceita);
+            });
+            
+            // Atualizar controles de paginação
+            atualizarControlesPaginacaoReceitas();
+        }
+        
+        // Função para atualizar os controles de paginação
+        function atualizarControlesPaginacaoReceitas() {
+            const totalPaginas = Math.ceil(receitasFiltradas.length / itensPorPaginaReceitas);
+            const paginacao = document.querySelector('.paginacao-receitas');
+            
+            if (!paginacao) return;
+            
+            // Atualizar contadores
+            const inicio = ((paginaAtualReceitas - 1) * itensPorPaginaReceitas) + 1;
+            const fim = Math.min(paginaAtualReceitas * itensPorPaginaReceitas, receitasFiltradas.length);
+            
+            paginacao.innerHTML = `
+                <div class="info-paginacao">
+                    Mostrando ${inicio} a ${fim} de ${receitasFiltradas.length} receitas
+                </div>
+                <div class="controles-paginacao">
+                    <button id="anterior-pagina-receitas" ${paginaAtualReceitas === 1 ? 'disabled' : ''} 
+                            onclick="mudarPaginaReceitas('anterior')">
+                        Anterior
+                    </button>
+                    <span id="pagina-atual-receitas">${paginaAtualReceitas}</span> / 
+                    <span id="total-paginas-receitas">${totalPaginas || 1}</span>
+                    <button id="proxima-pagina-receitas" ${paginaAtualReceitas >= totalPaginas ? 'disabled' : ''} 
+                            onclick="mudarPaginaReceitas('proxima')">
+                        Próxima
+                    </button>
+                </div>
+            `;
+        }
+        
+        // Função para mudar de página
+        function mudarPaginaReceitas(direcao) {
+            const totalPaginas = Math.ceil(receitasFiltradas.length / itensPorPaginaReceitas);
+            
+            if (direcao === 'anterior' && paginaAtualReceitas > 1) {
+                paginaAtualReceitas--;
+            } else if (direcao === 'proxima' && paginaAtualReceitas < totalPaginas) {
+                paginaAtualReceitas++;
+            }
+            
+            atualizarListaReceitas();
+        }
+        
+        // Função para buscar receitas
+        function buscarReceitas() {
+            const buscaInput = document.getElementById('busca-receita');
+            if (buscaInput) {
+                termoBuscaReceita = buscaInput.value.trim();
+                carregarReceitas();
+            }
+        }
+        
+        // Função para filtrar por data
+        function filtrarPorData() {
+            const dataInput = document.getElementById('filtro-data');
+            if (dataInput) {
+                dataFiltroReceita = dataInput.value;
+                carregarReceitas();
+            }
+        }
+        
+        // Função para limpar filtros
+        function limparFiltrosReceitas() {
+            termoBuscaReceita = '';
+            dataFiltroReceita = '';
+            const buscaInput = document.getElementById('busca-receita');
+            const dataInput = document.getElementById('filtro-data');
+            
+            if (buscaInput) buscaInput.value = '';
+            if (dataInput) dataInput.value = '';
+            
+            carregarReceitas();
+        }
+
+        // Funções para gerenciar receitas
+        async function visualizarReceita(id) {
+            try {
+                const receita = receitasFiltradas.find(r => r.id === id);
+                if (receita) {
+                    const dataFormatada = new Date(receita.data_prescricao).toLocaleDateString('pt-BR');
+                    
+                    // Usar SweetAlert2 para mostrar os detalhes da receita
+                    Swal.fire({
+                        title: `Receita #${receita.id}`,
+                        html: `
+                            <div style="text-align: left;">
+                                <p><strong>Data:</strong> ${dataFormatada}</p>
+                                <p><strong>Paciente:</strong> ${receita.paciente_nome}</p>
+                                <hr>
+                                <p><strong>Medicamento:</strong> ${receita.medicamento}</p>
+                                <p><strong>Dosagem:</strong> ${receita.dosagem}</p>
+                                <p><strong>Frequência:</strong> ${receita.frequencia}</p>
+                                <p><strong>Duração:</strong> ${receita.duracao}</p>
+                                ${receita.observacoes ? `<p><strong>Observações:</strong> ${receita.observacoes}</p>` : ''}
+                                <hr>
+                                <p><strong>Status:</strong> <span class="status ${receita.status}">${receita.status}</span></p>
+                            </div>
+                        `,
+                        icon: 'info',
+                        confirmButtonText: 'Fechar',
+                        showCancelButton: true,
+                        cancelButtonText: 'Imprimir',
+                        showCloseButton: true
+                    }).then((result) => {
+                        if (result.dismiss === Swal.DismissReason.cancel) {
+                            imprimirReceita(id);
+                        }
+                    });
+                } else {
+                    Swal.fire('Erro', 'Receita não encontrada', 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao visualizar receita:', error);
+                Swal.fire('Erro', 'Não foi possível carregar os dados da receita', 'error');
+            }
+        }
+
+        async function imprimirReceita(receitaId = null) {
+            let pacienteNome, medicamento, dosagem, frequencia, duracao, observacoes, dataPrescricao;
+            
+            // Obter informações do médico logado
+            const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
+            const nomeMedico = usuarioLogado.nome || 'Dr(a). Nome do Médico';
+            const crmMedico = usuarioLogado.crm || 'CRM/UF 12345';
+            const especialidadeMedico = usuarioLogado.especialidade || 'Clínico Geral';
+            
+            // Se recebeu um ID, usar os dados da receita já carregados
+            if (receitaId) {
+                const receita = receitasFiltradas.find(r => r.id === receitaId);
+                if (!receita) {
+                    console.error('Receita não encontrada no cache');
+                    Swal.fire('Erro', 'Receita não encontrada', 'error');
+                    return;
+                }
+                
+                pacienteNome = receita.paciente_nome;
+                medicamento = receita.medicamento;
+                dosagem = receita.dosagem;
+                frequencia = receita.frequencia;
+                duracao = receita.duracao;
+                observacoes = receita.observacoes || '';
+                dataPrescricao = new Date(receita.data_prescricao).toLocaleDateString('pt-BR');
+            } else {
+                const pacienteSelect = document.getElementById('paciente-receita');
+                pacienteNome = pacienteSelect.options[pacienteSelect.selectedIndex].text;
+                medicamento = document.getElementById('medicamento').value;
+                dosagem = document.getElementById('dosagem').value;
+                frequencia = document.getElementById('frequencia').value;
+                duracao = document.getElementById('duracao').value;
+                observacoes = document.getElementById('observacoes').value;
+                dataPrescricao = new Date().toLocaleDateString('pt-BR');
+                
+                // Validar se há dados para imprimir
+                if (!pacienteSelect.value || !medicamento || !dosagem || !frequencia || !duracao) {
+                    Swal.fire({
+                        title: 'Atenção',
+                        text: 'Preencha todos os campos obrigatórios antes de imprimir.',
+                        icon: 'warning',
+                        confirmButtonText: 'Entendi'
+                    });
+                    return;
+                }
+            }
+            
+            // Criar o conteúdo HTML para impressão
+            const conteudoImpressao = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Receita Médica</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
+                        .cabecalho { text-align: center; margin-bottom: 30px; }
+                        .cabecalho h1 { color: #2c3e50; margin-bottom: 5px; }
+                        .cabecalho p { margin: 5px 0; color: #555; }
+                        .dados-receita { margin: 30px 0; }
+                        .dados-receita p { margin: 10px 0; }
+                        .assinatura { margin-top: 50px; text-align: right; }
+                        .assinatura p { margin: 40px 0 0; border-top: 1px solid #000; display: inline-block; padding-top: 5px; }
+                        .data { text-align: right; margin-top: 30px; }
+                        .logo { text-align: center; margin-bottom: 20px; }
+                        .logo img { max-width: 200px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="logo">
+                        <img src="../IMG/logo1.0-sem-fundo.png" alt="Logo da Clínica">
+                    </div>
+                    <div class="cabecalho">
+                        <h1>Receita Médica</h1>
+                        <p>Clínica Vida e Saúde</p>
+                        <p>CNPJ: 12.345.678/0001-90 | ${crmMedico}</p>
+                        <p>${especialidadeMedico}</p>
+                    </div>
+                    
+                    <div class="dados-receita">
+                        <p><strong>Paciente:</strong> ${pacienteNome}</p>
+                        <p><strong>Data:</strong> ${dataPrescricao}</p>
+                        <p><strong>Medicamento:</strong> ${medicamento}</p>
+                        <p><strong>Dosagem:</strong> ${dosagem}</p>
+                        <p><strong>Frequência:</strong> ${frequencia}</p>
+                        <p><strong>Duração do Tratamento:</strong> ${duracao}</p>
+                        ${observacoes ? `<p><strong>Observações:</strong> ${observacoes}</p>` : ''}
+                    </div>
+                    
+                    <div class="assinatura">
+                        <p>_________________________________</p>
+                        <p>${nomeMedico}</p>
+                        <p>${crmMedico}</p>
+                    </div>
+                    
+                    <div class="data">
+                        <p>Belo Horizonte, ${dataPrescricao}</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            // Abrir uma nova janela para impressão
+            const janelaImpressao = window.open('', '_blank', 'width=800,height=900');
+            janelaImpressao.document.open();
+            janelaImpressao.document.write(conteudoImpressao);
+            janelaImpressao.document.close();
+            
+            // Aguardar o carregamento do conteúdo antes de imprimir
+            janelaImpressao.onload = function() {
+                setTimeout(function() {
+                    janelaImpressao.print();
+                    // janelaImpressao.close();
+                }, 500);
+            };
+        }
+        
+        // Adicionar evento de input para busca em tempo real
+        document.addEventListener('DOMContentLoaded', function() {
+            const buscaInput = document.getElementById('busca-receita');
+            const dataInput = document.getElementById('filtro-data');
+            const btnLimparFiltros = document.getElementById('btn-limpar-filtros');
+            
+            if (buscaInput) {
+                let timeoutId;
+                buscaInput.addEventListener('input', () => {
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => {
+                        buscarReceitas();
+                    }, 500);
+                });
+            }
+            
+            if (dataInput) {
+                dataInput.addEventListener('change', filtrarPorData);
+            }
+            
+            if (btnLimparFiltros) {
+                btnLimparFiltros.addEventListener('click', limparFiltrosReceitas);
+            }
+            
+            // Função para verificar se a aba de receitas está visível e carregar os dados
+            function verificarAbaReceitas() {
+                const secaoReceitas = document.getElementById('receitas');
+                if (secaoReceitas && secaoReceitas.style.display !== 'none') {
+                    carregarReceitas();
+                }
+            }
+            
+            // Carregar receitas quando a aba for mostrada
+            const abaReceitas = document.querySelector('a[href="#receitas"]');
+            if (abaReceitas) {
+                abaReceitas.addEventListener('click', function() {
+                    // Pequeno atraso para garantir que a aba foi mostrada
+                    setTimeout(verificarAbaReceitas, 100);
+                });
+                
+                // Verificar se a aba de receitas já está aberta ao carregar a página
+                const url = new URL(window.location.href);
+                if (url.hash === '#receitas') {
+                    setTimeout(verificarAbaReceitas, 300);
+                }
+            }
+            
+            // A função limparFiltrosReceitas já foi definida anteriormente e será usada aqui
+            
+            // Adicionar evento de clique para o botão de limpar filtros
+            const btnLimparFiltrosElement = document.getElementById('btn-limpar-filtros');
+            if (btnLimparFiltrosElement) {
+                btnLimparFiltrosElement.addEventListener('click', limparFiltrosReceitas);
+            }
+            
+            // Adicionar evento de clique para o botão de recarregar
+            const btnRecarregar = document.getElementById('btn-recargar-receitas');
+            if (btnRecarregar) {
+                btnRecarregar.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Evitar que o clique propague para elementos pais
+                    const icone = this.querySelector('i');
+                    
+                    icone.classList.add('fa-spin');
+                    
+                    carregarReceitas().finally(() => {
+                        setTimeout(() => {
+                            icone.classList.remove('fa-spin');
+                        }, 500);
+                    });
+                });
+            }
+        });
+
+        // Lidar com o envio do formulário de receita
+        document.getElementById('form-receita').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Obter o ID do médico logado
+            const medicoId = await obterIdMedicoLogado();
+            if (!medicoId) {
+                Swal.fire('Erro', 'Não foi possível identificar o médico', 'error');
+                return;
+            }
+            
+            const formData = new FormData(this);
+            const data = {
+                paciente_id: formData.get('paciente_id'),
+                medico_id: medicoId,
+                medicamento: formData.get('medicamento'),
+                dosagem: formData.get('dosagem'),
+                frequencia: formData.get('frequencia'),
+                duracao: formData.get('duracao'),
+                observacoes: formData.get('observacoes'),
+                status: 'ativa',
+                data_prescricao: new Date().toISOString()
+            };
+            
+            // Validar campos obrigatórios
+            if (!data.paciente_id || !data.medicamento || !data.dosagem || !data.frequencia || !data.duracao) {
+                Swal.fire('Atenção', 'Preencha todos os campos obrigatórios', 'warning');
+                return;
+            }
+            
+            // Mostrar loading
+            const btnSalvar = this.querySelector('button[type="submit"]');
+            const btnText = btnSalvar.innerHTML;
+            btnSalvar.disabled = true;
+            btnSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+            
+            try {
+                const response = await fetch('/api/receitas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    Swal.fire({
+                        title: 'Sucesso!',
+                        text: 'Receita cadastrada com sucesso!',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    
+                    // Limpar formulário
+                    this.reset();
+                    
+                    // Atualizar a lista de receitas
+                    await carregarReceitas();
+                    
+                } else {
+                    throw new Error(result.erro || 'Erro ao salvar receita');
+                }
+            } catch (error) {
+                console.error('Erro ao salvar receita:', error);
+                Swal.fire({
+                    title: 'Erro!',
+                    text: error.message || 'Ocorreu um erro ao salvar a receita',
+                    icon: 'error'
+                });
+            } finally {
+                // Restaurar botão
+                btnSalvar.disabled = false;
+                btnSalvar.innerHTML = btnText;
+            }
+        });
+
+        
+        
+        // Função para carregar a lista de pacientes no select
+        async function carregarPacientesSelect() {
+            try {
+                const selectPaciente = document.getElementById('paciente-receita');
+                if (!selectPaciente) return;
+                
+                // Limpar opções atuais, exceto a primeira
+                while (selectPaciente.options.length > 1) {
+                    selectPaciente.remove(1);
+                }
+                
+                // Obter o ID do médico logado
+                const medicoId = await obterIdMedicoLogado();
+                if (!medicoId) {
+                    console.error('ID do médico não encontrado');
+                    return;
+                }
+                
+                // Buscar pacientes do médico
+                const response = await fetch(`/api/medicos/${medicoId}/pacientes`);
+                const data = await response.json();
+                
+                if (data.erro) {
+                    throw new Error(data.erro);
+                }
+                
+                const pacientes = Array.isArray(data) ? data : (data.pacientes || []);
+                
+                if (pacientes.length === 0) {
+                    console.log('Nenhum paciente encontrado para este médico');
+                    const option = document.createElement('option');
+                    option.value = '';
+                    option.textContent = 'Nenhum paciente encontrado';
+                    option.disabled = true;
+                    option.selected = true;
+                    selectPaciente.appendChild(option);
+                    return;
+                }
+                
+                // Adicionar pacientes ao select
+                pacientes.forEach(paciente => {
+                    const option = document.createElement('option');
+                    option.value = paciente.id;
+                    // Mostrar apenas o nome do paciente, sem o CPF
+                    option.textContent = paciente.nome || 'Paciente sem nome';
+                    selectPaciente.appendChild(option);
+                });
+                
+            } catch (error) {
+                console.error('Erro ao carregar pacientes:', error);
+                Swal.fire({
+                    title: 'Erro',
+                    text: 'Não foi possível carregar a lista de pacientes',
+                    icon: 'error'
+                });
+            }
+        }
+        
+        // Inicializar o formulário de receita
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Configurar evento para a aba de exames
+            const abaExames = document.querySelector('a[href="#exames"]');
+            if (abaExames) {
+                abaExames.addEventListener('click', async function(e) {
+                    // Pequeno atraso para garantir que a aba foi mostrada
+                    setTimeout(async () => {
+                        const medicoId = await obterIdMedicoLogado();
+                        if (medicoId) {
+                            await carregarExames(medicoId);
+                        } else {
+                            console.error('ID do médico não encontrado');
+                        }
+                    }, 100);
+                });
+            }
+            // Carregar pacientes no select quando a aba de receitas for aberta
+            const abaReceitas = document.querySelector('a[href="#receitas"]');
+            if (abaReceitas) {
+                abaReceitas.addEventListener('click', carregarPacientesSelect);
+            }
+            
+            // Se a página for carregada diretamente na aba de receitas
+            if (window.location.hash === '#receitas') {
+                carregarPacientesSelect();
+            }
+        });
+
+        async function finalizarExame(exameId, buttonElement) {
+            try {
+                const confirmResult = await Swal.fire({
+                    title: 'Confirmar',
+                    text: 'Deseja marcar este exame como realizado?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sim, marcar como realizado',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d'
+                });
+
+                if (!confirmResult.isConfirmed) {
+                    return;
+                }
+
+                // Mostrar loading no botão
+                const originalButtonText = buttonElement ? buttonElement.innerHTML : '';
+                if (buttonElement) {
+                    buttonElement.disabled = true;
+                    buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+                }
+
+                const response = await fetch(`/api/exames/${exameId}/finalizar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({})
+                });
+
+                if (!response.ok) {
+                    const erro = await response.json().catch(() => ({}));
+                    throw new Error(erro.mensagem || 'Erro ao finalizar exame.');
+                }
+
+
+                // Atualiza o status do exame na interface
+                const exameItem = document.querySelector(`.exame-item[data-id="${exameId}"]`);
+                if (exameItem) {
+                    // Atualiza o status no atributo data-status
+                    exameItem.setAttribute('data-status', 'realizado');
+                    
+                    // Atualiza o badge de status
+                    const statusBadge = exameItem.querySelector('.status-badge');
+                    if (statusBadge) {
+                        statusBadge.textContent = 'Realizado';
+                        statusBadge.className = 'status-badge realizado';
+                    }
+                    
+                    // Remove o botão de finalizar
+                    if (buttonElement) {
+                        buttonElement.remove();
+                    } else {
+                        const btnFinalizar = exameItem.querySelector('.btn-finalizar');
+                        if (btnFinalizar) {
+                            btnFinalizar.remove();
+                        }
+                    }
+                }
+
+                // Mostrar mensagem de sucesso
+                await Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Exame marcado como realizado com sucesso!',
+                    icon: 'success',
+                    confirmButtonColor: '#28a745'
+                });
+
+            } catch (error) {
+                console.error('Erro ao finalizar exame:', error);
+                
+                // Reverter estado do botão em caso de erro
+                if (buttonElement) {
+                    buttonElement.disabled = false;
+                    buttonElement.innerHTML = originalButtonText;
+                }
+                
+                // Mostrar mensagem de erro
+                await Swal.fire({
+                    title: 'Erro',
+                    text: error.message || 'Erro ao finalizar exame. Por favor, tente novamente.',
+                    icon: 'error',
+                    confirmButtonColor: '#dc3545'
+                });
+            }
+        }
+
+
+        function sair() {
+            // Limpar os dados do localStorage
+            localStorage.removeItem('usuarioLogado');
+            localStorage.removeItem('tipoUsuario');
+
+            // Redirecionar para a página de login
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        console.log('Iniciando carregamento da página do profissional...');
+        
+        // Verificar se o usuário está logado
+        const usuarioLogadoStr = localStorage.getItem('usuarioLogado');
+        const tipoUsuario = localStorage.getItem('tipoUsuario');
+        
+        console.log('Dados do localStorage - usuarioLogado:', usuarioLogadoStr);
+        console.log('Dados do localStorage - tipoUsuario:', tipoUsuario);
+
+        if (!usuarioLogadoStr || tipoUsuario !== 'medico') {
+            console.error('Acesso não autorizado - redirecionando para login');
+            alert('Acesso não autorizado. Por favor, faça login novamente.');
+            window.location.href = 'login.html'; 
+            return;
+        }
+
+        // Tentar fazer parse do usuário logado
+        let medicoLogado;
+        try {
+            medicoLogado = JSON.parse(usuarioLogadoStr);
+            console.log('Usuário logado (parseado):', medicoLogado);
+        } catch (parseError) {
+            console.error('Erro ao fazer parse do usuário logado:', parseError);
+            throw new Error('Erro ao ler os dados da sessão. Por favor, faça login novamente.');
+        }
+
+        const medicoId = medicoLogado && medicoLogado.id ? parseInt(medicoLogado.id) : null;
+        
+        if (!medicoId) {
+            throw new Error('ID do médico não encontrado. Por favor, faça login novamente.');
+        }
+
+        console.log(`Buscando dados do médico com ID: ${medicoId}`); 
+
+        // Buscar dados detalhados do médico
+        console.log('Fazendo requisição para:', `/api/medicos/${medicoId}`);
+        const response = await fetch(`/api/medicos/${medicoId}`);
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Erro na resposta da API:', response.status, errorText);
+            throw new Error('Erro ao buscar dados do médico. Status: ' + response.status);
+        }
+
+        const medico = await response.json();
+        console.log('Dados do médico recebidos:', medico); 
+
+        // Exibir informações do médico na interface
+        try {
+            const nomeElement = document.querySelector('.info-profissional .card-info h3');
+            const especialidadeElement = document.querySelector('.info-profissional .card-info p:nth-child(2)');
+            const crmElement = document.querySelector('.info-profissional .card-info p:nth-child(3)');
+            
+            if (nomeElement) nomeElement.textContent = medico.nome || 'Nome não disponível';
+            if (especialidadeElement) especialidadeElement.textContent = `Especialidade: ${medico.especialidade || 'Não informada'}`;
+            if (crmElement) crmElement.textContent = `CRM: ${medico.crm || 'Não informado'}`;
+            
+            // Adicionar o ID do médico ao elemento para acesso posterior
+            const infoProfissional = document.querySelector('.info-profissional');
+            if (infoProfissional) {
+                infoProfissional.dataset.medicoId = medicoId;
+            }
+        } catch (uiError) {
+            console.error('Erro ao atualizar a interface do usuário:', uiError);
+            // Continuar mesmo com erro na UI
+        }
+
+        // Carregar dados relacionados ao médico
+        console.log('Carregando consultas para o médico ID:', medicoId);
+        await carregarConsultas(medicoId);
+        
+        console.log('Carregando exames para o médico ID:', medicoId);
+        await carregarExames(medicoId); 
+
+    } catch (error) {
+        console.error('Erro ao carregar dados do médico:', error);
+        alert('Erro ao carregar dados do médico: ' + (error.message || 'Erro desconhecido'));
+        // Opcional: redirecionar para login em caso de erro grave
+        // window.location.href = 'login.html';
+    }
+});
+
+        async function carregarConsultas(medicoId) {
+            // Verificar se o ID do médico é válido
+            if (!medicoId) {
+                console.error('ID do médico não fornecido');
+                const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
+                if (usuarioLogado && usuarioLogado.id) {
+                    medicoId = usuarioLogado.id;
+                    console.warn('Usando ID do médico do localStorage:', medicoId);
+                } else {
+                    throw new Error('Não foi possível identificar o médico. Por favor, faça login novamente.');
+                }
+            }
+
+            try {
+                console.log('Carregando consultas para o médico ID:', medicoId);
+                const response = await fetch(`/api/medicos/${medicoId}/consultas`);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Erro na resposta da API:', response.status, errorText);
+                    
+                    if (response.status === 404) {
+                        console.warn('Médico não encontrado, tentando obter ID do usuário logado...');
+                        const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
+                        if (usuarioLogado && usuarioLogado.id) {
+                            return await carregarConsultas(usuarioLogado.id);
+                        }
+                    }
+                    
+                    throw new Error('Erro ao buscar consultas do médico. Status: ' + response.status);
+                }
+
+                const consultas = await response.json();
+                console.log('Dados das consultas recebidos:', JSON.parse(JSON.stringify(consultas)));
+                const listaConsultas = document.querySelector('.lista-consultas .grade-consultas');
+                listaConsultas.innerHTML = ''; 
+
+                // Filtrar consultas que não estão canceladas nem concluídas
+                // Armazenar as consultas na variável global
+                consultasAtuais = consultas;
+                
+                // Aplicar os filtros atuais
+                aplicarFiltros();
+                return;
+
+                consultasAgendadas.forEach(consulta => {
+                    const consultaCard = document.createElement('div');
+                    consultaCard.classList.add('card-consulta');
+                    consultaCard.setAttribute('data-id', consulta.id);
+                    // Verificar o status da consulta
+                    const status = (consulta.status || '').toLowerCase();
+                    const jaIniciada = consulta.inicio_consulta !== null && consulta.inicio_consulta !== undefined;
+                    const jaEncerrada = consulta.fim_consulta !== null && consulta.fim_consulta !== undefined;
+                    const estaAgendada = status === 'agendado' && !jaIniciada && !jaEncerrada;
+                    const estaEmAndamento = (status === 'em andamento' || jaIniciada) && !jaEncerrada;
+                    
+                    console.log(`Consulta ${consulta.id}:`, {
+                        status,
+                        inicio_consulta: consulta.inicio_consulta,
+                        fim_consulta: consulta.fim_consulta,
+                        jaIniciada,
+                        jaEncerrada,
+                        estaAgendada,
+                        estaEmAndamento
+                    });
+                    
+                    // Normalizar o status
+                    let statusDisplay = consulta.status || 'Agendado';
+                    let statusLower = statusDisplay.toLowerCase().trim();
+                    
+                    // Ajustar status para exibição
+                    if (statusLower === 'em andamento' || statusLower === 'emandamento') {
+                        statusDisplay = 'Em Andamento';
+                        statusLower = 'em andamento';
+                    } else if (statusLower === 'agendado') {
+                        statusDisplay = 'Agendado';
+                    } else if (statusLower === 'concluído' || statusLower === 'concluido') {
+                        statusDisplay = 'Concluído';
+                    } else if (statusLower === 'cancelado') {
+                        statusDisplay = 'Cancelado';
+                    }
+                    
+                    const statusClass = statusLower.replace(' ', '-');
+                    const podeIniciar = statusLower === 'agendado';
+                    const podeEncerrar = statusLower === 'em andamento' || statusLower === 'emandamento';
+                    
+                    // Formatar datas
+                    let dataFormatada = 'Data não disponível';
+                    let horarioFormatado = consulta.horario || 'Horário não disponível';
+                    let inicioFormatado = '';
+                    let fimFormatado = '';
+                    
+                    try {
+                        if (consulta.data_consulta) {
+                            const data = new Date(consulta.data_consulta);
+                            if (!isNaN(data.getTime())) {
+                                dataFormatada = data.toLocaleDateString('pt-BR');
+                            }
+                        }
+                        
+                        if (consulta.inicio_consulta) {
+                            const inicio = new Date(consulta.inicio_consulta);
+                            if (!isNaN(inicio.getTime())) {
+                                inicioFormatado = inicio.toLocaleString('pt-BR');
+                            }
+                        }
+                        
+                        if (consulta.fim_consulta) {
+                            const fim = new Date(consulta.fim_consulta);
+                            if (!isNaN(fim.getTime())) {
+                                fimFormatado = fim.toLocaleString('pt-BR');
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Erro ao formatar datas:', e);
+                    }
+                    
+                    consultaCard.innerHTML = `
+                        <div class="cabecalho-consulta">
+                            <span class="data">${dataFormatada}</span>
+                            <span class="horario">${horarioFormatado}</span>
+                        </div>
+                        <div class="info-consulta">
+                            <p><strong>Paciente:</strong> ${consulta.nome_paciente || 'Não informado'}</p>
+                            <p><strong>Status:</strong> <span class="status ${statusClass}">${statusDisplay}</span></p>
+                            ${inicioFormatado ? `<p><strong>Início:</strong> ${inicioFormatado}</p>` : ''}
+                            ${fimFormatado ? `<p><strong>Fim:</strong> ${fimFormatado}</p>` : ''}
+                        </div>
+                        <div class="acoes-consulta">
+                            <button class="btn-iniciar ${podeIniciar ? '' : 'disabled'}" 
+                                    onclick="${podeIniciar ? `iniciarConsulta(${consulta.id}, this)` : 'return false;'}" 
+                                    ${podeIniciar ? '' : 'disabled'}>
+                                <i class="fas fa-play"></i> Iniciar Consulta
+                            </button>
+                            <button class="btn-encerrar ${podeEncerrar ? '' : 'disabled'}" 
+                                    onclick="${podeEncerrar ? `encerrarConsulta(${consulta.id}, this)` : 'return false;'}" 
+                                    ${podeEncerrar ? '' : 'disabled'}>
+                                <i class="fas fa-stop"></i> Encerrar Consulta
+                            </button>
+                        </div>
+                    `;
+
+                    listaConsultas.appendChild(consultaCard);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar consultas:', error);
+                alert('Erro ao carregar consultas.');
+            }
+        }
+
+
+
+        async function iniciarConsulta(consultaId, botao) {
+            const btnOriginalHTML = botao.innerHTML;
+            
+            try {
+                botao.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando...';
+                botao.disabled = true;
+
+                const response = await fetch(`/api/consultas/${consultaId}/iniciar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    const erro = await response.json();
+                    throw new Error(erro.mensagem || 'Erro ao iniciar consulta.');
+                }
+
+                const resultado = await response.json();
+                console.log('Resposta ao iniciar consulta:', resultado);
+                
+                // Obter o ID do médico do localStorage
+                let medicoId = null;
+                try {
+                    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
+                    if (usuarioLogado && usuarioLogado.id) {
+                        medicoId = usuarioLogado.id;
+                        console.log('ID do médico obtido do localStorage:', medicoId);
+                    } else {
+                        console.warn('Usuário não está logado ou ID não encontrado');
+                    }
+                } catch (error) {
+                    console.error('Erro ao obter usuário do localStorage:', error);
+                }
+                
+                if (medicoId) {
+                    await carregarConsultas(medicoId);
+                } else {
+                    console.warn('ID do médico não encontrado, atualizando apenas localmente');
+                    // Atualização local como fallback
+                    const card = botao.closest('.card-consulta');
+                    if (card) {
+                        // Atualizar status
+                        const statusElement = card.querySelector('.status');
+                        if (statusElement) {
+                            statusElement.textContent = 'Em Andamento';
+                            statusElement.className = 'status em-andamento';
+                        }
+                        
+                        // Atualizar botões
+                        botao.disabled = true;
+                        botao.classList.add('disabled');
+                        
+                        const btnEncerrar = card.querySelector('.btn-encerrar');
+                        if (btnEncerrar) {
+                            btnEncerrar.disabled = false;
+                            btnEncerrar.classList.remove('disabled');
+                        }
+                    }
+                }
+                
+                // Mostrar mensagem de sucesso
+                alert('Consulta iniciada com sucesso!');
+                
+            } catch (error) {
+                console.error('Erro ao iniciar consulta:', error);
+                alert('Erro ao iniciar consulta: ' + (error.message || 'Erro desconhecido'));
+                // Restaurar botão em caso de erro
+                botao.innerHTML = btnOriginalHTML;
+                botao.disabled = false;
+            }
+        }
+
+        async function encerrarConsulta(consultaId, botao) {
+            console.log(`[DEBUG] Encerrando consulta ID: ${consultaId}`);
+            
+            if (!confirm('Deseja encerrar esta consulta?')) {
+                return;
+            }
+            
+            const btn = botao;
+            const btnOriginalHTML = btn.innerHTML;
+            
+            try {
+                // Mostrar indicador de carregamento
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Encerrando...';
+                
+                const response = await fetch(`/api/consultas/${consultaId}/encerrar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) {
+                }
+
+                const resultado = await response.json();
+                console.log('Resposta do servidor ao encerrar consulta:', resultado);
+                
+                // Obter o ID do médico do localStorage
+                let medicoId = null;
+                try {
+                    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
+                    if (usuarioLogado && usuarioLogado.id) {
+                        medicoId = usuarioLogado.id;
+                        console.log('ID do médico obtido do localStorage:', medicoId);
+                    }
+                } catch (error) {
+                    console.error('Erro ao obter usuário do localStorage:', error);
+                }
+
+                if (medicoId) {
+                    await carregarConsultas(medicoId);
+                } else {
+                    console.warn('ID do médico não encontrado, atualizando apenas localmente');
+                    // Atualização local como fallback
+                    const card = botao.closest('.consulta-card') || botao.closest('.card-consulta');
+                    if (card) {
+                        // Atualizar status
+                        const statusElement = card.querySelector('.status');
+                        if (statusElement) {
+                            statusElement.textContent = 'Concluído';
+                            statusElement.className = 'status concluido';
+                        }
+                        
+                        // Atualizar botões
+                        btn.disabled = true;
+                        btn.classList.add('disabled');
+                        
+                        const btnIncerrar = card.querySelector('.btn-encerrar');
+                        if (btnIncerrar) {
+                            btnIncerrar.disabled = true;
+                            btnIncerrar.classList.add('disabled');
+                        }
+                        
+                        const btnIniciar = card.querySelector('.btn-iniciar');
+                        if (btnIniciar) {
+                            btnIniciar.disabled = true;
+                            btnIniciar.classList.add('disabled');
+                        }
+                    }
+                }
+                
+                // Mostrar mensagem de sucesso
+                alert('Consulta encerrada com sucesso!');
+                
+            } catch (error) {
+                console.error('Erro ao encerrar consulta:', error);
+                alert('Erro ao encerrar consulta: ' + (error.message || 'Erro desconhecido'));
+                btn.disabled = false;
+                btn.innerHTML = btnOriginalHTML;
+            } finally {
+                btn.innerHTML = btnOriginalHTML;
+            }
+        }
+
+        // Função para filtrar os exames com base no status selecionado
+        function filtrarExames() {
+            const status = document.getElementById('filtro-status-exame').value;
+            const itensExame = document.querySelectorAll('.exame-item');
+            
+            itensExame.forEach(item => {
+                const statusExame = item.getAttribute('data-status').toLowerCase();
+                if (status === 'todos' || statusExame === status) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Função para formatar a data no formato dd/mm/yyyy
+        function formatarData(dataString) {
+            if (!dataString) return '';
+            const data = new Date(dataString);
+            return data.toLocaleDateString('pt-BR');
+        }
+
+        // Função para formatar o horário
+        function formatarHorario(horarioString) {
+            if (!horarioString) return '';
+            // Se o horário já estiver no formato HH:MM, retorna sem alteração
+            if (/^\d{2}:\d{2}$/.test(horarioString)) {
+                return horarioString;
+            }
+            // Se for um objeto de tempo, converte para string
+            if (typeof horarioString === 'object' && horarioString.hours !== undefined) {
+                return `${String(horarioString.hours).padStart(2, '0')}:${String(horarioString.minutes).padStart(2, '0')}`;
+            }
+            return horarioString;
+        }
+
+        // Função para carregar os exames do médico
+        async function carregarExames(medicoId) {
+            try {
+                const response = await fetch(`/api/medicos/${medicoId}/exames`);
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar exames do médico.');
+                }
+
+                const exames = await response.json();
+                const listaExames = document.querySelector('.lista-exames');
+                listaExames.innerHTML = ''; // Limpa a lista antes de preencher
+
+                if (exames.length === 0) {
+                    listaExames.innerHTML = '<p>Nenhum exame encontrado para este médico.</p>';
+                    return;
+                }
+
+                exames.forEach(exame => {
+                    const statusLower = exame.status ? exame.status.toLowerCase() : '';
+                    const exameItem = document.createElement('div');
+                    exameItem.classList.add('exame-item');
+                    exameItem.setAttribute('data-id', exame.id);
+                    exameItem.setAttribute('data-status', statusLower);
+                    
+                    // Formatar data e horário
+                    const dataFormatada = formatarData(exame.data_exame);
+                    const horarioFormatado = formatarHorario(exame.horario);
+                    
+                    // Determinar a classe CSS com base no status
+                    let statusClass = '';
+                    if (statusLower.includes('agenda') || statusLower === 'agendado') {
+                        statusClass = 'agendado';
+                    } else if (statusLower.includes('reali') || statusLower === 'realizado') {
+                        statusClass = 'realizado';
+                    } else if (statusLower.includes('cancela') || statusLower === 'cancelado') {
+                        statusClass = 'cancelado';
+                    }
+                    
+                    exameItem.innerHTML = `
+    <div class="cabecalho-exame">
+        <span class="data">${dataFormatada}</span>
+        <span class="horario">${horarioFormatado}</span>
+        <span class="status-badge ${statusClass}">${exame.status || 'Agendado'}</span>
+    </div>
+    <div class="info-exame">
+        <p><strong>Paciente:</strong> ${exame.paciente || 'Não informado'}</p>
+        <p><strong>Tipo de Exame:</strong> ${exame.tipo_exame || 'Não especificado'}</p>
+    </div>
+    ${statusClass === 'agendado' ? `<button class="btn-finalizar" onclick="finalizarExame(${exame.id}, this)">Finalizar</button>` : ''}
+`;
+
+
+                    listaExames.appendChild(exameItem);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar exames:', error);
+                alert('Erro ao carregar exames.');
+            }
+        }
+    </script>
+</body>
+
+    </main>
+
+
+    <!-- Modal de Histórico de Paciente -->
+    <div id="modal-historico" class="modal">
+        <div class="modal-conteudo">
+            <div class="modal-cabecalho">
+                <h2>
+                    <i class="fas fa-history"></i>
+                    Histórico do Paciente: <span id="nome-paciente-historico"></span>
+                </h2>
+                <button class="botao-fechar" onclick="fecharModalHistorico()">&times;</button>
+            </div>
+            
+            <!-- Abas de navegação -->
+            <div class="abastyle">
+                <button class="botao-aba ativo" data-aba="consultas" onclick="mudarAba('consultas')">
+                    <i class="fas fa-calendar-alt"></i> Consultas
+                </button>
+                <button class="botao-aba" data-aba="exames" onclick="mudarAba('exames')">
+                    <i class="fas fa-file-medical"></i> Exames
+                </button>
+            </div>
+            
+            <!-- Conteúdo das abas -->
+            <div id="conteudo-consultas" class="conteudo-aba">
+                <div id="loading-consultas" class="loading" style="display: none; text-align: center; padding: 20px;">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p>Carregando consultas...</p>
+                </div>
+                
+                <div id="sem-consultas" style="display: none; text-align: center; padding: 40px 20px; color: #7f8c8d;">
+                    <i class="fas fa-calendar-times fa-3x" style="margin-bottom: 15px; opacity: 0.5;"></i>
+                    <p>Nenhuma consulta encontrada para este paciente.</p>
+                </div>
+                
+                <div class="tabela-container">
+                    <table id="tabela-consultas" class="tabela-dados" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Hora</th>
+                                <th>Tipo</th>
+                                <th>Médico</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- As linhas serão preenchidas via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="conteudo-exames" class="conteudo-aba" style="display: none;">
+                <div id="loading-exames" class="loading" style="display: none; text-align: center; padding: 20px;">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p>Carregando exames...</p>
+                </div>
+                
+                <div id="sem-exames" style="display: none; text-align: center; padding: 40px 20px; color: #7f8c8d;">
+                    <i class="fas fa-file-medical-alt fa-3x" style="margin-bottom: 15px; opacity: 0.5;"></i>
+                    <p>Nenhum exame encontrado para este paciente.</p>
+                </div>
+                
+                <div class="tabela-container">
+                    <table id="tabela-exames" class="tabela-dados" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Hora</th>
+                                <th>Tipo de Exame</th>
+                                <th>Especificação</th>
+                                <th>Status</th>
+                                <th>Resultado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- As linhas serão preenchidas via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="modal-rodape">
+                <button onclick="fecharModalHistorico()" class="botao-secundario">
+                    <i class="fas fa-times"></i> Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Prontuário Médico -->
+    <div id="modalProntuario" class="modal" style="display: none;">
+        <div class="modal-conteudo" style="max-width: 800px; width: 90%;">
+            <div class="modal-cabecalho">
+                <h2>Prontuário Médico</h2>
+                <span class="fechar" onclick="document.getElementById('modalProntuario').style.display='none';">&times;</span>
+            </div>
+            <div class="modal-corpo">
+                <div class="info-paciente">
+                    <h3 id="prontuarioPacienteNome"></h3>
+                    <input type="hidden" id="prontuarioPacienteId">
+                    <input type="hidden" id="medicoId">
+                </div>
+                
+                <form id="formProntuario">
+                    <div class="grupo-formulario">
+                        <label for="historicoMedico">Histórico Médico:</label>
+                        <textarea id="historicoMedico" name="historico_medico" rows="4" required></textarea>
+                    </div>
+                    
+                    <div class="grupo-formulario">
+                        <label for="historicoFamiliar">Histórico Familiar:</label>
+                        <textarea id="historicoFamiliar" name="historico_familiar" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="grupo-formulario">
+                        <label for="alergias">Alergias:</label>
+                        <textarea id="alergias" name="alergias" rows="2" required></textarea>
+                    </div>
+                    
+                    <div class="grupo-formulario">
+                        <label for="medicamentos">Medicamentos em Uso Contínuo:</label>
+                        <textarea id="medicamentos" name="medicamentos_uso_continuo" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="grupo-formulario">
+                        <label for="observacoesProntuario">Observações:</label>
+                        <textarea id="observacoesProntuario" name="observacoes" rows="3" required></textarea>
+                    </div>
+                    
+                    <div id="infoAtualizacao" class="info-atualizacao">
+                        <p>Prontuário ainda não foi preenchido.</p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-rodape">
+                <button type="button" class="botao-secundario" onclick="document.getElementById('modalProntuario').style.display='none';">
+                    <i class="fas fa-times"></i> Fechar
+                </button>
+                <button type="button" class="botao-primario" onclick="salvarProntuario()">
+                    <i class="fas fa-save"></i> Salvar Prontuário
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../JS/pagina-profissional.js"></script>
+    
+    <script>
+        // Variáveis globais
+        let pacienteAtual = null;
+        let consultasCarregadas = [];
+        let examesCarregados = [];
+        let abaAtiva = 'consultas';
+
+        // Função para formatar data no formato dd/mm/yyyy
+        function formatarData(dataString) {
+            if (!dataString) return '--/--/----';
+            const data = new Date(dataString);
+            return data.toLocaleDateString('pt-BR');
+        }
+
+        // Função para formatar hora no formato HH:MM
+        function formatarHora(horaString) {
+            if (!horaString) return '--:--';
+            // Verifica se é um objeto de tempo ou string
+            if (typeof horaString === 'object' && 'hours' in horaString && 'minutes' in horaString) {
+                return `${horaString.hours.toString().padStart(2, '0')}:${horaString.minutes.toString().padStart(2, '0')}`;
+            }
+            // Se for string, tenta converter
+            const [hora, minuto] = horaString.split(':');
+            return `${hora.padStart(2, '0')}:${(minuto || '00').padStart(2, '0')}`;
+        }
+
+        // Função para formatar o status
+        function formatarStatus(status) {
+            if (!status) return '';
+            const statusFormatado = status.toLowerCase();
+            return `<span class="status ${statusFormatado}">${statusFormatado}</span>`;
+        }
+
+        // Função para abrir o modal de histórico
+        function abrirModalHistorico(paciente) {
+            pacienteAtual = paciente;
+            document.getElementById('nome-paciente-historico').textContent = paciente.nome;
+            document.getElementById('modal-historico').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            // Atualizar aba ativa
+            mudarAba('consultas');
+            
+            // Carregar dados iniciais
+            carregarConsultasPaciente(paciente.id);
+        }
+
+        // Função para fechar o modal
+        function fecharModalHistorico() {
+            document.getElementById('modal-historico').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            pacienteAtual = null;
+            consultasCarregadas = [];
+            examesCarregados = [];
+        }
+
+        // Função para mudar entre as abas
+        function mudarAba(aba) {
+            abaAtiva = aba;
+            
+            // Atualizar botões ativos
+            document.querySelectorAll('.botao-aba').forEach(btn => {
+                btn.classList.toggle('ativo', btn.getAttribute('data-aba') === aba);
+            });
+            
+            // Mostrar conteúdo da aba ativa
+            document.querySelectorAll('.conteudo-aba').forEach(div => {
+                div.style.display = div.id === `conteudo-${aba}` ? 'block' : 'none';
+            });
+            
+            // Carregar dados se necessário
+            if (aba === 'consultas' && consultasCarregadas.length === 0) {
+                carregarConsultasPaciente(pacienteAtual.id);
+            } else if (aba === 'exames' && examesCarregados.length === 0) {
+                carregarExamesPaciente(pacienteAtual.id);
+            } else if (aba === 'consultas') {
+                atualizarTabelaConsultas(consultasCarregadas);
+            } else if (aba === 'exames') {
+                atualizarTabelaExames(examesCarregados);
+            }
+        }
+
+        // Função para carregar as consultas do paciente
+        async function carregarConsultasPaciente(pacienteId) {
+            const tabelaConsulta = document.getElementById('tabela-consultas');
+            const semDados = document.getElementById('sem-consultas');
+            const loading = document.getElementById('loading-consultas');
+            
+            try {
+                tabelaConsulta.style.display = 'none';
+                semDados.style.display = 'none';
+                loading.style.display = 'block';
+                
+                const response = await fetch(`/api/pacientes/${pacienteId}/consultas`);
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar consultas');
+                }
+                
+                const consultas = await response.json();
+                consultasCarregadas = consultas;
+                
+                if (consultas.length === 0) {
+                    semDados.style.display = 'block';
+                } else {
+                    atualizarTabelaConsultas(consultas);
+                    tabelaConsulta.style.display = 'table';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar consultas:', error);
+                semDados.textContent = 'Erro ao carregar consultas. Tente novamente mais tarde.';
+                semDados.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Função para atualizar a tabela de consultas
+        function atualizarTabelaConsultas(consultas) {
+            const tbody = document.querySelector('#tabela-consultas tbody');
+            tbody.innerHTML = '';
+            
+            if (consultas.length === 0) {
+                document.getElementById('sem-consultas').style.display = 'block';
+                return;
+            }
+            
+            consultas.forEach(consulta => {
+                const tr = document.createElement('tr');
+                
+                tr.innerHTML = `
+                    <td>${formatarData(consulta.data_consulta)}</td>
+                    <td>${formatarHora(consulta.horario)}</td>
+                    <td>${consulta.tipo_consulta || '--'}</td>
+                    <td>${consulta.nome_medico || '--'}</td>
+                    <td>${formatarStatus(consulta.status)}</td>
+                    <td>
+                        <button class="botao-icone" title="Visualizar detalhes" onclick="verDetalhesConsulta(${consulta.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+            
+            document.getElementById('tabela-consultas').style.display = 'table';
+        }
+
+        // Função para carregar os exames do paciente
+        async function carregarExamesPaciente(pacienteId) {
+            const tabelaExame = document.getElementById('tabela-exames');
+            const semDados = document.getElementById('sem-exames');
+            const loading = document.getElementById('loading-exames');
+            
+            try {
+                tabelaExame.style.display = 'none';
+                semDados.style.display = 'none';
+                loading.style.display = 'block';
+                
+                const response = await fetch(`/api/pacientes/${pacienteId}/exames`);
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar exames');
+                }
+                
+                const exames = await response.json();
+                examesCarregados = exames;
+                
+                if (exames.length === 0) {
+                    semDados.style.display = 'block';
+                } else {
+                    atualizarTabelaExames(exames);
+                    tabelaExame.style.display = 'table';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar exames:', error);
+                semDados.textContent = 'Erro ao carregar exames. Tente novamente mais tarde.';
+                semDados.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Função para atualizar a tabela de exames
+        function atualizarTabelaExames(exames) {
+            const tbody = document.querySelector('#tabela-exames tbody');
+            tbody.innerHTML = '';
+            
+            if (exames.length === 0) {
+                document.getElementById('sem-exames').style.display = 'block';
+                return;
+            }
+            
+            exames.forEach(exame => {
+                const tr = document.createElement('tr');
+                
+                tr.innerHTML = `
+                    <td>${formatarData(exame.data_exame)}</td>
+                    <td>${formatarHora(exame.horario)}</td>
+                    <td>${exame.tipo_exame || '--'}</td>
+                    <td>${exame.especificacao || '--'}</td>
+                    <td>${formatarStatus(exame.status)}</td>
+                    <td>
+                        ${exame.resultado_url && exame.resultado_url !== 'null' ? 
+                            `<a href="${exame.resultado_url}" class="botao-icone" title="Visualizar resultado" target="_blank">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>` : 
+                            '<span class="sem-resultado">--</span>'
+                        }
+                    </td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+            
+            document.getElementById('tabela-exames').style.display = 'table';
+        }
+
+        // Função para preencher a tabela de pacientes
+        function preencherTabelaPacientes(pacientes) {
+            const tbody = document.querySelector('#tabela-pacientes tbody');
+            tbody.innerHTML = '';
+            
+            if (pacientes.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td colspan="5" class="sem-dados">Nenhum paciente encontrado</td>
+                `;
+                tbody.appendChild(tr);
+                return;
+            }
+            
+            console.log('Iniciando preenchimento da tabela de pacientes');
+            
+            pacientes.forEach((paciente, index) => {
+                const tr = document.createElement('tr');
+                
+                // Log para depuração
+                console.log(`\n=== Processando paciente ${index + 1} ===`);
+                console.log('Dados completos:', JSON.stringify(paciente, null, 2));
+                
+                // Extrai os valores com verificações de segurança
+                const nome = paciente.nome || '--';
+                const dataNasc = formatarData(paciente.data_nascimento);
+                const ultimaCons = formatarData(paciente.ultima_consulta);
+                const status = paciente.ativo === 1 ? 'Ativo' : 'Inativo';
+                
+                console.log('Valores extraídos:', { nome, dataNasc, ultimaCons, status });
+                
+              
+                tr.innerHTML = `
+                    <td>${nome}</td>
+                    <td>${dataNasc}</td>
+                    <td>${ultimaCons}</td>
+                    <td>${status}</td>
+                    <td class="acoes">
+                        <button class="botao-icone" title="Visualizar histórico completo" onclick="abrirModalHistorico(${JSON.stringify(paciente).replace(/"/g, '&quot;')})">
+                            <i class="fas fa-history"></i> Histórico
+                        </button>
+                        <button class="botao-icone" title="Prontuário" onclick="verProntuario(${paciente.id || '0'}, '${nome.replace(/'/g, "\\'")}')">
+                            <i class="fas fa-notes-medical"></i> Prontuário
+                        </button>
+                    </td>
+                `;
+                console.log('Linha da tabela criada para o paciente:', nome);
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Função para visualizar detalhes da consulta em um modal
+        function verDetalhesConsulta(consultaId) {
+            const consulta = consultasCarregadas.find(c => c.id === consultaId);
+            if (!consulta) {
+                mostrarNotificacao('Erro', 'Não foi possível carregar os detalhes desta consulta.', 'error');
+                return;
+            }
+            
+            try {
+                // Preencher os dados no modal
+                document.getElementById('detalhes-data').textContent = formatarData(consulta.data_consulta);
+                document.getElementById('detalhes-hora').textContent = formatarHora(consulta.horario);
+                document.getElementById('detalhes-tipo').textContent = consulta.tipo_consulta || '--';
+                document.getElementById('detalhes-medico').textContent = consulta.nome_medico || '--';
+                document.getElementById('detalhes-especialidade').textContent = consulta.especialidade_medico || '--';
+                
+                // Status com estilo
+                const statusElement = document.getElementById('detalhes-status');
+                statusElement.innerHTML = formatarStatus(consulta.status);
+                
+                // Formatar e exibir as observações
+                const observacoesElement = document.getElementById('detalhes-observacoes');
+                const observacoes = consulta.observacoes || 'Nenhuma observação registrada.';
+                observacoesElement.innerHTML = formatarTextoComQuebras(observacoes);
+                
+                // Adicionar botão para copiar dados da consulta
+                document.getElementById('copiar-detalhes').onclick = () => copiarDetalhesConsulta(consulta);
+                
+                // Exibir o modal de detalhes
+                document.getElementById('modal-detalhes-consulta').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Erro ao exibir detalhes da consulta:', error);
+                mostrarNotificacao('Erro', 'Ocorreu um erro ao carregar os detalhes da consulta.', 'error');
+            }
+        }
+        
+        // Função para formatar texto com quebras de linha
+        function formatarTextoComQuebras(texto) {
+            if (!texto) return '';
+            return texto.replace(/\n/g, '<br>');
+        }
+        
+        // Função para copiar os detalhes da consulta
+        function copiarDetalhesConsulta(consulta) {
+            try {
+                const textoParaCopiar = `
+                    Data: ${formatarData(consulta.data_consulta)}
+                    Hora: ${formatarHora(consulta.horario)}
+                    Tipo: ${consulta.tipo_consulta || '--'}
+                    Médico: ${consulta.nome_medico || '--'}
+                    Especialidade: ${consulta.especialidade_medico || '--'}
+                    Status: ${consulta.status || '--'}
+                    Observações: ${consulta.observacoes || 'Nenhuma observação registrada.'}
+                `.replace(/^\s+/gm, ''); // Remove espaços iniciais de cada linha
+                
+                navigator.clipboard.writeText(textoParaCopiar).then(() => {
+                    mostrarNotificacao('Sucesso', 'Detalhes copiados para a área de transferência!', 'success');
+                }).catch(err => {
+                    console.error('Erro ao copiar texto: ', err);
+                    mostrarNotificacao('Erro', 'Não foi possível copiar os detalhes.', 'error');
+                });
+            } catch (error) {
+                console.error('Erro ao copiar detalhes:', error);
+                mostrarNotificacao('Erro', 'Ocorreu um erro ao copiar os detalhes.', 'error');
+            }
+        }
+        
+        // Função para exibir notificações
+        function mostrarNotificacao(titulo, mensagem, tipo = 'info') {
+            // Verifica se a biblioteca SweetAlert2 está disponível
+            if (typeof Swal !== 'undefined') {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer);
+                        toast.addEventListener('mouseleave', Swal.resumeTimer);
+                    }
+                });
+                
+                Toast.fire({
+                    icon: tipo,
+                    title: titulo,
+                    text: mensagem
+                });
+            } else {
+                // Fallback para alerta nativo se SweetAlert2 não estiver disponível
+                alert(`${titulo}: ${mensagem}`);
+            }
+        }
+
+        // Fechar o modal ao clicar fora do conteúdo
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal-historico');
+            if (event.target === modal) {
+                fecharModalHistorico();
+            }
+        };
+
+        // Fechar com a tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                fecharModalHistorico();
+            }
+        });
+    </script>
+    
+    <!-- Modal de Detalhes da Consulta -->
+    <div id="modal-detalhes-consulta" class="modal">
+        <div class="modal-conteudo" style="max-width: 600px;">
+            <div class="modal-cabecalho">
+                <h2><i class="fas fa-calendar-check"></i> Detalhes da Consulta</h2>
+                <button class="botao-fechar" onclick="fecharModalDetalhesConsulta()">&times;</button>
+            </div>
+            
+            <div class="detalhes-consulta">
+                <div class="detalhes-linha">
+                    <div class="detalhes-rotulo"><i class="far fa-calendar"></i> Data:</div>
+                    <div class="detalhes-valor" id="detalhes-data">--/--/----</div>
+                </div>
+                
+                <div class="detalhes-linha">
+                    <div class="detalhes-rotulo"><i class="far fa-clock"></i> Hora:</div>
+                    <div class="detalhes-valor" id="detalhes-hora">--:--</div>
+                </div>
+                
+                <div class="detalhes-linha">
+                    <div class="detalhes-rotulo"><i class="fas fa-stethoscope"></i> Tipo:</div>
+                    <div class="detalhes-valor" id="detalhes-tipo">--</div>
+                </div>
+                
+                <div class="detalhes-linha">
+                    <div class="detalhes-rotulo"><i class="fas fa-user-md"></i> Médico:</div>
+                    <div class="detalhes-valor" id="detalhes-medico">--</div>
+                </div>
+                
+                <div class="detalhes-linha">
+                    <div class="detalhes-rotulo"><i class="fas fa-briefcase-medical"></i> Especialidade:</div>
+                    <div class="detalhes-valor" id="detalhes-especialidade">--</div>
+                </div>
+                
+                <div class="detalhes-linha">
+                    <div class="detalhes-rotulo"><i class="fas fa-info-circle"></i> Status:</div>
+                    <div class="detalhes-valor" id="detalhes-status">--</div>
+                </div>
+                
+                <div class="detalhes-linha detalhes-coluna">
+                    <div class="detalhes-rotulo"><i class="far fa-comment-alt"></i> Observações:</div>
+                    <div class="detalhes-valor" id="detalhes-observacoes" style="white-space: pre-line;">Nenhuma observação registrada.</div>
+                </div>
+            </div>
+            
+            <div class="modal-rodape">
+                <button id="copiar-detalhes" class="botao-icone" title="Copiar detalhes">
+                    <i class="far fa-copy"></i> Copiar
+                </button>
+                <button onclick="fecharModalDetalhesConsulta()" class="botao-secundario">
+                    <i class="fas fa-times"></i> Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Função para fechar o modal de detalhes da consulta
+        function fecharModalDetalhesConsulta() {
+            document.getElementById('modal-detalhes-consulta').style.display = 'none';
+        }
+        
+        // Fechar o modal de detalhes ao clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal-historico');
+            const modalDetalhes = document.getElementById('modal-detalhes-consulta');
+            
+            if (event.target === modal) {
+                fecharModalHistorico();
+            } else if (event.target === modalDetalhes) {
+                fecharModalDetalhesConsulta();
+            }
+        };
+    </script>
+</body>
+</html>

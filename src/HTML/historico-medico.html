@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico Médico - Clínica Vida e Saúde</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../CSS/historico-medico.css">
+    <link rel="stylesheet" href="../CSS/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="description" content="Visualize seu histórico médico na Clínica Vida e Saúde">
+</head>
+
+<body>
+    <!-- Fundo curvado -->
+    <div class="fundo-curvado"></div>
+
+    <header class="cabecalho" id="cabecalho">
+        <div class="logo">
+            <img class="logo2-0" src="../IMG/logo2.0-sem-fundo-lol.png" alt="Nome da Clínica Vida e Saúde" />
+        </div>
+
+        <!-- Menu Hamburguer -->
+        <div class="menu-hamburguer">
+            <div class="icone-hamburguer" onclick="toggleMenu()" aria-label="Menu de opções">
+                <img src="../IMG/opcoes.png" alt="Menu">
+            </div>
+            <div class="menu-opcoes" id="menu-opcoes">
+                <ul>
+                    <li><a href="pagina-principal-usr.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="#ajuda"><i class="fas fa-question-circle"></i> Ajuda</a></li>
+                    <li><a href="#suporte"><i class="fas fa-headset"></i> Suporte</a></li>
+                    <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="conteiner">
+        <div class="secao-historico">
+            <div class="cabecalho-historico">
+                <h2><i class="fas fa-notes-medical"></i> Histórico Médico</h2>
+                <div class="acoes-historico">
+                    <button class="botao-imprimir">
+                        <i class="fas fa-print"></i> Imprimir
+                    </button>
+                    <button class="botao-exportar">
+                        <i class="fas fa-file-export"></i> Exportar
+                    </button>
+                </div>
+            </div>
+
+            <div class="conteudo-historico">
+                <div class="secao-historico">
+                    <h3><i class="fas fa-calendar-check"></i> Consultas Realizadas</h3>
+                    <div class="lista-historico-consultas">
+                        <!-- Consultas realizadas serão carregadas  aqui -->
+                    </div>
+                </div>
+
+                <div class="secao-historico">
+                    <h3><i class="fas fa-vials"></i> Exames Realizados</h3>
+                    <div class="lista-historico-exames">
+                        <!-- Exames realizados serão carregados  aqui -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            menuOpcoes.classList.toggle('active');
+        }
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(event) {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            const iconeHamburguer = document.querySelector('.icone-hamburguer');
+            
+            if (!iconeHamburguer.contains(event.target) && !menuOpcoes.contains(event.target)) {
+                menuOpcoes.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+            if (!usuarioLogado) {
+                alert('Usuário não autenticado.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const usuarioId = usuarioLogado.id;
+
+            try {
+                // Buscar consultas realizadas
+                const responseConsultas = await fetch(`/api/usuarios/${usuarioId}/consultas/realizadas`);
+                if (!responseConsultas.ok) throw new Error('Erro ao buscar consultas realizadas');
+                const consultas = await responseConsultas.json();
+
+                // Preencher consultas realizadas
+                const listaConsultas = document.querySelector('.lista-historico-consultas');
+                listaConsultas.innerHTML = consultas.map(consulta => `
+                    <div class="item-historico">
+                        <div class="info-historico">
+                            <h4>${consulta.tipo_consulta}</h4>
+                            <p><i class="fas fa-calendar"></i> Data: ${formatarData(consulta.data_consulta)}</p> <!-- Formata a data -->
+                            <p><i class="fas fa-clock"></i> Horário: ${consulta.horario}</p>
+                            <p><i class="fas fa-user-md"></i> Médico: ${consulta.nome_medico}</p>
+                            <p><i class="fas fa-check-circle"></i> Status: ${consulta.status}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Buscar exames realizados
+                const responseExames = await fetch(`/api/usuarios/${usuarioId}/exames/realizados`);
+                if (!responseExames.ok) throw new Error('Erro ao buscar exames realizados');
+                const exames = await responseExames.json();
+
+                // Preencher exames realizados
+                const listaExames = document.querySelector('.lista-historico-exames');
+                listaExames.innerHTML = exames.map(exame => `
+                    <div class="item-historico">
+                        <div class="info-historico">
+                            <h4>${exame.tipo_exame}</h4>
+                            <p><i class="fas fa-calendar"></i> Data: ${formatarData(exame.data_exame)}</p> <!-- Formata a data -->
+                            <p><i class="fas fa-clock"></i> Horário: ${exame.horario}</p>
+                            <p><i class="fas fa-user-md"></i> Médico: ${exame.nome_medico}</p>
+                            <p><i class="fas fa-check-circle"></i> Status: ${exame.status}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Erro ao carregar histórico:', error);
+                alert('Erro ao carregar histórico. Por favor, tente novamente.');
+            }
+        });
+
+        function formatarData(data) {
+            const dataObj = new Date(data);
+            return dataObj.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Funcionário - CVS</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="stylesheet" href="../CSS/funcionario.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+        .navbar-brand-subtitle {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <div class="navbar-brand-text">
+                    <span>CVS</span>
+                    <span class="navbar-brand-subtitle">Administração CVS</span>
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item me-2">
+                        <a class="nav-link" href="#" id="btnConsultas">Consultas</a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <a class="nav-link" href="#" id="btnExames">Exames</a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <a class="nav-link" href="#" id="btnMedicos">Médicos</a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <a class="nav-link" href="#" id="btnUsuarios">Pacientes</a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <a class="nav-link" href="usuarios_inativos.html" id="btnUsuariosInativos">Pacientes Inativos</a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <a class="nav-link" href="marcar-consulta-exame.html">Marcar Consulta/Exame</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Mais
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="cadastro-profissional.html">Cadastro de Profissional</a></li>
+                            <li><a class="dropdown-item" href="cadastro.html">Cadastro de Paciente</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="btnRelatorios">Relatórios</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#" id="btnLogout">Sair</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Seção de Consultas -->
+        <div id="secaoConsultas" class="secao">
+            <h2>Gerenciamento de Consultas</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Médico</th>
+                            <th>Especialidade</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Tipo</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaConsultas">
+                        <!-- Preenchido via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Seção de Exames -->
+        <div id="secaoExames" class="secao d-none">
+            <h2>Gerenciamento de Exames</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Tipo de Exame</th>
+                            <th>Médico</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaExames">
+                        <!-- Preenchido via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Seção de Médicos -->
+        <div id="secaoMedicos" class="secao d-none">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="mb-0">Médicos Cadastrados</h2>
+                <a href="editar-medico.html" class="btn btn-primary" id="btnNovoMedico">
+                    <i class="bi bi-plus-circle"></i> Editar Médico
+                </a>
+            </div>
+            <div class="mt-4">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>CRM</th>
+                                <th>Especialidade</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaMedicos">
+                            <!-- Preenchido via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Usuários -->
+        <div id="secaoUsuarios" class="secao d-none">
+            <h2>Gerenciamento de Pacientes</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Email</th>
+                            <th>Telefone</th>
+                            <th>Data de Nascimento</th>
+                            <th>CEP</th>
+                            <th>Último Acesso</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaUsuarios">
+                        <!-- Preenchido via JavaScript -->
+                        <tr>
+                            <td>Exemplo Nome</td>
+                            <td>123.456.789-00</td>
+                            <td>exemplo@email.com</td>
+                            <td>(11) 98765-4321</td>
+                            <td>01/01/1990</td>
+                            <td>00000-000</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../JS/funcionario.js"></script>
+</body>
+</html>

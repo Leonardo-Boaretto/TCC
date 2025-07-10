@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Médico</title>
+    <link rel="stylesheet" href="../CSS/editar-medico.css">
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <h1>Sistema de Gestão Médica</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="funcionario.html">Início</a></li>
+                <li><a href="editar-medico.html" class="active">Editar Médico</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <h2>Editar Médico</h2>
+        <p class="instruction">Selecione um médico da lista para editar suas informações.</p>
+        
+        <div class="search-container">
+            <input type="text" id="searchMedico" placeholder="Buscar médico por nome ou especialidade..." class="search-input">
+        </div>
+        
+        <ul id="listaMedicos" class="list-group">
+
+            <li class="list-group-item">
+                <div class="medico-info">
+                    <div class="medico-details">
+                        <span class="medico-nome">Dr. João Silva</span>
+                        <span class="medico-especialidade">Cardiologia</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="toggleDetails(this, 1)">Editar</button>
+                </div>
+                <div class="details" id="details-1">
+                    <form onsubmit="return atualizarMedico(event, 1)">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="nome-1">Nome:</label>
+                                <input type="text" id="nome-1" name="nome" value="Dr. João Silva" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="especialidade-1">Especialidade:</label>
+                                <select id="especialidade-1" name="especialidade" required>
+                                    <option value="">Selecione uma especialidade</option>
+                                    <option value="Clinica Geral" {{ especialidade1 === 'Clinica Geral' ? 'selected' : '' }}>Clínica Geral</option>
+                                    <option value="Cardiologia" {{ especialidade1 === 'Cardiologia' ? 'selected' : '' }}>Cardiologia</option>
+                                    <option value="Dermatologia" {{ especialidade1 === 'Dermatologia' ? 'selected' : '' }}>Dermatologia</option>
+                                    <option value="Endocrinologia" {{ especialidade1 === 'Endocrinologia' ? 'selected' : '' }}>Endocrinologia</option>
+                                    <option value="Ginecologia" {{ especialidade1 === 'Ginecologia' ? 'selected' : '' }}>Ginecologia</option>
+                                    <option value="Ortopedia" {{ especialidade1 === 'Ortopedia' ? 'selected' : '' }}>Ortopedia</option>
+                                    <option value="Pediatria" {{ especialidade1 === 'Pediatria' ? 'selected' : '' }}>Pediatria</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="crm-1">CRM:</label>
+                                <input type="number" id="crm-1" name="crm" value="123456" required min="100000" max="9999999999">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="cpf-1">CPF:</label>
+                                <input type="text" id="cpf-1" name="cpf" value="111.222.333-44" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="email-1">Email:</label>
+                                <input type="email" id="email-1" name="email" value="joao.silva@clinica.com" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="telefone-1">Telefone:</label>
+                                <input type="text" id="telefone-1" name="telefone" value="11987654321" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="cep-1">CEP:</label>
+                                <input type="text" id="cep-1" name="cep" value="12345-678" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label for="endereco-1">Endereço:</label>
+                                <input type="text" id="endereco-1" name="endereco" value="Rua A" required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="numero-1">Número:</label>
+                                <input type="text" id="numero-1" name="numero" value="100" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="bairro-1">Bairro:</label>
+                                <input type="text" id="bairro-1" name="bairro" value="Centro" required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="cidade-1">Cidade:</label>
+                                <input type="text" id="cidade-1" name="cidade" value="São Paulo" required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="estado-1">Estado:</label>
+                                <input type="text" id="estado-1" name="estado" value="SP" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="referencia-1">Referência:</label>
+                            <input type="text" id="referencia-1" name="referencia" value="Perto da praça">
+                        </div>
+                        <div class="form-group">
+                            <label for="senha-1">Nova Senha (deixe em branco para manter a atual):</label>
+                            <input type="password" id="senha-1" name="senha" placeholder="Digite a nova senha">
+                        </div>
+                        <div class="form-buttons">
+                            <button type="submit" class="btn btn-success">Salvar</button>
+                            <button type="button" class="btn btn-secondary" onclick="toggleDetails(this.parentElement.querySelector('.btn-success'), 1)">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </li>
+            
+            <li class="list-group-item">
+                <div class="medico-info">
+                    <div class="medico-details">
+                        <span class="medico-nome">Dra. Maria Oliveira</span>
+                        <span class="medico-especialidade">Dermatologia</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="toggleDetails(this, 2)">Editar</button>
+                </div>
+                <div class="details" id="details-2">
+                    <form onsubmit="return atualizarMedico(event, 2)">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="nome-2">Nome:</label>
+                                <input type="text" id="nome-2" name="nome" value="Dra. Maria Oliveira" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="especialidade-2">Especialidade:</label>
+                                <select id="especialidade-2" name="especialidade" required>
+                                    <option value="">Selecione uma especialidade</option>
+                                    <option value="Clinica Geral" {{ especialidade2 === 'Clinica Geral' ? 'selected' : '' }}>Clínica Geral</option>
+                                    <option value="Cardiologia" {{ especialidade2 === 'Cardiologia' ? 'selected' : '' }}>Cardiologia</option>
+                                    <option value="Dermatologia" {{ especialidade2 === 'Dermatologia' ? 'selected' : '' }}>Dermatologia</option>
+                                    <option value="Endocrinologia" {{ especialidade2 === 'Endocrinologia' ? 'selected' : '' }}>Endocrinologia</option>
+                                    <option value="Ginecologia" {{ especialidade2 === 'Ginecologia' ? 'selected' : '' }}>Ginecologia</option>
+                                    <option value="Ortopedia" {{ especialidade2 === 'Ortopedia' ? 'selected' : '' }}>Ortopedia</option>
+                                    <option value="Pediatria" {{ especialidade2 === 'Pediatria' ? 'selected' : '' }}>Pediatria</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="crm-2">CRM:</label>
+                                <input type="number" id="crm-2" name="crm" value="654321" required min="100000" max="9999999999">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="cpf-2">CPF:</label>
+                                <input type="text" id="cpf-2" name="cpf" value="222.333.444-55" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="email-2">Email:</label>
+                                <input type="email" id="email-2" name="email" value="maria.oliveira@clinica.com" required>
+                            </div>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="submit" class="btn btn-success">Salvar</button>
+                            <button type="button" class="btn btn-secondary" onclick="toggleDetails(this.parentElement.querySelector('.btn-success'), 2)">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </li>
+            
+            <li class="list-group-item">
+                <div class="medico-info">
+                    <div class="medico-details">
+                        <span class="medico-nome">Dr. Pedro Santos</span>
+                        <span class="medico-especialidade">Ortopedia</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="toggleDetails(this, 3)">Editar</button>
+                </div>
+                <div class="details" id="details-3">
+                    <form onsubmit="return atualizarMedico(event, 3)">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="nome-3">Nome:</label>
+                                <input type="text" id="nome-3" name="nome" value="Dr. Pedro Santos" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="especialidade-3">Especialidade:</label>
+                                <select id="especialidade-3" name="especialidade" required>
+                                    <option value="">Selecione uma especialidade</option>
+                                    <option value="Clinica Geral" {{ especialidade3 === 'Clinica Geral' ? 'selected' : '' }}>Clínica Geral</option>
+                                    <option value="Cardiologia" {{ especialidade3 === 'Cardiologia' ? 'selected' : '' }}>Cardiologia</option>
+                                    <option value="Dermatologia" {{ especialidade3 === 'Dermatologia' ? 'selected' : '' }}>Dermatologia</option>
+                                    <option value="Endocrinologia" {{ especialidade3 === 'Endocrinologia' ? 'selected' : '' }}>Endocrinologia</option>
+                                    <option value="Ginecologia" {{ especialidade3 === 'Ginecologia' ? 'selected' : '' }}>Ginecologia</option>
+                                    <option value="Ortopedia" {{ especialidade3 === 'Ortopedia' ? 'selected' : '' }}>Ortopedia</option>
+                                    <option value="Pediatria" {{ especialidade3 === 'Pediatria' ? 'selected' : '' }}>Pediatria</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="crm-3">CRM:</label>
+                                <input type="number" id="crm-3" name="crm" value="112233" required min="100000" max="9999999999">
+                            </div>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="submit" class="btn btn-success">Salvar</button>
+                            <button type="button" class="btn btn-secondary" onclick="toggleDetails(this.parentElement.querySelector('.btn-success'), 3)">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </main>
+
+
+
+    <script src="../JS/editar-medico.js"></script>
+</body>
+</html>

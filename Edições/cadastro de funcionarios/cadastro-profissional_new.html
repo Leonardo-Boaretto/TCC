@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Profissionais - CVS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../cadastro de funcionarios/cadastro-profissional.css">
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .required-field::after {
+            content: " *";
+            color: red;
+        }LO
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <h1>CVS<br><span>Administração</span></h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="funcionario.html">Início</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="main-content">
+        <h2>Cadastro de Profissionais</h2>
+        
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="medico-tab" data-bs-toggle="tab" data-bs-target="#medico" type="button" role="tab">Médico</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="funcionario-tab" data-bs-toggle="tab" data-bs-target="#funcionario" type="button" role="tab">Funcionário</button>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-4" id="myTabContent">
+            <!-- Formulário Médico -->
+            <div class="tab-pane fade show active" id="medico" role="tabpanel">
+                <form id="formMedico">
+                    <div class="form-group">
+                        <label for="nomeMedico" class="required-field">Nome Completo</label>
+                        <input type="text" id="nomeMedico" required 
+                               oninput="this.value = this.value.trimStart().replace(/\s{2,}/g, ' ');"
+                               onblur="validarCampoTexto(this, 'nomeMedicoError');">
+                        <div id="nomeMedicoError" class="invalid-feedback" style="display: none;">O nome não pode conter apenas espaços em branco</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="crm" class="required-field">CRM</label>
+                        <input type="number" id="crm" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cpfMedico" class="required-field">CPF</label>
+                        <input type="text" id="cpfMedico" required 
+                               oninput="this.value = this.value.trimStart(); if(/\s/.test(this.value)) { this.value = this.value.replace(/\s/g, ''); }">
+                    </div>
+                    <div class="form-group">
+                        <label for="especialidade" class="required-field">Especialidade</label>
+                        <select id="especialidade" required>
+                            <option value="">Selecione uma especialidade</option>
+                            <option value="Clinica Geral">Clínica Geral</option>
+                            <option value="Cardiologia">Cardiologia</option>
+                            <option value="Dermatologia">Dermatologia</option>
+                            <option value="Endocrinologia">Endocrinologia</option>
+                            <option value="Ginecologia">Ginecologia</option>
+                            <option value="Ortopedia">Ortopedia</option>
+                            <option value="Pediatria">Pediatria</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailMedico" class="required-field">Email</label>
+                        <input type="email" id="emailMedico" required
+                               oninput="this.value = this.value.trimStart(); if(/\s/.test(this.value)) { this.value = this.value.replace(/\s/g, ''); }">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefoneMedico" class="required-field">Telefone</label>
+                        <input type="tel" id="telefoneMedico" required
+                               oninput="this.value = this.value.trimStart(); if(/\s/.test(this.value)) { this.value = this.value.replace(/\s/g, ''); }">
+                    </div>
+                    <div class="form-group">
+                        <label for="cepMedico" class="required-field">CEP</label>
+                        <input type="text" id="cepMedico" required
+                               oninput="this.value = this.value.trimStart(); if(/\s/.test(this.value)) { this.value = this.value.replace(/\s/g, ''); }">
+                    </div>
+                    <div class="form-group">
+                        <label for="enderecoMedico" class="required-field">Endereço</label>
+                        <input type="text" id="enderecoMedico" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="numeroMedico" class="required-field">Número</label>
+                                <input type="text" id="numeroMedico" required
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '').trimStart(); if(this.value < 0) this.value = ''; if(/\s/.test(this.value)) { this.value = this.value.replace(/\s/g, ''); }">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="bairroMedico" class="required-field">Bairro</label>
+                                <input type="text" id="bairroMedico" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="cidadeMedico" class="required-field">Cidade</label>
+                                <input type="text" id="cidadeMedico" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="estadoMedico" class="required-field">Estado</label>
+                                <input type="text" id="estadoMedico" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="senhaMedico" class="required-field">Senha:</label>
+                        <input type="password" id="senhaMedico" required maxlength="12">
+                        <div class="senha-requisitos">
+                            <p>A senha deve conter:</p>
+                            <ul>
+                                <li>Mínimo 6 e máximo 12 caracteres</li>
+                                <li>Pelo menos uma letra maiúscula</li>
+                                <li>Pelo menos um número</li>
+                                <li>Pelo menos um caractere especial (!@#$%^&*)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmarSenhaMedico" class="required-field">Confirmar Senha:</label>
+                        <input type="password" id="confirmarSenhaMedico" required maxlength="12">
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="btn btn-primary">Cadastrar Médico</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Formulário Funcionário -->
+            <div class="tab-pane fade" id="funcionario" role="tabpanel">
+                <form id="formFuncionario">
+                    <div class="form-group">
+                        <label for="nomeFuncionario" class="required-field">Nome Completo</label>
+                        <input type="text" id="nomeFuncionario" required
+                               oninput="this.value = this.value.trimStart().replace(/\s{2,}/g, ' ');"
+                               onblur="validarCampoTexto(this, 'nomeFuncionarioError');">
+                        <div id="nomeFuncionarioError" class="invalid-feedback" style="display: none;">O nome não pode conter apenas espaços em branco</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cpfFuncionario" class="required-field">CPF</label>
+                        <input type="text" id="cpfFuncionario" required
+                               oninput="this.value = this.value.trimStart(); if(/\s/.test(this.value)) { this.value = this.value.replace(/\s/g, ''); }">
+                    </div>
+                    <div class="form-group">
+                        <label for="dataNascimentoFuncionario" class="required-field">Data de Nascimento</label>
+                        <input type="date" id="dataNascimentoFuncionario" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailFuncionario" class="required-field">Email</label>
+                        <input type="email" id="emailFuncionario" required
+                               oninput="this.value = this.value.trimStart(); if(/\s/.test(this.value)) { this.value = this.value.replace(/\s/g, ''); }">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefoneFuncionario" class="required-field">Telefone</label>
+                        <input type="tel" id="telefoneFuncionario" required
+                               oninput="this.value = this.value.trimStart(); if(/\s/.test(this.value)) { this.value = this.value.replace(/\s/g, ''); }">
+                    </div>
+                    <div class="form-group">
+                        <label for="cargoFuncionario" class="required-field">Cargo</label>
+                        <select id="cargoFuncionario" required>
+                            <option value="">Selecione um cargo</option>
+                            <option value="Recepcionista">Recepcionista</option>
+                            <option value="Enfermeiro">Enfermeiro</option>
+                            <option value="Administrador">Administrador</option>
+                            <option value="Técnico de Enfermagem">Técnico de Enfermagem</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="salarioFuncionario" class="required-field">Salário</label>
+                        <input type="number" step="0.01" id="salarioFuncionario" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataContratacaoFuncionario" class="required-field">Data de Contratação</label>
+                        <input type="date" id="dataContratacaoFuncionario" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cepFuncionario" class="required-field">CEP</label>
+                        <input type="text" id="cepFuncionario" required
+                               oninput="this.value = this.value.trimStart(); if(/\s/.test(this.value)) { this.value = this.value.replace(/\s/g, ''); }">
+                    </div>
+                    <div class="form-group">
+                        <label for="enderecoFuncionario" class="required-field">Endereço</label>
+                        <input type="text" id="enderecoFuncionario" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="numeroFuncionario" class="required-field">Número</label>
+                                <input type="text" id="numeroFuncionario" required
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '').trimStart(); if(this.value < 0) this.value = ''; if(/\s/.test(this.value)) { this.value = this.value.replace(/\s/g, ''); }">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="bairroFuncionario" class="required-field">Bairro</label>
+                                <input type="text" id="bairroFuncionario" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="cidadeFuncionario" class="required-field">Cidade</label>
+                                <input type="text" id="cidadeFuncionario" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="estadoFuncionario" class="required-field">Estado</label>
+                                <input type="text" id="estadoFuncionario" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="senhaFuncionario" class="required-field">Senha:</label>
+                        <input type="password" id="senhaFuncionario" required maxlength="12">
+                        <div class="senha-requisitos">
+                            <p>A senha deve conter:</p>
+                            <ul>
+                                <li>Mínimo 6 e máximo 12 caracteres</li>
+                                <li>Pelo menos uma letra maiúscula</li>
+                                <li>Pelo menos um número</li>
+                                <li>Pelo menos um caractere especial (!@#$%^&*)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmarSenhaFuncionario" class="required-field">Confirmar Senha:</label>
+                        <input type="password" id="confirmarSenhaFuncionario" required maxlength="12">
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="btn btn-primary">Cadastrar Funcionário</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../JS/cadastro-profissional.js"></script>
+    <script>
+        // Função para validar campos de texto (nome)
+        function validarCampoTexto(input, errorId) {
+            const errorElement = document.getElementById(errorId);
+            if (!input.value.trim()) {
+                input.classList.add('is-invalid');
+                errorElement.style.display = 'block';
+                return false;
+            } else {
+                input.classList.remove('is-invalid');
+                errorElement.style.display = 'none';
+                return true;
+            }
+        }
+
+        // Validar formulário de médico antes de enviar
+        document.getElementById('formMedico').addEventListener('submit', function(e) {
+            const nomeInput = document.getElementById('nomeMedico');
+            if (!validarCampoTexto(nomeInput, 'nomeMedicoError')) {
+                e.preventDefault();
+                return false;
+            }
+            return true;
+        });
+
+        // Validar formulário de funcionário antes de enviar
+        document.getElementById('formFuncionario').addEventListener('submit', function(e) {
+            const nomeInput = document.getElementById('nomeFuncionario');
+            if (!validarCampoTexto(nomeInput, 'nomeFuncionarioError')) {
+                e.preventDefault();
+                return false;
+            }
+            return true;
+        });
+
+        // Adicionar validação de espaços em branco para campos de texto
+        const camposSemEspaco = ['cpfMedico', 'emailMedico', 'telefoneMedico', 'cepMedico', 'numeroMedico',
+                               'cpfFuncionario', 'emailFuncionario', 'telefoneFuncionario', 'cepFuncionario', 'numeroFuncionario'];
+        
+        camposSemEspaco.forEach(campo => {
+            const elemento = document.getElementById(campo);
+            if (elemento) {
+                elemento.addEventListener('blur', function() {
+                    if (this.value.trim() === '' && this.hasAttribute('required')) {
+                        this.classList.add('is-invalid');
+                    } else {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+            }
+        });
+
+        document.getElementById('formMedico').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const nome = document.getElementById('nomeMedico').value;
+            const crm = document.getElementById('crm').value;
+            const cpf = document.getElementById('cpfMedico').value;
+            const especialidade = document.getElementById('especialidade').value;
+            const email = document.getElementById('emailMedico').value;
+            const telefone = document.getElementById('telefoneMedico').value;
+            const cep = document.getElementById('cepMedico').value;
+            const endereco = document.getElementById('enderecoMedico').value;
+            const numero = document.getElementById('numeroMedico').value;
+            const bairro = document.getElementById('bairroMedico').value;
+            const cidade = document.getElementById('cidadeMedico').value;
+            const estado = document.getElementById('estadoMedico').value;
+            const senha = document.getElementById('senhaMedico').value;
+            const confirmarSenha = document.getElementById('confirmarSenhaMedico').value;
+
+            if (senha !== confirmarSenha) {
+                alert('As senhas não coincidem.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/medicos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nome,
+                        crm,
+                        cpf,
+                        especialidade,
+                        email,
+                        telefone,
+                        cep,
+                        endereco,
+                        numero,
+                        bairro,
+                        cidade,
+                        estado,
+                        senha
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Médico cadastrado com sucesso!');
+                    document.getElementById('formMedico').reset();
+                } else {
+                    const erro = await response.json();
+                    alert(`Erro ao cadastrar médico: ${erro.erro}`);
+                }
+            } catch (error) {
+                console.error('Erro ao cadastrar médico:', error);
+                alert('Erro ao cadastrar médico.');
+            }
+        });
+    </script>
+</body>
+</html>

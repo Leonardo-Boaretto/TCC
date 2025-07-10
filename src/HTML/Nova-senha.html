@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Senha - Clínica Vida e Saúde</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/CSS/style-pagina-usr.css">
+    <link rel="stylesheet" href="/CSS/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="description" content="Nova Senha - Clínica Vida e Saúde">
+    <style>
+        #mensagem-erro {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+            text-align: center;
+        }
+
+        #mensagem-sucesso {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Fundo curvado -->
+    <div class="curved-background"></div>
+
+    <header class="cabecalho" id="cabecalho">
+        <div class="logo">
+            <img class="logo1-0" src="/IMG/logo1.0-sem-fundo.png" alt="Logo da Clínica Vida e Saúde" />
+        </div>
+
+        <!-- Menu Hamburguer -->
+        <div class="menu-hamburguer">
+            <div class="hamburguer-icon" onclick="toggleMenu()" aria-label="Menu de opções">
+               <img src="/IMG/opcoes.png" alt="Menu">
+            </div>
+            <div class="menu-opcoes" id="menu-opcoes">
+                <ul>
+                    <li><a href="login.html"><i class="fas fa-home"></i> Voltar ao Início</a></li>
+                    <li><a href="#ajuda"><i class="fas fa-question-circle"></i> Ajuda</a></li>
+                    <li><a href="#suporte"><i class="fas fa-headset"></i> Suporte</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <div class="form-section">
+                <h2><i class="fas fa-key"></i> Nova Senha</h2>
+                <p class="form-description">Digite sua nova senha abaixo.</p>
+                
+                <form id="formNovaSenha" class="form-agendamento">
+                    <div class="form-group">
+                        <label for="senha">Nova Senha:</label>
+                        <div class="senha-input">
+                            <input type="password" id="senha" name="senha" required placeholder="Digite sua nova senha">
+                            <button type="button" class="btn-mostrar-senha" onclick="toggleSenha()">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmarSenha">Confirmar Nova Senha:</label>
+                        <div class="senha-input">
+                            <input type="password" id="confirmarSenha" name="confirmarSenha" required placeholder="Confirme sua nova senha">
+                            <button type="button" class="btn-mostrar-senha" onclick="toggleConfirmarSenha()">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Salvar Nova Senha
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="window.location.href='login.html'">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            menuOpcoes.classList.toggle('active');
+        }
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(event) {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            const hamburguerIcon = document.querySelector('.hamburguer-icon');
+            
+            if (!hamburguerIcon.contains(event.target) && !menuOpcoes.contains(event.target)) {
+                menuOpcoes.classList.remove('active');
+            }
+        });
+
+        function toggleSenha() {
+            const senhaInput = document.getElementById('senha');
+            const btnMostrarSenha = document.querySelector('.btn-mostrar-senha i');
+            
+            if (senhaInput.type === 'password') {
+                senhaInput.type = 'text';
+                btnMostrarSenha.classList.remove('fa-eye');
+                btnMostrarSenha.classList.add('fa-eye-slash');
+            } else {
+                senhaInput.type = 'password';
+                btnMostrarSenha.classList.remove('fa-eye-slash');
+                btnMostrarSenha.classList.add('fa-eye');
+            }
+        }
+
+        function toggleConfirmarSenha() {
+            const senhaInput = document.getElementById('confirmarSenha');
+            const btnMostrarSenha = document.querySelectorAll('.btn-mostrar-senha i')[1];
+            
+            if (senhaInput.type === 'password') {
+                senhaInput.type = 'text';
+                btnMostrarSenha.classList.remove('fa-eye');
+                btnMostrarSenha.classList.add('fa-eye-slash');
+            } else {
+                senhaInput.type = 'password';
+                btnMostrarSenha.classList.remove('fa-eye-slash');
+                btnMostrarSenha.classList.add('fa-eye');
+            }
+        }
+
+        // Função para mostrar mensagem de erro
+        function mostrarErro(mensagem) {
+            const formSection = document.querySelector('.form-section');
+            let mensagemErro = document.getElementById('mensagem-erro');
+            
+            if (!mensagemErro) {
+                mensagemErro = document.createElement('div');
+                mensagemErro.id = 'mensagem-erro';
+                formSection.insertBefore(mensagemErro, formSection.firstChild);
+            }
+            
+            mensagemErro.textContent = mensagem;
+            mensagemErro.style.display = 'block';
+            
+            // Esconder mensagem de sucesso se estiver visível
+            const mensagemSucesso = document.getElementById('mensagem-sucesso');
+            if (mensagemSucesso) {
+                mensagemSucesso.style.display = 'none';
+            }
+            
+            setTimeout(() => {
+                mensagemErro.style.display = 'none';
+            }, 3000);
+        }
+
+        // Função para mostrar mensagem de sucesso
+        function mostrarSucesso(mensagem) {
+            const formSection = document.querySelector('.form-section');
+            let mensagemSucesso = document.getElementById('mensagem-sucesso');
+            
+            if (!mensagemSucesso) {
+                mensagemSucesso = document.createElement('div');
+                mensagemSucesso.id = 'mensagem-sucesso';
+                formSection.insertBefore(mensagemSucesso, formSection.firstChild);
+            }
+            
+            mensagemSucesso.textContent = mensagem;
+            mensagemSucesso.style.display = 'block';
+            
+            // Esconder mensagem de erro se estiver visível
+            const mensagemErro = document.getElementById('mensagem-erro');
+            if (mensagemErro) {
+                mensagemErro.style.display = 'none';
+            }
+        }
+
+        // Obter token da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        console.log('Token da URL:', token); 
+
+        if (!token) {
+            mostrarErro('Token de recuperação inválido ou expirado.');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 3000);
+        }
+
+        // Manipular envio do formulário
+        document.getElementById('formNovaSenha').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+            console.log('Token sendo enviado:', token); 
+            console.log('Nova senha:', senha);
+
+            // Validações
+            if (senha !== confirmarSenha) {
+                mostrarErro('As senhas não coincidem.');
+                return;
+            }
+
+            if (senha.length < 6) {
+                mostrarErro('A senha deve ter pelo menos 6 caracteres.');
+                return;
+            }
+
+            try {
+                const dados = {
+                    token,
+                    senha
+                };
+                console.log('Dados sendo enviados:', dados);
+
+                const response = await fetch('/api/nova-senha', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dados)
+                });
+
+                const data = await response.json();
+                console.log('Resposta do servidor:', data); 
+
+                if (response.ok) {
+                    mostrarSucesso('Senha alterada com sucesso!');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    mostrarErro(data.erro || 'Erro ao alterar senha.');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                mostrarErro('Erro ao processar a solicitação. Tente novamente.');
+            }
+        });
+    </script>
+</body>
+
+</html>

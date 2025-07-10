@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clínica Vida e Saúde</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/CSS/style.css">
+  <link rel="stylesheet" href="/CSS/reset.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <meta name="description" content="Clínica Vida e Saúde - Cuidando da sua saúde com excelência">
+</head>
+
+<body>
+  <!-- Fundo curvado -->
+  <div class="fundo-curvado"></div>
+
+  <header class="cabecalho" id="cabecalho">
+    <div class="logo">
+      <img class="logo2-0" src="/IMG/logo2.0-sem-fundo-lol.png" alt="Nome da Clínica Vida e Saúde" />
+    </div>
+
+    <!-- Menu Hamburguer -->
+    <div class="menu-hamburguer">
+      <div class="icone-hamburguer" onclick="toggleMenu()" aria-label="Menu de opções">
+        <img src="/IMG/opcoes.png" alt="Menu">
+      </div>
+      <div class="menu-opcoes" id="menu-opcoes">
+        <ul>
+          <li><a href="#sobre"><i class="fas fa-info-circle"></i> Sobre Nós</a></li>
+          <li><a href="#servicos"><i class="fas fa-stethoscope"></i> Serviços</a></li>
+          <li><a href="/HTML/pagina-principal-usr.html"><i class="fas fa-sign-in-alt"></i> Área do Paciente</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <div class="conteiner">
+    <div class="conteudo">
+      <div class="secao-hero">
+        <h1>Bem-vindo à Clínica Vida e Saúde</h1>
+        <p>Cuidando da sua saúde com excelência e dedicação</p>
+        <div class="botoes-hero">
+          <button class="botao-principal" onclick="window.location.href='/HTML/pagina-principal-usr.html'">
+            <i class="fas fa-user"></i> Área do Paciente
+          </button>
+        </div>
+      </div>
+
+      <div id="sobre" class="secao-informacoes">
+        <img src="/IMG/logo-pagina-usr.jpg" alt="Imagem da Clínica Vida e Saúde" class="imagem-clinica">
+        <div class="texto-informacoes">
+          <h2>Sobre Nossa Clínica</h2>
+          <p>A Clínica Vida e Saúde oferece atendimento médico de excelência, com profissionais qualificados e
+            infraestrutura moderna.</p>
+          <p><i class="fas fa-map-marker-alt"></i> Localização: Rua Marcolino De lazarin Souza, 123 - Centro de Curitiba</p>
+          <p><i class="fas fa-phone"></i> Contato: (41) 4002-8922</p>
+          <p><i class="fas fa-clock"></i> Horário de Atendimento: Segunda a Sexta, 8h às 18h</p>
+        </div>
+      </div>
+
+      <div id="servicos" class="secao-servicos">
+        <h2>Nossos Serviços</h2>
+        <div class="grade-menu">
+          <div class="item-grade">
+            <i class="fas fa-stethoscope"></i>
+            <p>Consultas Médicas</p>
+          </div>
+          <div class="item-grade">
+            <i class="fas fa-vials"></i>
+            <p>Exames Laboratoriais</p>
+          </div>
+          <div class="item-grade">
+            <i class="fas fa-heartbeat"></i>
+            <p>Cardiologia</p>
+          </div>
+          <div class="item-grade">
+            <i class="fas fa-baby"></i>
+            <p>Pediatria</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="rodape">
+    <div class="conteudo-rodape">
+      <div class="informacoes-rodape">
+        <h3>Clínica Vida e Saúde</h3>
+        <p><i class="fas fa-map-marker-alt"></i> Rua Marcolino De lazarin Souza, 123</p>
+        <p><i class="fas fa-phone"></i> (41) 4002-8922</p>
+        <p><i class="fas fa-envelope"></i> contato@clinicavidaesaude.com.br</p>
+      </div>
+      <div class="redes-rodape">
+        <h3>Siga-nos</h3>
+        <div class="redes-sociais">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="copyright-rodape">
+      <p>&copy; 2024 Clínica Vida e Saúde. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      const menuOpcoes = document.getElementById('menu-opcoes');
+      menuOpcoes.classList.toggle('active');
+    }
+
+    // Fechar menu ao clicar fora
+    document.addEventListener('click', function(event) {
+      const menuOpcoes = document.getElementById('menu-opcoes');
+      const iconeHamburguer = document.querySelector('.icone-hamburguer');
+      
+      if (!iconeHamburguer.contains(event.target) && !menuOpcoes.contains(event.target)) {
+        menuOpcoes.classList.remove('active');
+      }
+    });
+
+    // Manipular envio do formulário de login (se existir)
+    const formLogin = document.querySelector('form[action="/login"]');
+    if (formLogin) {
+      formLogin.addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Lógica de login pode ser adicionada aqui
+      });
+    }
+  </script>
+</body>
+
+</html>

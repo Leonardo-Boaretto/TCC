@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Consulta - Clínica Vida e Saúde</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../CSS/agendar-consulta.css">
+    <link rel="stylesheet" href="../CSS/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="description" content="Agende sua consulta na Clínica Vida e Saúde">
+</head>
+
+<body>
+    <!-- Fundo curvado -->
+    <div class="curved-background"></div>
+
+    <header class="cabecalho" id="cabecalho">
+        <div class="logo">
+            <img class="logo2-0" src="../IMG/logo2.0-sem-fundo-lol.png" alt="Nome da Clínica Vida e Saúde" />
+        </div>
+
+        <!-- Menu Hamburguer -->
+        <div class="menu-hamburguer">
+            <div class="hamburguer-icon" onclick="toggleMenu()" aria-label="Menu de opções">
+               <img src="../IMG/opcoes.png" alt="Menu">
+            </div>
+            <div class="menu-opcoes" id="menu-opcoes">
+                <ul>
+                    <li><a href="pagina-principal-usr.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="#ajuda"><i class="fas fa-question-circle"></i> Ajuda</a></li>
+                    <li><a href="#suporte"><i class="fas fa-headset"></i> Suporte</a></li>
+                    <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <div class="form-section">
+                <h2><i class="fas fa-calendar-plus"></i> Agendar Consulta</h2>
+                <form id="formAgendamento" class="form-agendamento">
+                    <div class="form-group">
+                        <label for="especialidade"><i class="fas fa-stethoscope"></i> Especialidade:</label>
+                        <select id="especialidade" name="especialidade" required>
+                            <option value="">Selecione uma especialidade</option>
+                            <option value="Clinica Geral">Clínico Geral</option>
+                            <option value="cardiologia">Cardiologia</option>
+                            <option value="dermatologia">Dermatologia</option>
+                            <option value="endocrinologia">Endocrinologia</option>
+                            <option value="ginecologia">Ginecologia</option>
+                            <option value="ortopedia">Ortopedia</option>
+                            <option value="pediatria">Pediatria</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medico"><i class="fas fa-user-md"></i> Médico:</label>
+                        <select id="medico" name="medico" required>
+                            <option value="">Selecione um médico</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="data"><i class="fas fa-calendar"></i> Data:</label>
+                        <input type="date" id="data" name="data" required min="">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="horario"><i class="fas fa-clock"></i> Horário:</label>
+                        <select id="horario" name="horario" required>
+                            <option value="">Selecione um horário</option>
+                            <option value="08:00">08:00</option>
+                            <option value="09:00">09:00</option>
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="14:00">14:00</option>
+                            <option value="15:00">15:00</option>
+                            <option value="16:00">16:00</option>
+                            <option value="17:00">17:00</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipo-consulta"><i class="fas fa-file-medical"></i> Tipo de Consulta:</label>
+                        <select id="tipo-consulta" name="tipo-consulta" required>
+                            <option value="">Selecione o tipo de consulta</option>
+                            <option value="Primeira Consulta">Primeira Consulta</option>
+                            <option value="Retorno">Retorno</option>
+                            <option value="Emergência">Emergência</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="observacoes"><i class="fas fa-comment-medical"></i> Observações:</label>
+                        <textarea id="observacoes" name="observacoes" rows="4" placeholder="Descreva seus sintomas ou motivo da consulta"></textarea>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-check"></i> Agendar Consulta
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="window.location.href='pagina-principal-usr.html'">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            menuOpcoes.classList.toggle('active');
+        }
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(event) {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            const hamburguerIcon = document.querySelector('.hamburguer-icon');
+            
+            if (hamburguerIcon && menuOpcoes && !hamburguerIcon.contains(event.target) && !menuOpcoes.contains(event.target)) {
+                menuOpcoes.classList.remove('active');
+            }
+        });
+
+        // Definir data mínima como hoje
+        const hoje = new Date().toISOString().split('T')[0];
+        document.getElementById('data').min = hoje;
+
+        // Manipular envio do formulário
+        document.getElementById('formAgendamento').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Obter os dados do formulário
+            const especialidade = document.getElementById('especialidade').value;
+            const medico_id = document.getElementById('medico').value; 
+            const data_consulta = document.getElementById('data').value;
+            const horario = document.getElementById('horario').value;
+            const tipo_consulta = document.getElementById('tipo-consulta').value;
+            const observacoes = document.getElementById('observacoes').value;
+
+            // Obter o usuário logado do localStorage
+            const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+            if (!usuarioLogado) {
+                alert('Usuário não autenticado');
+                return;
+            }
+
+            // Dados a serem enviados para o backend
+            const dadosConsulta = {
+                especialidade,
+                medico_id,
+                usuario_id: usuarioLogado.id, 
+                data_consulta,
+                horario,
+                tipo_consulta,
+                observacoes
+            };
+
+            try {
+                const response = await fetch('/api/agendar-consulta', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dadosConsulta)
+                });
+
+                if (response.ok) {
+                    alert('Consulta agendada com sucesso!');
+                    window.location.href = 'pagina-principal-usr.html'; 
+                } else {
+                    const erro = await response.json();
+                    alert(`Erro ao agendar consulta: ${erro.erro}`);
+                }
+            } catch (error) {
+                console.error('Erro ao agendar consulta:', error);
+                alert('Erro ao agendar consulta. Tente novamente.');
+            }
+        });
+
+        // Função para carregar médicos por especialidade
+        async function carregarMedicosPorEspecialidade(especialidade) {
+            try {
+                const selectMedico = document.getElementById('medico');
+                
+                // Limpar opções atuais, mantendo apenas a primeira opção
+                selectMedico.innerHTML = '<option value="">Selecione um médico</option>';
+                
+                if (!especialidade) {
+                    selectMedico.disabled = true;
+                    return; 
+                }
+                
+                const response = await fetch(`/api/medicos?especialidade=${encodeURIComponent(especialidade)}`);
+                
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar médicos');
+                }
+
+                const medicos = await response.json();
+
+                // Preencher o campo "Médico" com os dados recebidos
+                if (medicos.length === 0) {
+                    const option = document.createElement('option');
+                    option.value = '';
+                    option.textContent = 'Nenhum médico disponível';
+                    selectMedico.appendChild(option);
+                    selectMedico.disabled = true;
+                } else {
+                    medicos.forEach(medico => {
+                        const option = document.createElement('option');
+                        option.value = medico.id; 
+                        option.textContent = medico.nome; 
+                        selectMedico.appendChild(option);
+                    });
+                    selectMedico.disabled = false;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar médicos:', error);
+                alert('Erro ao carregar a lista de médicos. Tente novamente mais tarde.');
+            }
+        }
+
+        // Adicionar evento de mudança no select de especialidade
+        document.getElementById('especialidade').addEventListener('change', function() {
+            const especialidadeSelecionada = this.value;
+            carregarMedicosPorEspecialidade(especialidadeSelecionada);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectMedico = document.getElementById('medico');
+            selectMedico.disabled = true;
+            
+            const especialidadeSelecionada = document.getElementById('especialidade').value;
+            if (especialidadeSelecionada) {
+                carregarMedicosPorEspecialidade(especialidadeSelecionada);
+            }
+        });
+    </script>
+</body>
+
+</html>

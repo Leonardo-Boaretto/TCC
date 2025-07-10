@@ -1,0 +1,629 @@
+/* Estilos gerais */
+:root {
+    --cor-primaria: #2c3e50;
+    --cor-secundaria: #3498db;
+    --cor-terciaria: #e74c3c;
+    --cor-fundo: #f5f6fa;
+    --cor-texto: #2c3e50;
+    --cor-borda: #dcdde1;
+    --sombra-suave: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --transicao-padrao: all 0.3s ease;
+}
+
+body {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    font-family: 'Inter', sans-serif;
+}
+
+/* Fundo curvado */
+.fundo-curvado {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 250px;
+    background: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
+    border-radius: 0 0 50% 50% / 0 0 100px 100px;
+    z-index: -1;
+}
+
+/* Cabeçalho */
+.cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    position: relative;
+}
+
+.logo img {
+    height: 60px;
+    background-color: #dcdde1;
+    border-radius: 30px;
+}
+
+/* Menu Hamburguer */
+.menu-hamburguer {
+    position: relative;
+}
+
+.icone-hamburguer {
+    cursor: pointer;
+    padding: 10px;
+}
+
+.icone-hamburguer img {
+    width: 30px;
+    height: 30px;
+    filter: brightness(0) invert(1);
+}
+
+.menu-opcoes {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: white;
+    border-radius: 10px;
+    box-shadow: var(--sombra-suave);
+    min-width: 200px;
+    z-index: 1000;
+}
+
+.menu-opcoes.active {
+    display: block;
+}
+
+.menu-opcoes ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-opcoes li a {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    color: var(--cor-texto);
+    text-decoration: none;
+    transition: var(--transicao-padrao);
+}
+
+.menu-opcoes li a:hover {
+    background-color: var(--cor-fundo);
+    color: var(--cor-secundaria);
+}
+
+.menu-opcoes li a i {
+    margin-right: 10px;
+    width: 20px;
+}
+
+/* Container principal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Seções de conteúdo */
+.conteudo-secao {
+    background: white;
+    border-radius: 15px;
+    padding: 2.5rem; 
+    margin-bottom: 2.5rem; 
+    box-shadow: var(--sombra-suave);
+    min-height: 500px; 
+}
+
+.conteudo-secao h2 {
+    color: var(--cor-primaria);
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Card de informações do profissional */
+.info-profissional {
+    margin-bottom: 2rem;
+}
+
+.card-info {
+    background: linear-gradient(135deg, var(--cor-primaria), var(--cor-secundaria));
+    color: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.card-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Filtros */
+.filtros-consultas, .filtros-pacientes {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.grupo-formulario {
+    flex: 1;
+    min-width: 200px;
+}
+
+.grupo-formulario label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--cor-texto);
+}
+
+.grupo-formulario select,
+.grupo-formulario input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: var(--transicao-padrao);
+}
+
+.grupo-formulario select:focus,
+.grupo-formulario input:focus {
+    border-color: var(--cor-secundaria);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Cards de consulta */
+.grade-consultas, .grade-pacientes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.card-consulta, .card-paciente {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--cor-borda);
+    transition: var(--transicao-padrao);
+}
+
+.card-consulta:hover, .card-paciente:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.cabecalho-consulta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    color: var(--cor-primaria);
+    font-weight: 500;
+}
+
+.info-consulta, .detalhes-paciente {
+    margin-bottom: 1.5rem;
+}
+
+.info-consulta p, .detalhes-paciente p {
+    margin-bottom: 0.5rem;
+}
+
+.status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.status.confirmada {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.status.cancelada {
+    background-color: var(--cor-terciaria);
+    color: white;
+}
+
+.status.realizada {
+    background-color: #3498db;
+    color: white;
+}
+
+/* Botões */
+.acoes-consulta, .acoes-paciente {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.botao-principal, .botao-secundario {
+    padding: 0.8rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transicao-padrao);
+    flex: 1;
+    justify-content: center;
+}
+
+.botao-principal {
+    background-color: var(--cor-secundaria);
+    color: white;
+}
+
+.botao-principal:hover {
+    background-color: #2980b9;
+}
+
+.botao-secundario {
+    background-color: #f1f2f6;
+    color: var(--cor-texto);
+}
+
+.botao-secundario:hover {
+    background-color: #dcdde1;
+}
+
+/* Seção de Receitas */
+.criar-receita {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--sombra-suave);
+}
+
+.criar-receita h3 {
+    color: var(--cor-primaria);
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+}
+
+.form-receita {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.grupo-formulario-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.grupo-formulario-row .grupo-formulario {
+    flex: 1;
+    min-width: 200px;
+}
+
+textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 100px;
+    transition: var(--transicao-padrao);
+}
+
+textarea:focus {
+    border-color: var(--cor-secundaria);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.historico-receitas {
+    margin-top: 2rem;
+}
+
+.historico-receitas h3 {
+    color: var(--cor-primaria);
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+}
+
+.filtros-receitas {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.lista-receitas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.card-receita {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--cor-borda);
+    transition: var(--transicao-padrao);
+}
+
+.card-receita:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.cabecalho-receita {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    color: var(--cor-primaria);
+    font-weight: 500;
+}
+
+.conteudo-receita {
+    margin-bottom: 1.5rem;
+}
+
+.conteudo-receita p {
+    margin-bottom: 0.5rem;
+}
+
+/* Estilos para impressão */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    
+    .receita-para-impressao,
+    .receita-para-impressao * {
+        visibility: visible;
+    }
+    
+    .receita-para-impressao {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    .acoes-receita,
+    .menu-hamburguer,
+    .filtros-receitas {
+        display: none !important;
+    }
+}
+
+/* Responsividade para receitas */
+@media (max-width: 768px) {
+    .grupo-formulario-row {
+        flex-direction: column;
+    }
+
+    .grupo-formulario-row .grupo-formulario {
+        width: 100%;
+    }
+
+    .filtros-receitas {
+        flex-direction: column;
+    }
+
+    .lista-receitas {
+        grid-template-columns: 1fr;
+    }
+
+    .acoes-receita {
+        flex-direction: column;
+    }
+
+    .acoes-receita button {
+        width: 100%;
+    }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .conteudo-secao {
+        padding: 1.5rem;
+    }
+
+    .grade-consultas, .grade-pacientes {
+        grid-template-columns: 1fr;
+    }
+
+    .filtros-consultas, .filtros-pacientes {
+        flex-direction: column;
+    }
+
+    .grupo-formulario {
+        width: 100%;
+    }
+
+    .acoes-consulta, .acoes-paciente {
+        flex-direction: column;
+    }
+
+    .botao-principal, .botao-secundario {
+        width: 100%;
+    }
+}
+
+.btn-concluir {
+    background-color: #28a745; 
+    color: #fff; 
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-concluir:hover {
+    background-color: #218838; 
+}
+
+.btn-concluir:active {
+    background-color: #1e7e34;
+}
+
+/* Estilo para a lista de consultas */
+.lista-consultas {
+    min-height: 450px; 
+    max-height: 700px; 
+    overflow-y: auto; 
+    margin-top: 2rem; 
+    padding: 1rem; 
+    background-color: #f9f9f9; 
+    border-radius: 10px; 
+    border: 1px solid #eee; 
+}
+
+/* Botões de ação das consultas */
+.acoes-consulta {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-iniciar, .btn-encerrar {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-iniciar {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-iniciar:hover:not(:disabled) {
+    background-color: #45a049;
+}
+
+.btn-encerrar {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn-encerrar:hover:not(:disabled) {
+    background-color: #d32f2f;
+}
+
+/* Estilo temporário para depuração */
+.btn-iniciar, .btn-encerrar {
+    position: relative;
+    z-index: 1000;
+    pointer-events: auto !important;
+}
+
+.btn-iniciar:disabled, .btn-encerrar:disabled,
+.btn-iniciar.disabled, .btn-encerrar.disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Estilos para os status */
+.status {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.status.agendado {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status.em-andamento {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.status.concluido {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status.cancelado {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Melhorias para exibição dos horários */
+.info-consulta p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.info-consulta p strong {
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+/* Estilos para os botões da seção de receitas */
+.acoes-receita {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.acoes-receita .botao-principal,
+.acoes-receita .botao-secundario {
+    flex: 1;
+    min-width: 120px;
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.acoes-receita .botao-principal {
+    background-color: var(--cor-secundaria);
+}
+
+.acoes-receita .botao-principal:hover {
+    background-color: #2980b9;
+}
+
+.acoes-receita .botao-secundario {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.acoes-receita .botao-secundario:hover {
+    background-color: #5a6268;
+}

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Paciente - Clínica Vida e Saúde</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../CSS/pagina-principal-usr.css">
+    <link rel="stylesheet" href="../CSS/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="description" content="Painel do Paciente - Clínica Vida e Saúde">
+</head>
+
+<body>
+    <!-- Fundo curvado -->
+    <div class="fundo-curvado"></div>
+
+    <header class="cabecalho" id="cabecalho">
+        <div class="logo">
+            <img src="../IMG/logo2.0-sem-fundo-lol.png" alt="Logo da Clínica Vida e Saúde">
+        </div>
+
+        <div class="menu-hamburguer">
+            <div class="icone-hamburguer" onclick="toggleMenu()" aria-label="Menu de opções">
+                <img src="../IMG/opcoes.png" alt="Menu">
+            </div>
+            <div class="menu-opcoes" id="menu-opcoes">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="#ajuda"><i class="fas fa-question-circle"></i> Ajuda</a></li>
+                    <li><a href="#suporte"><i class="fas fa-headset"></i> Suporte</a></li>
+                    <li><a href="login.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="conteiner">
+        <div class="conteudo">
+            <div class="secao-hero">
+                <h1>Bem-vindo ao Painel do Paciente</h1>
+                <p>Gerencie suas consultas e exames de forma simples e rápida</p>
+            </div>
+
+            <div class="secao-servicos">
+                <h2>Serviços Disponíveis</h2>
+                <div class="grade-menu">
+                    <a href="agendar-consulta.html" class="item-grade">
+                        <i class="fas fa-calendar-plus"></i>
+                        <p>Agendar Consulta</p>
+                        <small>Agende sua consulta com um dos nossos médicos</small>
+                    </a>
+                    <a href="gerenciar-consultas.html" class="item-grade">
+                        <i class="fas fa-calendar-alt"></i>
+                        <p>Minhas Consultas</p>
+                        <small>Ver, editar ou cancelar</small>
+                    </a>
+                    <a href="marcar-exame.html" class="item-grade">
+                        <i class="fas fa-vials"></i>
+                        <p>Marcar Exame</p>
+                        <small>Agende seu exame com um dos nossos médicos</small>
+                    </a>
+                    <a href="gerenciar-exames.html" class="item-grade">
+                        <i class="fas fa-microscope"></i>
+                        <p>Meus Exames</p>
+                        <small>Ver, editar ou cancelar</small>
+                    </a>
+                    <a href="historico-consultas-exames.html" class="item-grade">
+                        <i class="fas fa-history"></i>
+                        <p>Histórico de Consultas e Exames</p>
+                        <small>Visualização simplificada disponível</small>
+                    </a>
+                </div>
+            </div>
+
+            <div class="secao-informacoes">
+                <img src="../IMG/logo-pagina-usr.jpg" alt="Imagem da Clínica Vida e Saúde" class="imagem-clinica">
+                <div class="texto-informacoes">
+                    <h2>Sobre Nossa Clínica</h2>
+                    <p>A Clínica Vida e Saúde oferece atendimento médico de excelência, com profissionais qualificados e infraestrutura moderna.</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Localização: Rua Marcolino De Lazarin Souza, 123 - Centro de catuba</p>
+                    <p><i class="fas fa-phone"></i> Contato: (41) 4002-8922</p>
+                    <p><i class="fas fa-clock"></i> Horário de Atendimento: Segunda a Sexta, 8h às 18h</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="rodape">
+        <div class="conteudo-rodape">
+            <div class="informacoes-rodape">
+                <h3>Clínica Vida e Saúde</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Rua Marcolino De Lazarin Souza, 123</p>
+                <p><i class="fas fa-phone"></i> (41) 4002-8922</p>
+                <p><i class="fas fa-envelope"></i> contato@clinicavidaesaude.com.br</p>
+            </div>
+            <div class="redes-rodape">
+                <h3>Siga-nos</h3>
+                <div class="redes-sociais">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright-rodape">
+            <p>&copy; 2024 Clínica Vida e Saúde. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            menuOpcoes.classList.toggle('active');
+        }
+
+        document.addEventListener('click', function(event) {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            const iconeHamburguer = document.querySelector('.icone-hamburguer');
+            
+            if (!iconeHamburguer.contains(event.target) && !menuOpcoes.contains(event.target)) {
+                menuOpcoes.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+
+</html>

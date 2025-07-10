@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Email - Clínica Vida e Saúde</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link rel="stylesheet" href="/CSS/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="form-section">
+                <h2><i class="fas fa-envelope"></i> Confirmação de Email</h2>
+                <div id="mensagem" class="mensagem">
+                    <p>Por favor, aguarde enquanto confirmamos seu email...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pegar o token da URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            
+            if (!token) {
+                document.getElementById('mensagem').innerHTML = '<p class="erro">Token inválido ou não fornecido.</p>';
+                return;
+            }
+
+            // Enviar requisição para confirmar o email
+            fetch('/api/confirmar-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ token: token })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const mensagemDiv = document.getElementById('mensagem');
+                if (data.mensagem) {
+                    mensagemDiv.innerHTML = `
+                        <p class="sucesso">${data.mensagem}</p>
+                        <p>Você será redirecionado para a página de login em alguns segundos...</p>
+                    `;
+                    setTimeout(() => {
+                        window.location.href = '/HTML/login.html';
+                    }, 3000);
+                } else if (data.erro) {
+                    mensagemDiv.innerHTML = `<p class="erro">${data.erro}</p>`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('mensagem').innerHTML = `
+                    <p class="erro">Erro ao confirmar email. Por favor, tente novamente.</p>
+                    <p>Você será redirecionado para a página de login em alguns segundos...</p>
+                `;
+                setTimeout(() => {
+                    window.location.href = '/HTML/login.html';
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html> 

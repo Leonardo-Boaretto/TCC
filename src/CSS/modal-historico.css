@@ -1,0 +1,484 @@
+/* Estilos para o formulário de prontuário */
+#formProntuario .grupo-formulario {
+    margin-bottom: 20px;
+}
+
+#formProntuario label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+#formProntuario textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95em;
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#formProntuario textarea:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    outline: none;
+}
+
+.info-atualizacao {
+    margin-top: 20px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-left: 4px solid #3498db;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.info-atualizacao p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.info-paciente h3 {
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+    font-size: 1.4em;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Estilos para mensagens e carregamento */
+.sem-dados, .erro-carregamento {
+    text-align: center;
+    padding: 40px 20px;
+    color: #7f8c8d;
+}
+
+.sem-dados i, .erro-carregamento i {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.sem-dados p, .erro-carregamento p {
+    margin: 10px 0 0;
+    font-size: 1.1em;
+}
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    color: #7f8c8d;
+}
+
+.loading i {
+    font-size: 2em;
+    margin-bottom: 15px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estilos para o modal de histórico */
+
+/* Estilos para detalhes da consulta */
+.detalhes-consulta {
+    padding: 15px 0;
+}
+
+.detalhes-linha {
+    display: flex;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.detalhes-linha.detalhes-coluna {
+    flex-direction: column;
+}
+
+.detalhes-rotulo {
+    font-weight: 600;
+    color: #555;
+    min-width: 150px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.detalhes-rotulo i {
+    color: #7f8c8d;
+    width: 20px;
+    text-align: center;
+}
+
+.detalhes-valor {
+    flex: 1;
+    color: #2c3e50;
+}
+
+/* Ajustes para telas menores */
+@media (max-width: 576px) {
+    .detalhes-linha {
+        flex-direction: column;
+        margin-bottom: 15px;
+    }
+    
+    .detalhes-rotulo {
+        margin-bottom: 4px;
+        min-width: 100%;
+    }
+    
+    .detalhes-valor {
+        padding-left: 24px; /* Alinhar com o texto do rótulo */
+    }
+}
+
+/* Estilos para o modal de histórico */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-conteudo {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 24px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 900px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: relative;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+/* Cabeçalho do modal */
+.modal-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-cabecalho h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.5em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Nome do paciente */
+#nome-paciente-historico {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #3498db;
+    margin: 0 15px;
+}
+
+/* Botão de fechar */
+.botao-fechar {
+    background: none;
+    border: none;
+    font-size: 1.8em;
+    cursor: pointer;
+    color: #7f8c8d;
+    transition: color 0.2s;
+}
+
+.botao-fechar:hover {
+    color: #e74c3c;
+}
+
+/* Abas de navegação */
+.abastyle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.botao-aba {
+    padding: 10px 20px;
+    border: none;
+    background: #ecf0f1;
+    color: #7f8c8d;
+    cursor: pointer;
+    border-radius: 4px 4px 0 0;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.botao-aba.ativo {
+    background: #3498db;
+    color: white;
+}
+
+.botao-aba:hover:not(.ativo) {
+    background: #bdc3c7;
+    color: #2c3e50;
+}
+
+/* Conteúdo das abas */
+.conteudo-aba {
+    flex: 1;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+/* Tabelas */
+.tabela-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+}
+
+.tabela-dados {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+.tabela-dados th {
+    background-color: #f5f7fa;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #2c3e50;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.tabela-dados td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    color: #34495e;
+}
+
+.tabela-dados tr:last-child td {
+    border-bottom: none;
+}
+
+.tabela-dados tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Status */
+.status {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.status.ativo, .status.concluído, .status.realizado {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status.inativo, .status.cancelado {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status.pendente, .status.agendado {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* Estilos para os botões de ação na tabela de pacientes */
+td.acoes {
+    white-space: nowrap;
+    text-align: center;
+}
+
+.acoes .botao-icone {
+    margin: 0 2px;
+    padding: 6px 8px;
+    font-size: 0.9em;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.acoes .botao-icone:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.acoes .botao-icone i {
+    font-size: 0.9em;
+}
+
+/* Destaque para o botão de histórico */
+.acoes .botao-icone .fa-history {
+    color: #3498db;
+}
+
+.acoes .botao-icone:hover .fa-history {
+    color: #2980b9;
+}
+
+/* Botões de ação */
+.botao-icone {
+    background: none;
+    border: none;
+    color: #3498db;
+    cursor: pointer;
+    font-size: 1.1em;
+    padding: 5px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.botao-icone:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+    transform: translateY(-1px);
+}
+
+.botao-icone.vermelho {
+    color: #e74c3c;
+}
+
+.botao-icone.verde {
+    color: #2ecc71;
+}
+
+.botao-icone.vermelho:hover {
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+/* Estilos para o botão de cópia */
+#copiar-detalhes {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+#copiar-detalhes:hover {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+    transform: translateY(-1px);
+}
+
+#copiar-detalhes i {
+    font-size: 0.9em;
+}
+
+/* Rodapé do modal */
+.modal-rodape {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    margin-top: 15px;
+    gap: 10px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .modal-conteudo {
+        width: 95%;
+        margin: 10px auto;
+        padding: 15px;
+    }
+    
+    .abastyle {
+        flex-wrap: wrap;
+    }
+    
+    .botao-aba {
+        flex: 1;
+        text-align: center;
+        justify-content: center;
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    
+    .tabela-dados {
+        font-size: 0.85em;
+    }
+    
+    .tabela-dados th, 
+    .tabela-dados td {
+        padding: 8px 10px;
+    }
+    
+    .modal-cabecalho {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    #nome-paciente-historico {
+        margin: 5px 0;
+        font-size: 1.1em;
+    }
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-conteudo {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Scrollbar personalizada */
+.tabela-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.tabela-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.tabela-container::-webkit-scrollbar-thumb {
+    background: #bdc3c7;
+    border-radius: 4px;
+}
+
+.tabela-container::-webkit-scrollbar-thumb:hover {
+    background: #95a5a6;
+}

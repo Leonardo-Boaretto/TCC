@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancelar Consulta - Clínica Vida e Saúde</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../CSS/style-pagina-usr.css">
+    <link rel="stylesheet" href="../CSS/cancelar-consulta.css">
+    <link rel="stylesheet" href="../CSS/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="description" content="Cancele sua consulta na Clínica Vida e Saúde">
+</head>
+
+<body>
+    <!-- Fundo curvado -->
+    <div class="curved-background"></div>
+
+    <header class="cabecalho" id="cabecalho">
+        <div class="logo">
+            <img class="logo2-0" src="../IMG/logo2.0-sem-fundo-lol.png" alt="Nome da Clínica Vida e Saúde" />
+        </div>
+
+        <!-- Menu Hamburguer -->
+        <div class="menu-hamburguer">
+            <div class="hamburguer-icon" onclick="toggleMenu()" aria-label="Menu de opções">
+               <img src="../IMG/opcoes.png" alt="Menu">
+            </div>
+            <div class="menu-opcoes" id="menu-opcoes">
+                <ul>
+                    <li><a href="pagina-principal-usr.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="#ajuda"><i class="fas fa-question-circle"></i> Ajuda</a></li>
+                    <li><a href="#suporte"><i class="fas fa-headset"></i> Suporte</a></li>
+                    <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <div class="form-section">
+                <h2><i class="fas fa-calendar-times"></i> Cancelar Consulta</h2>
+                
+                <div class="consultas-agendadas">
+                    <h3>Suas Consultas Agendadas</h3>
+                    <div class="lista-consultas"></div>
+                </div>
+
+                <div class="form-buttons">
+                    <button type="button" class="btn-secondary" onclick="window.location.href='pagina-principal-usr.html'">
+                        <i class="fas fa-arrow-left"></i> Voltar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            menuOpcoes.classList.toggle('active');
+        }
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(event) {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            const hamburguerIcon = document.querySelector('.hamburguer-icon');
+            
+            if (!hamburguerIcon.contains(event.target) && !menuOpcoes.contains(event.target)) {
+                menuOpcoes.classList.remove('active');
+            }
+        });
+
+        async function carregarConsultas() {
+            try {
+                const response = await fetch('/api/consultas');
+                if (!response.ok) throw new Error('Erro ao buscar consultas');
+                const consultas = await response.json();
+
+                const listaConsultas = document.querySelector('.lista-consultas');
+                listaConsultas.innerHTML = ''; // Limpar a lista antes de preenchê-la
+
+                consultas.forEach(consulta => {
+                    const consultaItem = document.createElement('div');
+                    consultaItem.classList.add('consulta-item');
+                    consultaItem.setAttribute('data-id', consulta.id);
+                    consultaItem.innerHTML = `
+                        <div class="consulta-info">
+                            <h4>Consulta com ${consulta.nome_medico}</h4>
+                            <p><i class="fas fa-stethoscope"></i> ${consulta.especialidade}</p>
+                            <p><i class="fas fa-calendar"></i> ${formatarData(consulta.data_consulta)}</p> <!-- Formata a data -->
+                            <p><i class="fas fa-clock"></i> ${consulta.horario}</p>
+                        </div>
+                        <button class="btn-cancelar" onclick="confirmarCancelamento(${consulta.id})">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    `;
+                    listaConsultas.appendChild(consultaItem);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar consultas:', error);
+                alert('Erro ao carregar consultas. Por favor, tente novamente.');
+            }
+        }
+
+        function confirmarCancelamento(id) {
+            if (confirm('Tem certeza que deseja cancelar esta consulta?')) {
+                fetch(`/api/consultas/${id}/cancelar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao cancelar consulta.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.mensagem);
+                    // Remover a consulta do painel
+                    const consulta = document.querySelector(`.consulta-item[data-id="${id}"]`);
+                    if (consulta) {
+                        consulta.remove();
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao cancelar consulta:', error);
+                    alert('Erro ao cancelar consulta. Por favor, tente novamente.');
+                });
+            }
+        }
+
+        function formatarData(data) {
+            const dataObj = new Date(data);
+            return dataObj.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+        }
+
+        // Carregar as consultas ao carregar a página
+        document.addEventListener('DOMContentLoaded', carregarConsultas);
+    </script>
+</body>
+
+</html>

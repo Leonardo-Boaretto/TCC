@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Consultas e Exames - Clínica Vida e Saúde</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../CSS/reset.css">
+    <link rel="stylesheet" href="../CSS/style-pagina-usr.css">
+    <link rel="stylesheet" href="../CSS/historico-consultas-exames.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="description" content="Histórico de consultas e exames da Clínica Vida e Saúde">
+    
+</head>
+
+<body>
+    <!-- Fundo curvado -->
+    <div class="curved-background"></div>
+
+    <header class="cabecalho" id="cabecalho">
+        <div class="logo">
+            <img class="logo2-0" src="../IMG/logo2.0-sem-fundo-lol.png" alt="Nome da Clínica Vida e Saúde" />
+        </div>
+
+        <!-- Menu Hamburguer -->
+        <div class="menu-hamburguer">
+            <div class="hamburguer-icon" onclick="toggleMenu()" aria-label="Menu de opções">
+                <img src="../IMG/opcoes.png" alt="Menu">
+            </div>
+            <div class="menu-opcoes" id="menu-opcoes">
+                <ul>
+                    <li><a href="pagina-principal-usr.html"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="gerenciar-consultas.html"><i class="fas fa-calendar-check"></i> Consultas</a></li>
+                    <li><a href="gerenciar-exames.html"><i class="fas fa-vials"></i> Exames</a></li>
+                    <li><a href="historico-consultas-exames.html" class="active"><i class="fas fa-history"></i> Histórico</a></li>
+                    <li><a href="#ajuda"><i class="fas fa-question-circle"></i> Ajuda</a></li>
+                    <li><a href="#suporte"><i class="fas fa-headset"></i> Suporte</a></li>
+                    <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="conteiner">
+        <div class="content">
+            <div class="form-section">
+                <h2><i class="fas fa-history"></i> Histórico de Consultas e Exames</h2>
+                <p class="text-muted mb-4">Acompanhe todo o seu histórico médico em um só lugar</p>
+
+        <div class="filtros-container mb-4">
+            <h5 class="mb-3"><i class="fas fa-filter me-2"></i>Filtros</h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="filtro-item">
+                        <label for="filtroTipo" class="form-label fw-medium">Tipo</label>
+                        <select class="form-select" id="filtroTipo">
+                            <option value="todos">Todos</option>
+                            <option value="consultas">Consultas</option>
+                            <option value="exames">Exames</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="filtro-item">
+                        <label for="filtroPeriodo" class="form-label fw-medium">Período</label>
+                        <select class="form-select" id="filtroPeriodo">
+                            <option value="todos">Todo o histórico</option>
+                            <option value="30dias">Últimos 30 dias</option>
+                            <option value="6meses">Últimos 6 meses</option>
+                            <option value="1ano">Último ano</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="filtro-item">
+                        <label for="filtroStatus" class="form-label fw-medium">Status</label>
+                        <select class="form-select" id="filtroStatus">
+                            <option value="todos">Todos</option>
+                            <option value="agendado">Agendados</option>
+                            <option value="realizado">Realizados/Concluídos</option>
+                            <option value="cancelado">Cancelados</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="historico-lista" id="historicoUnificado">
+            <!-- Preenchido via JavaScript -->
+        </div>
+
+        <div id="semResultados" class="sem-historico" style="display: none;">
+            <i class="fas fa-search fa-4x mb-3"></i>
+            <h4>Nenhum registro encontrado</h4>
+            <p class="text-muted">Não encontramos registros para os filtros selecionados.</p>
+        </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para alternar o menu hamburguer
+        function toggleMenu() {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            menuOpcoes.classList.toggle('active');
+        }
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(event) {
+            const menuOpcoes = document.getElementById('menu-opcoes');
+            const hamburguerIcon = document.querySelector('.hamburguer-icon');
+            
+            if (!hamburguerIcon.contains(event.target) && !menuOpcoes.contains(event.target)) {
+                menuOpcoes.classList.remove('active');
+            }
+        });
+
+        // Função para formatar a data
+        function formatarData(dataString) {
+            console.log('Formatando data:', dataString);
+            
+            if (!dataString) {
+                console.log('Data não fornecida');
+                return 'Data não informada';
+            }
+            
+
+            if (typeof dataString === 'string' && /^\d{2}\/\d{2}\/\d{4}$/.test(dataString)) {
+                console.log('Data já está no formato DD/MM/YYYY');
+                return dataString;
+            }
+            
+            // Remover caracteres não numéricos e espaços em branco
+            const dataLimpa = String(dataString).trim();
+            
+            // Se a data estiver vazia após limpar
+            if (!dataLimpa) {
+                console.log('Data vazia após limpeza');
+                return 'Data inválida';
+            }
+            
+            // Tentar converter a data de diferentes formatos
+            let data;
+            let formato = 'desconhecido';
+            
+            try {
+                // Formato YYYY-MM-DD (ISO)
+                if (/^\d{4}-\d{2}-\d{2}/.test(dataLimpa)) {
+                    formato = 'YYYY-MM-DD';
+                    const [ano, mes, dia] = dataLimpa.split('-');
+                    data = new Date(ano, mes - 1, dia);
+                } 
+                // Formato YYYY-MM-DD HH:MM:SS (ISO com hora)
+                else if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/.test(dataLimpa)) {
+                    formato = 'YYYY-MM-DD HH:MM:SS';
+                    const [dataPart, horaPart] = dataLimpa.split(' ');
+                    const [ano, mes, dia] = dataPart.split('-');
+                    data = new Date(ano, mes - 1, dia);
+                }
+                // Formato DD/MM/YYYY
+                else if (/^\d{2}\/\d{2}\/\d{4}/.test(dataLimpa)) {
+                    formato = 'DD/MM/YYYY';
+                    const [dia, mes, ano] = dataLimpa.split('/');
+                    data = new Date(ano, mes - 1, dia);
+                }
+                // Formato DD-MM-YYYY
+                else if (/^\d{2}-\d{2}-\d{4}/.test(dataLimpa)) {
+                    formato = 'DD-MM-YYYY';
+                    const [dia, mes, ano] = dataLimpa.split('-');
+                    data = new Date(ano, mes - 1, dia);
+                }
+                // Formato YYYY/MM/DD
+                else if (/^\d{4}\/\d{2}\/\d{2}/.test(dataLimpa)) {
+                    formato = 'YYYY/MM/DD';
+                    const [ano, mes, dia] = dataLimpa.split('/');
+                    data = new Date(ano, mes - 1, dia);
+                }
+                // Formato YYYYMMDD
+                else if (/^\d{8}$/.test(dataLimpa)) {
+                    formato = 'YYYYMMDD';
+                    const ano = dataLimpa.substring(0, 4);
+                    const mes = dataLimpa.substring(4, 6);
+                    const dia = dataLimpa.substring(6, 8);
+                    data = new Date(ano, mes - 1, dia);
+                }
+                // Formato timestamp 
+                else if (/^\d+$/.test(dataLimpa)) {
+                    formato = 'timestamp';
+                    data = new Date(parseInt(dataLimpa));
+                }
+             
+                else {
+                    formato = 'tentativa automática';
+                    data = new Date(dataLimpa);
+                }
+                
+                console.log(`Tentando converter data: "${dataLimpa}" (formato: ${formato})`);
+                
+                // Verificar se a data é válida
+                if (isNaN(data.getTime())) {
+                    console.error('Data inválida após conversão:', {
+                        dataOriginal: dataString,
+                        dataLimpa,
+                        formato,
+                        timestamp: data.getTime()
+                    });
+                    return 'Data inválida';
+                }
+                
+                // Formatar a data no padrão brasileiro
+                const dataFormatada = data.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    timeZone: 'America/Sao_Paulo'
+                });
+                
+                console.log(`Data convertida: "${dataLimpa}" -> "${dataFormatada}"`);
+                return dataFormatada;
+                
+            } catch (error) {
+                console.error('Erro ao formatar data:', {
+                    dataOriginal: dataString,
+                    dataLimpa,
+                    formato,
+                    erro: error.message
+                });
+                return 'Data inválida';
+            }
+        }
+
+        // Função para formatar o horário
+        function formatarHora(horario) {
+            return horario.substring(0, 5); 
+        }
+
+        // Função para obter a classe do badge com base no status
+        function getBadgeClass(status) {
+            if (!status) return 'badge-secondary';
+            
+            const statusLower = status.toString().toLowerCase().trim();
+            const statusNormalizado = statusLower.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            
+            // Mapeamento de status para classes de badge
+            if (['realizado', 'realizada', 'concluido', 'concluída', 'finalizado', 'finalizada'].includes(statusNormalizado)) {
+                return 'badge-realizada';
+            } else if (['cancelado', 'cancelada', 'desmarcado', 'desmarcada'].includes(statusNormalizado)) {
+                return 'badge-cancelada';
+            } else if (['agendado', 'agendada', 'marcado', 'marcada'].includes(statusNormalizado)) {
+                return 'badge-agendada';
+            }
+            
+            return 'badge-secondary';
+        }
+
+        // Função para carregar o histórico unificado
+        async function carregarHistoricoUnificado() {
+            try {
+                const tipoFiltro = document.getElementById('filtroTipo').value;
+                const periodoFiltro = document.getElementById('filtroPeriodo').value;
+                const statusFiltro = document.getElementById('filtroStatus').value;
+
+                // Configuração comum para as requisições
+                const requestOptions = {
+                    method: 'GET',
+                    credentials: 'include', 
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+
+                console.log('Iniciando requisições para APIs...');
+                
+                // Chamadas à API com tratamento de erros individual
+                const [consultasResponse, examesResponse] = await Promise.all([
+                    fetch('/api/consultas/paciente', requestOptions).catch(err => {
+                        console.error('Erro na requisição de consultas:', err);
+                        return { ok: false, status: 500, statusText: 'Erro de conexão' };
+                    }),
+                    fetch('/api/exames/paciente', requestOptions).catch(err => {
+                        console.error('Erro na requisição de exames:', err);
+                        return { ok: false, status: 500, statusText: 'Erro de conexão' };
+                    })
+                ]);
+
+                console.log('Resposta de consultas:', consultasResponse);
+                console.log('Resposta de exames:', examesResponse);
+
+                // Verificar status de autenticação
+                if (consultasResponse.status === 401 || examesResponse.status === 401) {
+                    // Redirecionar para a página de login se não estiver autenticado
+                    console.error('Usuário não autenticado. Redirecionando para login...');
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                if (!consultasResponse.ok || !examesResponse.ok) {
+                    let errorMsg = 'Erro ao buscar histórico do servidor. ';
+                    if (!consultasResponse.ok) {
+                        errorMsg += `Consultas: ${consultasResponse.status} ${consultasResponse.statusText || 'Erro desconhecido'}. `;
+                    }
+                    if (!examesResponse.ok) {
+                        errorMsg += `Exames: ${examesResponse.status} ${examesResponse.statusText || 'Erro desconhecido'}.`;
+                    }
+                    console.error('Erro na resposta da API:', errorMsg);
+                    throw new Error(errorMsg);
+                }
+
+                const consultasData = await consultasResponse.json();
+                const examesData = await examesResponse.json();
+                
+                console.log('Dados brutos de consultas:', JSON.stringify(consultasData, null, 2));
+                console.log('Dados brutos de exames:', JSON.stringify(examesData, null, 2));
+                
+                if (consultasData.erro) {
+                    console.error("Erro retornado pela API de consultas:", consultasData.erro);
+                    throw new Error(`Erro ao processar dados de consultas: ${consultasData.erro}`);
+                }
+                if (examesData.erro) {
+                    console.error("Erro retornado pela API de exames:", examesData.erro);
+                    throw new Error(`Erro ao processar dados de exames: ${examesData.erro}`);
+                }
+
+                let historico = [];
+                
+                // Adicionar logs para depuração
+                console.log('Dados de consultas:', consultasData);
+                console.log('Dados de exames:', examesData);
+                
+                // Mapear consultas e exames garantindo que tenham os campos necessários
+                const consultasMapeadas = Array.isArray(consultasData) ? consultasData.map(c => {
+                    console.log('Mapeando consulta:', {
+                        id: c.id,
+                        data_consulta: c.data_consulta,
+                        data: c.data,
+                        tipo: c.tipo,
+                        status: c.status
+                    });
+                    
+                    const consultaMapeada = {
+                        ...c,
+                        tipoItem: 'consulta',
+                        data_consulta: c.data_consulta || c.data, // Garantir que temos o campo data_consulta
+                        tipo: 'Consulta', // Adicionar tipo para consistência
+                        data_original: c.data_consulta || c.data // Manter uma cópia do valor original para depuração
+                    };
+                    
+                    console.log('Consulta mapeada:', {
+                        id: consultaMapeada.id,
+                        data_consulta: consultaMapeada.data_consulta,
+                        tipo: consultaMapeada.tipo,
+                        data_original: consultaMapeada.data_original
+                    });
+                    
+                    return consultaMapeada;
+                }) : [];
+                
+                const examesMapeados = Array.isArray(examesData) ? examesData.map(e => {
+                    console.log('Mapeando exame:', {
+                        id: e.id,
+                        data_agendamento: e.data_agendamento,
+                        data: e.data,
+                        tipo: e.tipo,
+                        status: e.status
+                    });
+                    
+                    const exameMapeado = {
+                        ...e,
+                        tipoItem: 'exame',
+                        tipoExame: e.tipo || 'Exame',
+                        data_consulta: e.data_agendamento || e.data, // Usar data_agendamento se disponível
+                        status: e.status || 'Agendado', // Garantir que status existe
+                        data_original: e.data_agendamento || e.data // Manter uma cópia do valor original para depuração
+                    };
+                    
+                    console.log('Exame mapeado:', {
+                        id: exameMapeado.id,
+                        data_consulta: exameMapeado.data_consulta,
+                        tipo: exameMapeado.tipoExame,
+                        data_original: exameMapeado.data_original
+                    });
+                    
+                    return exameMapeado;
+                }) : [];
+                
+                // Combinar os resultados
+                historico = [...consultasMapeadas, ...examesMapeados];
+                
+                // Log para verificar os itens após o mapeamento
+                console.log('Histórico após mapeamento:', historico);
+                console.log(`Aplicando filtro de tipo: ${tipoFiltro}`);
+                
+                if (tipoFiltro !== 'todos') {
+                    const tipoFiltrado = tipoFiltro === 'consultas' ? 'consulta' : 'exame';
+                    historico = historico.filter(item => {
+                        const resultado = item.tipoItem === tipoFiltrado;
+                        console.log(`Item ${item.id} - Tipo: ${item.tipoItem}, Filtro: ${tipoFiltrado}, Incluir: ${resultado}`);
+                        return resultado;
+                    });
+                    console.log(`Itens após filtro de tipo (${tipoFiltro}):`, historico);
+                }
+                
+                if (statusFiltro !== 'todos') {
+                    console.log('Aplicando filtro de status:', statusFiltro);
+                    historico = historico.filter(item => {
+                        if (!item.status) return false;
+                        
+                        const itemStatus = item.status.toString().toLowerCase().trim();
+                        const statusNormalizado = itemStatus.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Remove acentos
+                        
+                        console.log(`Item: ${item.tipoItem}, Status: "${itemStatus}", Normalizado: "${statusNormalizado}", Status original: "${item.status}"`);
+                        
+                        // Mapeamento de status para compatibilidade
+                        const statusMap = {
+                            'agendado': ['agendado', 'agendada', 'marcado', 'marcada'],
+                            'realizado': ['realizado', 'realizada', 'concluido', 'concluída', 'concluido', 'concluida', 'finalizado', 'finalizada'],
+                            'concluida': ['concluido', 'concluída', 'concluido', 'concluida', 'finalizado', 'finalizada'],
+                            'cancelado': ['cancelado', 'cancelada', 'desmarcado', 'desmarcada']
+                        };
+                        
+                        // Verifica se o status do item corresponde ao filtro
+                        return statusMap[statusFiltro]?.includes(statusNormalizado) || false;
+                    });
+                    console.log('Histórico após filtro de status:', historico);
+                }
+
+                if (periodoFiltro !== 'todos') {
+                    console.log(`Aplicando filtro de período: ${periodoFiltro}`);
+                    const hoje = new Date();
+                    hoje.setHours(0, 0, 0, 0);
+                    
+                    historico = historico.filter(item => {
+                        const dataItemStr = item.data_consulta || item.data;
+                        if (!dataItemStr) {
+                            console.log(`Item ${item.id} sem data definida`);
+                            return false;
+                        }
+                        
+                        const dataItem = new Date(dataItemStr);
+                        if (isNaN(dataItem.getTime())) {
+                            console.log(`Data inválida para o item ${item.id}:`, dataItemStr);
+                            return false;
+                        }
+                        
+                        // Normalizar as datas para comparar apenas dia/mês/ano
+                        const dataItemNormalizada = new Date(dataItem.getFullYear(), dataItem.getMonth(), dataItem.getDate());
+                        const hojeNormalizado = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+                        
+                        // Calcular diferença em dias
+                        const diffTempo = hojeNormalizado - dataItemNormalizada;
+                        const diffDias = Math.floor(diffTempo / (1000 * 60 * 60 * 24));
+                        
+                        let resultado = false;
+                        switch (periodoFiltro) {
+                            case '30dias':
+                                resultado = diffDias <= 30 && diffDias >= 0;
+                                break;
+                            case '6meses':
+                                resultado = diffDias <= 182 && diffDias >= 0; // ~6 meses
+                                break;
+                            case '1ano':
+                                resultado = diffDias <= 365 && diffDias >= 0;
+                                break;
+                            default:
+                                resultado = true;
+                        }
+                        
+                        console.log(`Item ${item.id} - Data: ${dataItemNormalizada.toISOString().split('T')[0]}, ` +
+                                    `Dias atrás: ${diffDias}, Incluir: ${resultado}`);
+                        return resultado;
+                    });
+                    
+                    console.log(`Itens após filtro de período (${periodoFiltro}):`, historico);
+                }
+
+                historico.sort((a, b) => {
+                    const dataA = new Date(a.data + 'T' + (a.horario || '00:00:00'));
+                    const dataB = new Date(b.data + 'T' + (b.horario || '00:00:00'));
+                    if (isNaN(dataA.getTime()) || isNaN(dataB.getTime())) return 0;
+                    return dataB - dataA;
+                });
+                
+                const historicoElement = document.getElementById('historicoUnificado');
+                const semResultadosElement = document.getElementById('semResultados');
+
+                if (historico.length === 0) {
+                    historicoElement.innerHTML = '';
+                    semResultadosElement.style.display = 'block';
+                    return;
+                }
+
+                semResultadosElement.style.display = 'none';
+                historicoElement.innerHTML = historico.map(item => {
+                    console.log('Processando item para exibição:', {
+                        id: item.id,
+                        tipoItem: item.tipoItem,
+                        data: item.data,
+                        data_consulta: item.data_consulta,
+                        data_original: item.data_original,
+                        horario: item.horario,
+                        status: item.status
+                    });
+                    
+                    // Usar data_consulta se disponível, senão usar data
+                    const dataParaFormatar = item.data_consulta || item.data;
+                    console.log(`Formatando data: "${dataParaFormatar}"`);
+                    
+                    const dataFormatada = formatarData(dataParaFormatar);
+                    const horaFormatada = item.horario ? formatarHora(item.horario) : 'N/A';
+                    const statusLower = item.status ? item.status.toLowerCase() : 'desconhecido';
+                    
+                    console.log('Resultado da formatação:', {
+                        dataOriginal: dataParaFormatar,
+                        dataFormatada,
+                        horaFormatada,
+                        statusLower
+                    });
+                    
+                    const iconeTipo = item.tipoItem === 'consulta' ? 'user-md' : 'vials';
+                    const tituloPrincipal = item.tipoItem === 'consulta' 
+                        ? `Consulta com ${item.nome_medico || 'Médico não especificado'}` 
+                        : `Exame: ${item.tipoExame || item.tipo || 'Tipo não especificado'}`;
+                    
+                    let html = `
+                        <div class="historico-item mb-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-2">
+                                        <i class="fas fa-${iconeTipo} me-2"></i>
+                                        ${tituloPrincipal}
+                                    </h5>
+                                    <div class="d-flex flex-wrap align-items-center gap-3 mb-2">
+                                        <span class="d-flex align-items-center text-muted">
+                                            <i class="far fa-calendar me-2"></i>${dataFormatada}
+                                        </span>
+                                        <span class="d-flex align-items-center text-muted">
+                                            <i class="far fa-clock me-2"></i>${horaFormatada}
+                                        </span>
+                                    </div>`;
+                    
+                    if (item.tipoItem === 'consulta') {
+                        html += `
+                                    <p class="mb-1 d-flex align-items-center">
+                                        <i class="fas fa-stethoscope me-2"></i>
+                                        <span>${item.especialidade || 'Especialidade não informada'}</span>
+                                    </p>`;
+                         if (!(item.nome_medico && tituloPrincipal.includes(item.nome_medico))) {
+                             html += `<p class="mb-1 d-flex align-items-center"><i class="fas fa-user-md me-2"></i><span>${item.nome_medico || ''}</span></p>`;
+                        }
+                    } else if (item.tipoItem === 'exame' && item.nome_medico) {
+                         html += `<p class="mb-1 d-flex align-items-center"><i class="fas fa-user-md me-2"></i><span>Solicitante: ${item.nome_medico}</span></p>`;
+                    }
+                    
+                    html += `
+                                </div>
+                                <span class="badge ${getBadgeClass(statusLower)} ms-3">
+                                    ${item.status || 'N/D'}
+                                </span>`;
+                    
+                    html += '\n                            </div>';
+                    
+                    html += '\n                        </div>';
+                    
+                    return html;
+                }).join('');
+
+            } catch (error) {
+                console.error('Erro ao carregar histórico:', error);
+                const historicoElement = document.getElementById('historicoUnificado');
+                historicoElement.innerHTML = 
+                    `<div class="alert alert-danger d-flex align-items-center" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <div>
+                            Ocorreu um erro ao carregar o histórico. Por favor, tente novamente mais tarde. ${error.message}
+                        </div>
+                    </div>`;
+                document.getElementById('semResultados').style.display = 'none';
+            }
+        }
+
+        // Carregar histórico quando a página for carregada
+        document.addEventListener('DOMContentLoaded', function() {
+            // Definir o filtro de status como 'agendado' por padrão
+            document.getElementById('filtroStatus').value = 'agendado';
+            // Carregar o histórico
+            carregarHistoricoUnificado();
+        });
+        
+        // Adicionar event listeners para os filtros
+        document.getElementById('filtroTipo').addEventListener('change', carregarHistoricoUnificado);
+        document.getElementById('filtroPeriodo').addEventListener('change', carregarHistoricoUnificado);
+        document.getElementById('filtroStatus').addEventListener('change', carregarHistoricoUnificado);
+    </script>
+</body>
+</html>

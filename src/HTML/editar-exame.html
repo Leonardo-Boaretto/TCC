@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Exame - Clínica Vida e Saúde</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/editar-usuario.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <h1>CVS<br><span>Administração</span></h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="funcionario.html">Início</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="main-content">
+        <h2>Editar Exame</h2>
+
+        <form id="formEditarExame" class="form-agendamento">
+            <div class="form-group">
+                <label for="nome"><i class="fas fa-user"></i> Nome do Paciente:</label>
+                <input type="text" id="nome" name="nome" class="form-control" required maxlength="100">
+            </div>
+
+            <div class="form-group">
+                <label for="tipo-exame"><i class="fas fa-vial"></i> Tipo de Exame:</label>
+                <select id="tipo-exame" name="tipo-exame" class="form-control" required>
+                    <option value="">Selecione o tipo de exame</option>
+                    <option value="urina">Exame de Urina</option>
+                    <option value="sangue">Exames de Sangue</option>
+                    <option value="fezes">Exames de Fezes</option>
+                    <option value="cardiologico">Exames Cardiológicos</option>
+                    <option value="respiratorio">Exames Respiratórios</option>
+                    <option value="imagem">Exames de Imagem</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="medico"><i class="fas fa-user-md"></i> Médico Realizante:</label>
+                <select id="medico" name="medico" class="form-control" required>
+                    <option value="">Carregando médicos...</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="data"><i class="far fa-calendar-alt"></i> Data do Exame:</label>
+                        <input type="date" id="data" name="data" class="form-control" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="horario"><i class="far fa-clock"></i> Horário:</label>
+                        <input type="time" id="horario" name="horario" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="observacoes"><i class="fas fa-comment-medical"></i> Observações:</label>
+                <textarea id="observacoes" name="observacoes" class="form-control" rows="4"></textarea>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+                <a href="funcionario.html" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const exameId = urlParams.get('id');
+
+            if (!exameId) {
+                alert('ID do exame não fornecido.');
+                window.location.href = 'funcionario.html';
+                return;
+            }
+
+
+            try {
+                // Buscar lista de médicos
+                const responseMedicos = await fetch('/api/medicos', {
+                    credentials: 'include' 
+                });
+                
+                if (!responseMedicos.ok) {
+                    throw new Error('Erro ao carregar lista de médicos');
+                }
+                
+                const medicos = await responseMedicos.json();
+                const selectMedico = document.getElementById('medico');
+                
+                // Limpar opções existentes
+                selectMedico.innerHTML = '';
+                
+                // Adicionar opção vazia
+                const optionVazia = document.createElement('option');
+                optionVazia.value = '';
+                optionVazia.textContent = 'Selecione um médico';
+                selectMedico.appendChild(optionVazia);
+                
+                // Preencher select com os médicos
+                medicos.forEach(medico => {
+                    const option = document.createElement('option');
+                    option.value = medico.id;
+                    option.textContent = `${medico.nome} - ${medico.especialidade}`;
+                    selectMedico.appendChild(option);
+                });
+
+                // Buscar dados do exame
+                const responseExame = await fetch(`/api/exames/${exameId}`, {
+                    credentials: 'include'
+                });
+                
+                if (!responseExame.ok) {
+                    throw new Error('Erro ao carregar dados do exame');
+                }
+                
+                const exame = await responseExame.json();
+                
+                console.log('Dados recebidos da API:', exame); // Log para depuração
+
+                // Preencher dados do exame
+                if (exame.medico_id) {
+                    for (let i = 0; i < selectMedico.options.length; i++) {
+                        if (parseInt(selectMedico.options[i].value) === exame.medico_id) {
+                            selectMedico.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+
+                // Preencher nome do paciente
+                if (exame.nome_paciente && exame.nome_paciente !== 'nome_paciente') {
+                    document.getElementById('nome').value = exame.nome_paciente;
+                } else {
+                    console.warn('Nome do paciente não fornecido ou é um placeholder');
+                    document.getElementById('nome').value = '';
+                }
+
+                // Preencher tipo de exame
+                if (exame.tipo_exame && exame.tipo_exame !== 'tipo_exame') {
+                    const tipoExameSelect = document.getElementById('tipo-exame');
+                    console.log('Tentando preencher tipo de exame:', exame.tipo_exame);
+                    
+                    // Converte para minúsculas para melhor correspondência
+                    const tipoLower = exame.tipo_exame.toLowerCase();
+                    
+                    // Tenta encontrar uma opção que corresponda ao valor
+                    let encontrado = false;
+                    for (let i = 0; i < tipoExameSelect.options.length; i++) {
+                        const option = tipoExameSelect.options[i];
+                        const optionText = option.text.toLowerCase();
+                        const optionValue = option.value.toLowerCase();
+                        
+                        // Verifica se o tipo de exame contém parte do texto da opção
+                        if (optionValue.includes(tipoLower) || 
+                            tipoLower.includes(optionValue) ||
+                            optionText.includes(tipoLower) ||
+                            tipoLower.includes(optionText)) {
+                            option.selected = true;
+                            console.log('Tipo de exame definido com sucesso:', option.value);
+                            encontrado = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!encontrado) {
+                        console.warn('Tipo de exame não encontrado nas opções, definindo como padrão:', exame.tipo_exame);
+                        // Define o primeiro item como selecionado
+                        if (tipoExameSelect.options.length > 0) {
+                            tipoExameSelect.selectedIndex = 0;
+                        }
+                    }
+                } else {
+                    console.warn('Tipo de exame não fornecido ou é um placeholder');
+                    if (tipoExameSelect.options.length > 0) {
+                        tipoExameSelect.selectedIndex = 0;
+                    }
+                }
+
+                // Preencher data 
+                const dataInput = document.getElementById('data');
+                if (exame.data_exame && !['%Y-%m-%d', 'data_exame'].includes(exame.data_exame)) {
+                    try {
+                        console.log('Tentando formatar data:', exame.data_exame);
+                        const data = new Date(exame.data_exame);
+                        
+                        if (!isNaN(data.getTime())) {
+                            const dataFormatada = data.toISOString().split('T')[0];
+                            dataInput.value = dataFormatada;
+                            console.log('Data formatada com sucesso:', dataFormatada);
+                        } else {
+                            console.warn('Data inválida recebida, definindo data atual:', exame.data_exame);
+                            // Define a data atual como padrão
+                            dataInput.value = new Date().toISOString().split('T')[0];
+                        }
+                    } catch (e) {
+                        console.error('Erro ao formatar data, definindo data atual:', e);
+                        dataInput.value = new Date().toISOString().split('T')[0];
+                    }
+                } else {
+                    console.warn('Data não fornecida ou é um placeholder, definindo data atual');
+                    dataInput.value = new Date().toISOString().split('T')[0];
+                }
+
+                // Preencher horário 
+                const horarioInput = document.getElementById('horario');
+                if (exame.horario && !['%H:%i:%s', 'horario'].includes(exame.horario)) {
+                    try {
+                        const horarioStr = String(exame.horario).trim();
+                        console.log('Tentando formatar horário:', horarioStr);
+                        
+                        if (horarioStr.includes('Inval') || horarioStr === '') {
+                            console.warn('Horário inválido ou vazio, definindo horário padrão');
+                            horarioInput.value = '09:00';
+                        } else {
+                            //  extrair HH:MM 
+                            const match = horarioStr.match(/(\d{1,2})[:h](\d{2})(?::\d{2})?/);
+                            if (match) {
+                                let horas = parseInt(match[1], 10);
+                                const minutos = parseInt(match[2], 10);
+                                
+                                // Ajusta  formato 24h
+                                if (horas >= 0 && horas < 24 && minutos >= 0 && minutos < 60) {
+                                    const horarioFormatado = `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}`;
+                                    horarioInput.value = horarioFormatado;
+                                    console.log('Horário formatado com sucesso:', horarioFormatado);
+                                } else {
+                                    console.warn('Horário fora do intervalo válido, definindo horário padrão:', horarioStr);
+                                    horarioInput.value = '09:00';
+                                }
+                            } else {
+                                console.warn('Formato de horário inválido, definindo horário padrão:', horarioStr);
+                                horarioInput.value = '09:00';
+                            }
+                        }
+                    } catch (e) {
+                        console.error('Erro ao formatar horário, definindo horário padrão:', e);
+                        horarioInput.value = '09:00';
+                    }
+                } else {
+                    console.warn('Horário não fornecido ou é um placeholder, definindo horário padrão');
+                    horarioInput.value = '09:00';
+                }
+                
+                // Preencher observações
+                document.getElementById('observacoes').value = exame.observacoes || '';
+                
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                alert(`Erro ao carregar dados: ${error.message}`);
+            }
+        });
+
+        // Adicionar evento de submit do formulário
+        document.getElementById('formEditarExame').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const exameId = urlParams.get('id');
+
+            if (!exameId) {
+                alert('ID do exame não fornecido.');
+                return;
+            }
+
+            const medicoSelect = document.getElementById('medico');
+            const medicoId = medicoSelect.value;
+            const medicoNome = medicoSelect.options[medicoSelect.selectedIndex].text.split(' - ')[0];
+
+            const dadosAtualizados = {
+                medico_id: medicoId,
+                nome_medico: medicoNome,
+                nome_paciente: document.getElementById('nome').value,
+                tipo_exame: document.getElementById('tipo-exame').value,
+                data_exame: document.getElementById('data').value,
+                horario: document.getElementById('horario').value,
+                observacoes: document.getElementById('observacoes').value
+            };
+
+            try {
+                const response = await fetch(`/api/exames/${exameId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(dadosAtualizados)
+                });
+
+                if (response.ok) {
+                    alert('Exame atualizado com sucesso!');
+                    window.location.href = 'funcionario.html';
+                } else {
+                    const erro = await response.json();
+                    alert(`Erro ao atualizar exame: ${erro.erro || 'Erro desconhecido'}`);
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar exame:', error);
+                alert('Erro ao atualizar exame. Verifique o console para mais detalhes.');
+            }
+        });
+    </script>
+</body>
+</html>
